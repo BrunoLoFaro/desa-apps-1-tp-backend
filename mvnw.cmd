@@ -89,10 +89,17 @@ if (-not (Test-Path -Path $MAVEN_M2_PATH)) {
 }
 
 $MAVEN_WRAPPER_DISTS = $null
-if ((Get-Item $MAVEN_M2_PATH).Target[0] -eq $null) {
+# DirectoryInfo.Target is only populated for symlinks/junctions; on a normal directory it is $null.
+# Indexing `[0]` can throw "Cannot index into a null array." on some PowerShell versions.
+$m2Item = Get-Item $MAVEN_M2_PATH
+$m2Target0 = $null
+if ($m2Item.PSObject.Properties.Match('Target').Count -gt 0) {
+  $m2Target0 = $m2Item.Target | Select-Object -First 1
+}
+if ($null -eq $m2Target0) {
   $MAVEN_WRAPPER_DISTS = "$MAVEN_M2_PATH/wrapper/dists"
 } else {
-  $MAVEN_WRAPPER_DISTS = (Get-Item $MAVEN_M2_PATH).Target[0] + "/wrapper/dists"
+  $MAVEN_WRAPPER_DISTS = $m2Target0 + "/wrapper/dists"
 }
 
 $MAVEN_HOME_PARENT = "$MAVEN_WRAPPER_DISTS/$distributionUrlNameMain"
