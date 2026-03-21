@@ -2,6 +2,7 @@ package com.example.desabackend.controller;
 
 import com.example.desabackend.dto.LoginRequestDto;
 import com.example.desabackend.dto.LoginResponseDto;
+import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.services.interfaces.IAuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,5 +23,10 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponseDto login(@Valid @RequestBody LoginRequestDto request) {
         return authService.login(request);
+    }
+
+    @PostMapping("/register")
+    public LoginResponseDto register(@Valid @RequestBody RegisterRequestDto request) {
+        return authService.register(request);
     }
 }
