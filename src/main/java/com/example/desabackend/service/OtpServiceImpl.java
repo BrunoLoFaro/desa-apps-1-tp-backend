@@ -79,7 +79,10 @@ public class OtpServiceImpl implements IOtpService {
         String normalizedEmail = normalizeEmail(email);
 
         // Buscar el OTP más reciente activo para este email
-        OtpEntity otp = otpRepository.findLatestActiveOtpByEmail(normalizedEmail, LocalDateTime.now())
+        OtpEntity otp = otpRepository.findTopByEmailAndVerifiedFalseAndExpiresAtAfterOrderByCreatedAtDesc(
+                normalizedEmail,
+                LocalDateTime.now()
+            )
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No hay un código OTP activo o válido para este email. Solicita uno nuevo."
                 ));
@@ -113,10 +116,10 @@ public class OtpServiceImpl implements IOtpService {
                     // Crear usuario temporal si no existe
                     UserEntity newUser = new UserEntity();
                     newUser.setEmail(normalizedEmail);
-                    newUser.setPasswordHash(""); // Sin contraseña por ahora
+                    newUser.setPasswordHash("OTP_PENDING_PASSWORD");
                     newUser.setFirstName("Usuario");
                     newUser.setLastName("Temporal");
-                    newUser.setDni(""); // Se completa después
+                    newUser.setDni(generateTemporaryDni());
                     newUser.setEnabled(true);
                     newUser.setCreatedAt(LocalDateTime.now());
                     return userRepository.save(newUser);
@@ -141,7 +144,7 @@ public class OtpServiceImpl implements IOtpService {
         String normalizedEmail = normalizeEmail(email);
 
         // Buscar el OTP más reciente para este email (verificado o no)
-        OtpEntity lastOtp = otpRepository.findLatestOtpByEmail(normalizedEmail)
+        OtpEntity lastOtp = otpRepository.findTopByEmailOrderByCreatedAtDesc(normalizedEmail)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No hay un OTP pendiente para este email. Solicita uno nuevo primero."
                 ));
@@ -192,5 +195,10 @@ public class OtpServiceImpl implements IOtpService {
 
     private String normalizeEmail(String email) {
         return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private String generateTemporaryDni() {
+        // users.dni es UNIQUE y length=20; esto evita colisiones con usuarios OTP temporales.
+        return "OTP" + System.currentTimeMillis();
     }
 }
