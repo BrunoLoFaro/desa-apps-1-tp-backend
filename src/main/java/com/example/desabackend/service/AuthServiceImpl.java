@@ -18,13 +18,16 @@ public class AuthServiceImpl implements IAuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthServiceImpl(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            JwtTokenProvider jwtTokenProvider
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -41,7 +44,16 @@ public class AuthServiceImpl implements IAuthService {
             throw new UnauthorizedException("Invalid credentials");
         }
 
-        return new LoginResponseDto(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getDni());
+        String token = jwtTokenProvider.generateToken(user.getId().toString());
+
+        return new LoginResponseDto(
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getDni(),
+                token
+        );
     }
 
     @Override
@@ -68,7 +80,17 @@ public class AuthServiceImpl implements IAuthService {
         user.setCreatedAt(LocalDateTime.now());
 
         UserEntity saved = userRepository.save(user);
-        return new LoginResponseDto(saved.getId(), saved.getEmail(), saved.getFirstName(), saved.getLastName(), saved.getDni());
+
+        String token = jwtTokenProvider.generateToken(saved.getId().toString());
+
+        return new LoginResponseDto(
+                saved.getId(),
+                saved.getEmail(),
+                saved.getFirstName(),
+                saved.getLastName(),
+                saved.getDni(),
+                token
+        );
     }
 
     private static String normalizeEmail(String email) {

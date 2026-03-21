@@ -1,6 +1,42 @@
 @baseUrl = http://localhost:8080
 @json = application/json
 
+### ============================================
+### FLUJO OTP (Autenticación sin contraseña)
+### ============================================
+
+### 1. Solicitar OTP - Envía código de 6 dígitos al email
+POST {{baseUrl}}/api/v1/auth/otp/request
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "usuario.otp@example.com"
+}
+
+### 2. Verificar OTP - Confirma código y crea sesión
+POST {{baseUrl}}/api/v1/auth/otp/verify
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "usuario.otp@example.com",
+  "code": "123456"
+}
+
+### 3. Reenviar OTP - Si no recibió o expiró
+POST {{baseUrl}}/api/v1/auth/otp/resend
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "usuario.otp@example.com"
+}
+
+### ============================================
+### FLUJO LOGIN CLÁSICO (Email + Contraseña)
+### ============================================
+
 ### Registro clasico
 POST {{baseUrl}}/api/v1/auth/register
 Content-Type: {{json}}
@@ -23,6 +59,10 @@ Accept: {{json}}
   "email": "test@example.com",
   "password": "123456"
 }
+
+### ============================================
+### OTRAS RUTAS
+### ============================================
 
 ### Listar destinos
 GET {{baseUrl}}/api/v1/destinations
