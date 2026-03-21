@@ -56,7 +56,7 @@ Content-Type: {{json}}
 Accept: {{json}}
 
 {
-  "email": "test@example.com",
+  "email": "nuevo.usuario@example.com",
   "password": "123456"
 }
 
