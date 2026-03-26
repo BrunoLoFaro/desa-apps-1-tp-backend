@@ -1,0 +1,102 @@
+@baseUrl = http://localhost:8080
+@json = application/json
+
+### ============================================
+### FLUJO OTP (Autenticación sin contraseña)
+### ============================================
+
+### 1. Solicitar OTP - Envía código de 6 dígitos al email
+POST {{baseUrl}}/api/v1/auth/otp/request
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "usuario.otp@example.com"
+}
+
+### 2. Verificar OTP - Confirma código y crea sesión
+POST {{baseUrl}}/api/v1/auth/otp/verify
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "usuario.otp@example.com",
+  "code": "123456"
+}
+
+### 3. Reenviar OTP - Si no recibió o expiró
+POST {{baseUrl}}/api/v1/auth/otp/resend
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "usuario.otp@example.com"
+}
+
+### ============================================
+### FLUJO LOGIN CLÁSICO (Email + Contraseña)
+### ============================================
+
+### Registro clasico
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "nuevo.usuario@example.com",
+  "password": "123456",
+  "firstName": "Nuevo",
+  "lastName": "Usuario",
+  "dni": "12345678"
+}
+
+### Login clasico
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "nuevo.usuario@example.com",
+  "password": "123456"
+}
+
+### ============================================
+### OTRAS RUTAS
+### ============================================
+
+### Listar destinos
+GET {{baseUrl}}/api/v1/destinations
+Accept: {{json}}
+
+### Listar categorias
+GET {{baseUrl}}/api/v1/categories
+Accept: {{json}}
+
+### Listar actividades (sin filtros)
+GET {{baseUrl}}/api/v1/activities?page=0&size=10
+Accept: {{json}}
+
+### Listar actividades con filtros
+GET {{baseUrl}}/api/v1/activities?page=0&size=10&destinationId=1&category=ADVENTURE&minPrice=1000&maxPrice=50000&date=2026-03-21
+Accept: {{json}}
+
+### Listar destacadas
+GET {{baseUrl}}/api/v1/activities/featured?page=0&size=10
+Accept: {{json}}
+
+### Recomendadas con userId por query param
+GET {{baseUrl}}/api/v1/activities/recommended?userId=1&page=0&size=10
+Accept: {{json}}
+
+### Recomendadas con Authorization Bearer (opcional)
+GET {{baseUrl}}/api/v1/activities/recommended?page=0&size=10
+Accept: {{json}}
+Authorization: Bearer <pegar_token_o_jwt_aqui>
+
+### Detalle de actividad
+GET {{baseUrl}}/api/v1/activities/1
+Accept: {{json}}
+
+### Detalle de actividad para fecha especifica
+GET {{baseUrl}}/api/v1/activities/1?date=2026-03-21
+Accept: {{json}}
