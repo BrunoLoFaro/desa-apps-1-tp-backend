@@ -36,12 +36,10 @@ public class ActivityEntity {
     private Long id;
 
     @Column(nullable = false, length = 200)
-    private String name;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
+    private String name;    @Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String includesText;
 
     @Column(length = 255)
@@ -51,9 +49,7 @@ public class ActivityEntity {
     private Integer durationMinutes;
 
     @Column(length = 10)
-    private String language;
-
-    @Column(columnDefinition = "TEXT")
+    private String language;    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String cancellationPolicy;
 
     @Enumerated(EnumType.STRING)
