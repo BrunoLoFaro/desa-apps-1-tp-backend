@@ -29,9 +29,9 @@ services:
       -Q "IF DB_ID('desa_db') IS NULL CREATE DATABASE desa_db;"
     restart: "no"
   # ── Spring Boot App ────────────────────────────────
-  Descomentar para correr la app en Docker.
-  Si tenés problemas de proxy con Docker Hub, comentá este bloque
-  y corré la app local con: ./mvnw spring-boot:run
+  # Descomentar para correr la app en Docker.
+  # Si tenés problemas de proxy con Docker Hub, comentá este bloque
+  # y corré la app local con: ./mvnw spring-boot:run
   
   app:
     build: .
