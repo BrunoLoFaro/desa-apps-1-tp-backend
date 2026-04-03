@@ -1,12 +1,16 @@
 package com.example.desabackend.service;
 
 import com.example.desabackend.dto.LoginResponseDto;
+import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
+import com.example.desabackend.dto.PasswordResetConfirmDto;
+import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.entity.OtpEntity;
 import com.example.desabackend.entity.UserEntity;
 import com.example.desabackend.exception.UnauthorizedException;
 import com.example.desabackend.repository.OtpRepository;
 import com.example.desabackend.repository.UserRepository;
+import com.example.desabackend.services.interfaces.IAuthService;
 import com.example.desabackend.services.interfaces.IOtpService;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -14,6 +18,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +33,8 @@ public class OtpServiceImpl implements IOtpService {
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
     private final JwtTokenProvider jwtTokenProvider;
+    private final IAuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${spring.mail.from:noreply@xplorenow.com}")
     private String mailFrom;
@@ -36,98 +43,172 @@ public class OtpServiceImpl implements IOtpService {
             OtpRepository otpRepository,
             UserRepository userRepository,
             JavaMailSender mailSender,
-            JwtTokenProvider jwtTokenProvider
+            JwtTokenProvider jwtTokenProvider,
+            IAuthService authService,
+            PasswordEncoder passwordEncoder
     ) {
         this.otpRepository = otpRepository;
         this.userRepository = userRepository;
         this.mailSender = mailSender;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.authService = authService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    @Transactional
-    public OtpResponseDto requestOtp(String email) {
+        @Override
+        @Transactional
+        public OtpResponseDto requestSignupOtp(String email) {
         String normalizedEmail = normalizeEmail(email);
-
-        // Verificar que el email no esté vinculado a una cuenta existente
-        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
-            throw new IllegalArgumentException("Este email ya está registrado. Usa login en su lugar.");
+        ensureEmailIsAvailable(normalizedEmail);
+        return createOtp(normalizedEmail, "Código OTP enviado al email. Válido por " + OTP_EXPIRATION_MINUTES + " minutos.");
         }
 
-        // Generar código OTP de 6 dígitos
-        String code = generateOtpCode();
+        @Override
+        @Transactional
+        public OtpResponseDto resendSignupOtp(String email) {
+        String normalizedEmail = normalizeEmail(email);
+        ensureEmailIsAvailable(normalizedEmail);
+        return resendOtpInternal(
+            normalizedEmail,
+            "No hay un OTP pendiente para este email. Solicita uno nuevo primero.",
+            "Nuevo código OTP reenviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
+        );
+        }
 
-        // Crear entidad OTP
+        @Override
+        @Transactional
+        public LoginResponseDto completeSignupWithOtp(OtpRegistrationCompleteDto request) {
+        String normalizedEmail = normalizeEmail(request.email());
+        ensureEmailIsAvailable(normalizedEmail);
+
+        OtpEntity otp = getActiveOtp(normalizedEmail);
+        validateOtpCode(otp, request.code());
+
+        LoginResponseDto response = authService.register(new RegisterRequestDto(
+            normalizedEmail,
+            request.password(),
+            request.firstName(),
+            request.lastName(),
+            request.dni()
+        ));
+
+        markOtpVerified(otp);
+        return response;
+        }
+
+        @Override
+        @Transactional
+        public OtpResponseDto requestPasswordReset(String email) {
+        String normalizedEmail = normalizeEmail(email);
+        requireExistingUser(normalizedEmail);
+        return createOtp(
+            normalizedEmail,
+            "Te enviamos un código para restablecer tu contraseña. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
+        );
+        }
+
+        @Override
+        @Transactional
+        public OtpResponseDto resendPasswordReset(String email) {
+        String normalizedEmail = normalizeEmail(email);
+        requireExistingUser(normalizedEmail);
+        return resendOtpInternal(
+            normalizedEmail,
+            "No hay un OTP pendiente para este email. Solicita uno nuevo primero.",
+            "Nuevo código de restablecimiento reenviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
+        );
+        }
+
+        @Override
+        @Transactional
+        public LoginResponseDto confirmPasswordReset(PasswordResetConfirmDto request) {
+        String normalizedEmail = normalizeEmail(request.email());
+        UserEntity user = requireExistingUser(normalizedEmail);
+
+        OtpEntity otp = getActiveOtp(normalizedEmail);
+        validateOtpCode(otp, request.code());
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        UserEntity savedUser = userRepository.save(user);
+        markOtpVerified(otp);
+
+        return buildLoginResponse(savedUser);
+    }
+
+    private String generateOtpCode() {
+        return String.format("%06d", RANDOM.nextInt(1000000));
+    }
+
+    private OtpResponseDto createOtp(String normalizedEmail, String successMessage) {
+        String code = generateOtpCode();
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(OTP_EXPIRATION_MINUTES);
         OtpEntity otpEntity = new OtpEntity(normalizedEmail, code, expiresAt);
-
-        // Guardar en BD
         otpRepository.save(otpEntity);
-
-        // Enviar email
         sendOtpEmail(normalizedEmail, code);
-
-        return new OtpResponseDto(
-                "Código OTP enviado al email. Válido por " + OTP_EXPIRATION_MINUTES + " minutos.",
-                normalizedEmail
-        );
+        return new OtpResponseDto(successMessage, normalizedEmail);
     }
 
-    @Override
-    @Transactional
-    public LoginResponseDto verifyOtp(String email, String code) {
-        String normalizedEmail = normalizeEmail(email);
+    private OtpResponseDto resendOtpInternal(String normalizedEmail, String notFoundMessage, String successMessage) {
+        OtpEntity lastOtp = otpRepository.findTopByEmailOrderByCreatedAtDesc(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException(notFoundMessage));
 
-        // Buscar el OTP más reciente activo para este email
-        OtpEntity otp = otpRepository.findTopByEmailAndVerifiedFalseAndExpiresAtAfterOrderByCreatedAtDesc(
+        String newCode = generateOtpCode();
+        LocalDateTime newExpiresAt = LocalDateTime.now().plusMinutes(OTP_EXPIRATION_MINUTES);
+
+        lastOtp.setCode(newCode);
+        lastOtp.setExpiresAt(newExpiresAt);
+        lastOtp.setAttemptCount(0);
+        lastOtp.setVerified(false);
+
+        otpRepository.save(lastOtp);
+        sendOtpEmail(normalizedEmail, newCode);
+
+        return new OtpResponseDto(successMessage, normalizedEmail);
+    }
+
+    private OtpEntity getActiveOtp(String normalizedEmail) {
+        return otpRepository.findTopByEmailAndVerifiedFalseAndExpiresAtAfterOrderByCreatedAtDesc(
                 normalizedEmail,
                 LocalDateTime.now()
-            )
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "No hay un código OTP activo o válido para este email. Solicita uno nuevo."
-                ));
+        ).orElseThrow(() -> new IllegalArgumentException(
+                "No hay un código OTP activo o válido para este email. Solicita uno nuevo."
+        ));
+    }
 
-        // Validar intentos fallidos
+    private void validateOtpCode(OtpEntity otp, String code) {
         if (otp.getAttemptCount() >= MAX_OTP_ATTEMPTS) {
-            throw new IllegalStateException(
-                    "Demasiados intentos fallidos. Solicita un nuevo código OTP."
-            );
+            throw new IllegalStateException("Demasiados intentos fallidos. Solicita un nuevo código OTP.");
         }
 
-        // Validar código
+        if (otp.isExpired()) {
+            throw new IllegalArgumentException("El código OTP ha expirado. Solicita uno nuevo.");
+        }
+
         if (!otp.getCode().equals(code)) {
             otp.setAttemptCount(otp.getAttemptCount() + 1);
             otpRepository.save(otp);
             throw new UnauthorizedException("Código OTP inválido.");
         }
+    }
 
-        // Verificar que no haya expirado
-        if (otp.isExpired()) {
-            throw new IllegalArgumentException("El código OTP ha expirado. Solicita uno nuevo.");
-        }
-
-        // Marcar como verificado
+    private void markOtpVerified(OtpEntity otp) {
         otp.setVerified(true);
         otpRepository.save(otp);
+    }
 
-        // Buscar o crear usuario
-        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
-                .orElseGet(() -> {
-                    // Crear usuario temporal si no existe
-                    UserEntity newUser = new UserEntity();
-                    newUser.setEmail(normalizedEmail);
-                    newUser.setPasswordHash("OTP_PENDING_PASSWORD");
-                    newUser.setFirstName("Usuario");
-                    newUser.setLastName("Temporal");
-                    newUser.setDni(generateTemporaryDni());
-                    newUser.setEnabled(true);
-                    newUser.setCreatedAt(LocalDateTime.now());
-                    return userRepository.save(newUser);
-                });
+    private void ensureEmailIsAvailable(String normalizedEmail) {
+        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
+            throw new IllegalArgumentException("Este email ya está registrado. Usá login o recuperá tu contraseña.");
+        }
+    }
 
-        // Generar JWT
+    private UserEntity requireExistingUser(String normalizedEmail) {
+        return userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("No existe una cuenta registrada con ese email."));
+    }
+
+    private LoginResponseDto buildLoginResponse(UserEntity user) {
         String token = jwtTokenProvider.generateToken(user.getId().toString());
-
         return new LoginResponseDto(
                 user.getId(),
                 user.getEmail(),
@@ -136,42 +217,6 @@ public class OtpServiceImpl implements IOtpService {
                 user.getDni(),
                 token
         );
-    }
-
-    @Override
-    @Transactional
-    public OtpResponseDto resendOtp(String email) {
-        String normalizedEmail = normalizeEmail(email);
-
-        // Buscar el OTP más reciente para este email (verificado o no)
-        OtpEntity lastOtp = otpRepository.findTopByEmailOrderByCreatedAtDesc(normalizedEmail)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "No hay un OTP pendiente para este email. Solicita uno nuevo primero."
-                ));
-
-        // Generar nuevo código
-        String newCode = generateOtpCode();
-        LocalDateTime newExpiresAt = LocalDateTime.now().plusMinutes(OTP_EXPIRATION_MINUTES);
-
-        // Actualizar el OTP existente
-        lastOtp.setCode(newCode);
-        lastOtp.setExpiresAt(newExpiresAt);
-        lastOtp.setAttemptCount(0); // Resetear intentos
-        lastOtp.setVerified(false);
-
-        otpRepository.save(lastOtp);
-
-        // Enviar nuevo email
-        sendOtpEmail(normalizedEmail, newCode);
-
-        return new OtpResponseDto(
-                "Nuevo código OTP reenviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos.",
-                normalizedEmail
-        );
-    }
-
-    private String generateOtpCode() {
-        return String.format("%06d", RANDOM.nextInt(1000000));
     }
 
     private void sendOtpEmail(String email, String code) {
@@ -197,8 +242,4 @@ public class OtpServiceImpl implements IOtpService {
         return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }
 
-    private String generateTemporaryDni() {
-        // users.dni es UNIQUE y length=20; esto evita colisiones con usuarios OTP temporales.
-        return "OTP" + System.currentTimeMillis();
-    }
 }

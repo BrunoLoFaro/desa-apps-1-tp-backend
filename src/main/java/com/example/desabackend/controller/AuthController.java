@@ -3,8 +3,9 @@ package com.example.desabackend.controller;
 import com.example.desabackend.dto.LoginRequestDto;
 import com.example.desabackend.dto.LoginResponseDto;
 import com.example.desabackend.dto.OtpRequestDto;
+import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
-import com.example.desabackend.dto.OtpVerificationDto;
+import com.example.desabackend.dto.PasswordResetConfirmDto;
 import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.services.interfaces.IAuthService;
 import com.example.desabackend.services.interfaces.IOtpService;
@@ -36,18 +37,33 @@ public class AuthController {
         return authService.register(request);
     }
 
-    @PostMapping("/otp/request")
-    public OtpResponseDto requestOtp(@Valid @RequestBody OtpRequestDto request) {
-        return otpService.requestOtp(request.email());
+    @PostMapping("/signup/otp/request")
+    public OtpResponseDto requestSignupOtp(@Valid @RequestBody OtpRequestDto request) {
+        return otpService.requestSignupOtp(request.email());
     }
 
-    @PostMapping("/otp/verify")
-    public LoginResponseDto verifyOtp(@Valid @RequestBody OtpVerificationDto request) {
-        return otpService.verifyOtp(request.email(), request.code());
+    @PostMapping("/signup/otp/resend")
+    public OtpResponseDto resendSignupOtp(@Valid @RequestBody OtpRequestDto request) {
+        return otpService.resendSignupOtp(request.email());
     }
 
-    @PostMapping("/otp/resend")
-    public OtpResponseDto resendOtp(@Valid @RequestBody OtpRequestDto request) {
-        return otpService.resendOtp(request.email());
+    @PostMapping("/signup/otp/complete")
+    public LoginResponseDto completeSignupWithOtp(@Valid @RequestBody OtpRegistrationCompleteDto request) {
+        return otpService.completeSignupWithOtp(request);
+    }
+
+    @PostMapping("/password-reset/request")
+    public OtpResponseDto requestPasswordReset(@Valid @RequestBody OtpRequestDto request) {
+        return otpService.requestPasswordReset(request.email());
+    }
+
+    @PostMapping("/password-reset/resend")
+    public OtpResponseDto resendPasswordReset(@Valid @RequestBody OtpRequestDto request) {
+        return otpService.resendPasswordReset(request.email());
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public LoginResponseDto confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmDto request) {
+        return otpService.confirmPasswordReset(request);
     }
 }
