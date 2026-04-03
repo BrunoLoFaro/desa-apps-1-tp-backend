@@ -17,5 +17,7 @@ public interface IOtpService {
 
     OtpResponseDto resendPasswordReset(String email);
 
+    OtpResponseDto verifyPasswordResetCode(String email, String code);
+
     LoginResponseDto confirmPasswordReset(PasswordResetConfirmDto request);
 }

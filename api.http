@@ -61,7 +61,17 @@ Accept: {{json}}
   "email": "{{otpEmail}}"
 }
 
-### 3. Confirmar nueva contraseña con OTP
+### 3. Verificar código de recuperación
+POST {{baseUrl}}/api/v1/auth/password-reset/verify
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "{{otpEmail}}",
+  "code": "{{otpCode}}"
+}
+
+### 4. Confirmar nueva contraseña con OTP
 POST {{baseUrl}}/api/v1/auth/password-reset/confirm
 Content-Type: {{json}}
 Accept: {{json}}

@@ -2,6 +2,7 @@ package com.example.desabackend.controller;
 
 import com.example.desabackend.dto.LoginRequestDto;
 import com.example.desabackend.dto.LoginResponseDto;
+import com.example.desabackend.dto.OtpCodeVerificationDto;
 import com.example.desabackend.dto.OtpRequestDto;
 import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
@@ -60,6 +61,11 @@ public class AuthController {
     @PostMapping("/password-reset/resend")
     public OtpResponseDto resendPasswordReset(@Valid @RequestBody OtpRequestDto request) {
         return otpService.resendPasswordReset(request.email());
+    }
+
+    @PostMapping("/password-reset/verify")
+    public OtpResponseDto verifyPasswordResetCode(@Valid @RequestBody OtpCodeVerificationDto request) {
+        return otpService.verifyPasswordResetCode(request.email(), request.code());
     }
 
     @PostMapping("/password-reset/confirm")

@@ -120,7 +120,18 @@ public class OtpServiceImpl implements IOtpService {
         }
 
         @Override
-        @Transactional
+    @Transactional(readOnly = true)
+    public OtpResponseDto verifyPasswordResetCode(String email, String code) {
+        String normalizedEmail = normalizeEmail(email);
+        requireExistingUser(normalizedEmail);
+
+        OtpEntity otp = getActiveOtp(normalizedEmail);
+        validateOtpCode(otp, code);
+
+        return new OtpResponseDto("Código validado correctamente.", normalizedEmail);
+    }
+
+    @Override
         public LoginResponseDto confirmPasswordReset(PasswordResetConfirmDto request) {
         String normalizedEmail = normalizeEmail(request.email());
         UserEntity user = requireExistingUser(normalizedEmail);
