@@ -25,7 +25,17 @@ Accept: {{json}}
   "email": "{{otpEmail}}"
 }
 
-### 3. Completar registro con OTP + perfil + contraseña
+### 3. Verificar código OTP de registro
+POST {{baseUrl}}/api/v1/auth/signup/otp/verify
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "{{otpEmail}}",
+  "code": "{{otpCode}}"
+}
+
+### 4. Completar registro con OTP + perfil + contraseña
 POST {{baseUrl}}/api/v1/auth/signup/otp/complete
 Content-Type: {{json}}
 Accept: {{json}}
