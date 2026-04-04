@@ -1,36 +1,95 @@
 @baseUrl = http://localhost:8080
 @json = application/json
+@otpEmail = usuario.otp@example.com
+@otpCode = 123456
 
 ### ============================================
-### FLUJO OTP (Autenticación sin contraseña)
+### FLUJO SIGNUP CON OTP
 ### ============================================
 
-### 1. Solicitar OTP - Envía código de 6 dígitos al email
-POST {{baseUrl}}/api/v1/auth/otp/request
+### 1. Solicitar OTP de registro - Envía código de 6 dígitos al email
+POST {{baseUrl}}/api/v1/auth/signup/otp/request
 Content-Type: {{json}}
 Accept: {{json}}
 
 {
-  "email": "usuario.otp@example.com"
+  "email": "{{otpEmail}}"
 }
 
-### 2. Verificar OTP - Confirma código y crea sesión
-POST {{baseUrl}}/api/v1/auth/otp/verify
+### 2. Reenviar OTP de registro - Si no llegó o expiró
+POST {{baseUrl}}/api/v1/auth/signup/otp/resend
 Content-Type: {{json}}
 Accept: {{json}}
 
 {
-  "email": "usuario.otp@example.com",
-  "code": "123456"
+  "email": "{{otpEmail}}"
 }
 
-### 3. Reenviar OTP - Si no recibió o expiró
-POST {{baseUrl}}/api/v1/auth/otp/resend
+### 3. Verificar código OTP de registro
+POST {{baseUrl}}/api/v1/auth/signup/otp/verify
 Content-Type: {{json}}
 Accept: {{json}}
 
 {
-  "email": "usuario.otp@example.com"
+  "email": "{{otpEmail}}",
+  "code": "{{otpCode}}"
+}
+
+### 4. Completar registro con OTP + perfil + contraseña
+POST {{baseUrl}}/api/v1/auth/signup/otp/complete
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "{{otpEmail}}",
+  "code": "{{otpCode}}",
+  "password": "123456",
+  "firstName": "Usuario",
+  "lastName": "OTP",
+  "dni": "12345678"
+}
+
+### ============================================
+### FLUJO RECUPERAR CONTRASEÑA (OTP)
+### ============================================
+
+### 1. Solicitar código de recuperación
+POST {{baseUrl}}/api/v1/auth/password-reset/request
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "{{otpEmail}}"
+}
+
+### 2. Reenviar código de recuperación
+POST {{baseUrl}}/api/v1/auth/password-reset/resend
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "{{otpEmail}}"
+}
+
+### 3. Verificar código de recuperación
+POST {{baseUrl}}/api/v1/auth/password-reset/verify
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "{{otpEmail}}",
+  "code": "{{otpCode}}"
+}
+
+### 4. Confirmar nueva contraseña con OTP
+POST {{baseUrl}}/api/v1/auth/password-reset/confirm
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "email": "{{otpEmail}}",
+  "code": "{{otpCode}}",
+  "newPassword": "12345678"
 }
 
 ### ============================================
