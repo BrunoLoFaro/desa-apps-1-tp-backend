@@ -48,6 +48,11 @@ public class AuthController {
         return otpService.resendSignupOtp(request.email());
     }
 
+    @PostMapping("/signup/otp/verify")
+    public OtpResponseDto verifySignupOtpCode(@Valid @RequestBody OtpCodeVerificationDto request) {
+        return otpService.verifySignupOtpCode(request.email(), request.code());
+    }
+
     @PostMapping("/signup/otp/complete")
     public LoginResponseDto completeSignupWithOtp(@Valid @RequestBody OtpRegistrationCompleteDto request) {
         return otpService.completeSignupWithOtp(request);

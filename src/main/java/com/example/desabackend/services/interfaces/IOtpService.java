@@ -11,6 +11,8 @@ public interface IOtpService {
 
     OtpResponseDto resendSignupOtp(String email);
 
+    OtpResponseDto verifySignupOtpCode(String email, String code);
+
     LoginResponseDto completeSignupWithOtp(OtpRegistrationCompleteDto request);
 
     OtpResponseDto requestPasswordReset(String email);
