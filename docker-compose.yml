@@ -43,8 +43,15 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=desa_db;encrypt=false;trustServerCertificate=true"
       SPRING_DATASOURCE_USERNAME: "sa"
       SPRING_DATASOURCE_PASSWORD: "YourStrong!Passw0rd"
+      MAIL_HOST: "smtp.gmail.com"
+      MAIL_PORT: "587"
+      MAIL_USERNAME: "uadetps33@gmail.com"
+      MAIL_PASSWORD: "derqhphzmnrrgzvi"
+      MAIL_FROM: "noreply@xplorenow.com"
     ports:
       - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
 
 volumes:
   sqlserver-data:
