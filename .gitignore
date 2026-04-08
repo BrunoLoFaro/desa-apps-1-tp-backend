@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Logs ###
+logs/
+
+### Credenciales locales ###
+src/main/resources/application-local.properties
+
+### Scripts auxiliares ###
+write_files.py
