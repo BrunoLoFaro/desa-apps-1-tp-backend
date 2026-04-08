@@ -1,5 +1,7 @@
 package com.example.desabackend.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,10 +41,14 @@ public class UserEntity {
         private String firstName;
 
         @Column(name = "last_name", nullable = false, length = 80)
-        private String lastName;
-
-        @Column(nullable = false, unique = true, length = 20)
+        private String lastName;        @Column(nullable = false, unique = true, length = 20)
         private String dni;
+
+    @Column(length = 30)
+    private String phone;
+
+    @Column(name = "profile_photo_url", length = 500)
+    private String profilePhotoUrl;
 
     @Column(nullable = false)
     private Boolean enabled = true;
