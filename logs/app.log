@@ -234,3 +234,128 @@ java.lang.IllegalArgumentException: Este email ya está registrado. Usá login o
 2026-04-07 17:38:08.849 INFO  [http-nio-8080-exec-5] [476a27a8] c.e.d.service.OtpServiceImpl - Email sent successfully to: tomasgoncalves123@gmail.com
 2026-04-07 17:38:08.849 DEBUG [http-nio-8080-exec-5] [476a27a8] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp completed
 2026-04-07 17:38:08.854 DEBUG [http-nio-8080-exec-5] [476a27a8] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp completed successfully
+2026-04-07 17:40:28.041 INFO  [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.verifySignupOtpCode
+2026-04-07 17:40:28.047 DEBUG [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.verifySignupOtpCode
+2026-04-07 17:40:28.127 DEBUG [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.verifySignupOtpCode completed
+2026-04-07 17:40:28.130 DEBUG [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Controller method AuthController.verifySignupOtpCode completed successfully
+2026-04-07 17:40:51.502 INFO  [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.completeSignupWithOtp
+2026-04-07 17:40:51.507 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.completeSignupWithOtp
+2026-04-07 17:40:51.516 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method called: AuthServiceImpl.register
+2026-04-07 17:40:51.517 INFO  [http-nio-8080-exec-8] [391ac581] c.e.d.service.AuthServiceImpl - Registration attempt for email: tomasgoncalves123@gmail.com
+2026-04-07 17:40:51.611 INFO  [http-nio-8080-exec-8] [391ac581] c.e.d.service.AuthServiceImpl - Registration successful for user: 10001
+2026-04-07 17:40:51.695 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method AuthServiceImpl.register completed
+2026-04-07 17:40:51.698 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.completeSignupWithOtp completed
+2026-04-07 17:40:51.719 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Controller method AuthController.completeSignupWithOtp completed successfully
+2026-04-07 17:41:47.967 INFO  [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.requestSignupOtp
+2026-04-07 17:41:47.972 DEBUG [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.requestSignupOtp
+2026-04-07 17:41:47.976 WARN  [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp failed: Este email ya está registrado. Usá login o recuperá tu contraseña.
+2026-04-07 17:41:47.978 ERROR [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp failed: Este email ya está registrado. Usá login o recuperá tu contraseña.
+java.lang.IllegalArgumentException: Este email ya está registrado. Usá login o recuperá tu contraseña.
+	at com.example.desabackend.service.OtpServiceImpl.ensureEmailIsAvailable(OtpServiceImpl.java:235)
+	at com.example.desabackend.service.OtpServiceImpl.requestSignupOtp(OtpServiceImpl.java:71)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
+	at com.example.desabackend.config.LoggingAspect.logServiceMethods(LoggingAspect.java:36)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:133)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:371)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:130)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+	at com.example.desabackend.service.OtpServiceImpl$$SpringCGLIB$$0.requestSignupOtp(<generated>)
+	at com.example.desabackend.controller.AuthController.requestSignupOtp(AuthController.java:43)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
+	at com.example.desabackend.config.LoggingAspect.logControllerMethods(LoggingAspect.java:21)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+	at com.example.desabackend.controller.AuthController$$SpringCGLIB$$0.requestSignupOtp(<generated>)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at com.example.desabackend.config.RequestIdFilter.doFilterInternal(RequestIdFilter.java:24)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-04-07 17:41:47.983 WARN  [http-nio-8080-exec-10] [77924168] c.e.d.exception.ApiExceptionHandler - Bad request: Este email ya está registrado. Usá login o recuperá tu contraseña. - Path: /api/v1/auth/signup/otp/request
+2026-04-07 17:41:58.097 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.requestSignupOtp
+2026-04-07 17:41:58.099 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.requestSignupOtp
+2026-04-07 17:41:58.102 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Creating OTP for email: test@gmail.com
+2026-04-07 17:41:58.105 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - OTP created successfully, sending email to: test@gmail.com
+2026-04-07 17:41:58.106 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Preparing to send OTP email to: test@gmail.com
+2026-04-07 17:41:58.107 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Mail from: noreply@xplorenow.com, Mail host settings configured
+2026-04-07 17:41:58.107 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Sending email with OTP code to: test@gmail.com
+2026-04-07 17:42:01.416 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Email sent successfully to: test@gmail.com
+2026-04-07 17:42:01.417 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp completed
+2026-04-07 17:42:01.426 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp completed successfully
