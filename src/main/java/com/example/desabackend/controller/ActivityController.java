@@ -4,6 +4,7 @@ import com.example.desabackend.dto.ActivityDetailDto;
 import com.example.desabackend.dto.ActivitySummaryDto;
 import com.example.desabackend.dto.PageResponse;
 import com.example.desabackend.entity.ActivityCategory;
+import com.example.desabackend.security.AuthUtils;
 import com.example.desabackend.service.ActivityCatalogService;
 import com.example.desabackend.service.RecommendationService;
 import jakarta.validation.constraints.Max;
@@ -15,7 +16,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,22 +64,15 @@ public class ActivityController {
             @RequestParam(required = false) BigDecimal maxPrice
     ) {
         return catalogService.listActivities(page, size, destinationId, category, date, minPrice, maxPrice, true);
-    }
-
-    @GetMapping("/activities/recommended")
+    }    @GetMapping("/activities/recommended")
     public PageResponse<ActivitySummaryDto> listRecommended(
-            @RequestParam(required = false) Long userId,
-            @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestParam(required = false) @Min(0) Integer page,
             @RequestParam(required = false) @Min(1) @Max(100) Integer size,
             @RequestParam(required = false) Long destinationId,
             @RequestParam(required = false) ActivityCategory category
     ) {
-        Long resolvedUserId = userId != null ? userId : JwtUserIdExtractor.tryExtractUserIdFromAuthorizationHeader(authorization);
-        if (resolvedUserId == null) {
-            throw new IllegalArgumentException("userId is required (provide query param or a Bearer JWT with userId/sub)");
-        }
-        return recommendationService.listRecommended(resolvedUserId, page, size, destinationId, category);
+        Long userId = AuthUtils.getCurrentUserId();
+        return recommendationService.listRecommended(userId, page, size, destinationId, category);
     }
 
     @GetMapping("/activities/{activityId}")
