@@ -43,8 +43,15 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=desa_db;encrypt=false;trustServerCertificate=true"
       SPRING_DATASOURCE_USERNAME: "sa"
       SPRING_DATASOURCE_PASSWORD: "YourStrong!Passw0rd"
+      MAIL_HOST: "${MAIL_HOST}"
+      MAIL_PORT: "${MAIL_PORT}"
+      MAIL_USERNAME: "${MAIL_USERNAME}"
+      MAIL_PASSWORD: "${MAIL_PASSWORD}"
+      MAIL_FROM: "${MAIL_FROM}"
     ports:
       - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
 
 volumes:
   sqlserver-data:

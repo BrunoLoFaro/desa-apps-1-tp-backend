@@ -40,3 +40,9 @@ src/main/resources/application-local.properties
 
 ### Scripts auxiliares ###
 write_files.py
+*.log
+
+### Environment Variables ###
+.env
+.env.local
+.env.production
