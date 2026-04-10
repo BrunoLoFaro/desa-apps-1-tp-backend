@@ -1,0 +1,142 @@
+{
+	"info": {
+		"name": "XploreNow Backend API",
+		"description": "Colección completa del backend XploreNow.\n\n**Flujo:**\n1. Ejecutar \"Login (seed user)\" → guarda el token automáticamente\n2. Todos los demás endpoints usan Bearer {{token}}\n\n**Seed user:** test@example.com / password",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{ "key": "baseUrl", "value": "http://localhost:8080" },
+		{ "key": "token", "value": "" },
+		{ "key": "otpEmail", "value": "nuevo.usuario@example.com" },
+		{ "key": "otpCode", "value": "123456" }
+	],
+	"item": [
+		{
+			"name": "Auth (público)",
+			"item": [
+				{
+					"name": "Login (seed user)",
+					"event": [{ "listen": "test", "script": { "exec": ["if(pm.response.code===200){var j=pm.response.json();pm.collectionVariables.set('token',j.token);pm.test('Token saved',()=>pm.expect(j.token).to.be.a('string'));}"], "type": "text/javascript" }}],
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\",\"password\":\"password\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/login", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","login"] } }
+				},
+				{
+					"name": "Register",
+					"event": [{ "listen": "test", "script": { "exec": ["if(pm.response.code===200){var j=pm.response.json();pm.collectionVariables.set('token',j.token);}"], "type": "text/javascript" }}],
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"nuevo.registro@example.com\",\"password\":\"123456\",\"firstName\":\"Nuevo\",\"lastName\":\"Usuario\",\"dni\":\"99887766\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/register", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","register"] } }
+				},
+				{
+					"name": "Signup OTP - Request",
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"{{otpEmail}}\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/signup/otp/request", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","signup","otp","request"] } }
+				},
+				{
+					"name": "Signup OTP - Resend",
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"{{otpEmail}}\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/signup/otp/resend", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","signup","otp","resend"] } }
+				},
+				{
+					"name": "Signup OTP - Verify",
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"{{otpEmail}}\",\"code\":\"{{otpCode}}\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/signup/otp/verify", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","signup","otp","verify"] } }
+				},
+				{
+					"name": "Signup OTP - Complete",
+					"event": [{ "listen": "test", "script": { "exec": ["if(pm.response.code===200){var j=pm.response.json();pm.collectionVariables.set('token',j.token);}"], "type": "text/javascript" }}],
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"{{otpEmail}}\",\"code\":\"{{otpCode}}\",\"password\":\"123456\",\"firstName\":\"Usuario\",\"lastName\":\"OTP\",\"dni\":\"12345678\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/signup/otp/complete", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","signup","otp","complete"] } }
+				},
+				{
+					"name": "Password Reset - Request",
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/password-reset/request", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","password-reset","request"] } }
+				},
+				{
+					"name": "Password Reset - Resend",
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/password-reset/resend", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","password-reset","resend"] } }
+				},
+				{
+					"name": "Password Reset - Verify",
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\",\"code\":\"{{otpCode}}\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/password-reset/verify", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","password-reset","verify"] } }
+				},
+				{
+					"name": "Password Reset - Confirm",
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\",\"code\":\"{{otpCode}}\",\"newPassword\":\"newpassword123\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/password-reset/confirm", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","password-reset","confirm"] } }
+				}
+			]
+		},
+		{
+			"name": "Catálogo (protegido)",
+			"item": [
+				{
+					"name": "Listar Destinos",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('200',()=>pm.response.to.have.status(200));pm.test('Array',()=>pm.expect(pm.response.json()).to.be.an('array'));"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/destinations", "host": ["{{baseUrl}}"], "path": ["api","v1","destinations"] } }
+				},
+				{
+					"name": "Listar Categorías",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('200',()=>pm.response.to.have.status(200));"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/categories", "host": ["{{baseUrl}}"], "path": ["api","v1","categories"] } }
+				},
+				{
+					"name": "Actividades - Sin filtros",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('200',()=>pm.response.to.have.status(200));pm.test('Paginado',()=>{var j=pm.response.json();pm.expect(j).to.have.property('content');pm.expect(j).to.have.property('totalElements');});"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api","v1","activities"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+				},
+				{
+					"name": "Actividades - Con filtros",
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities?page=0&size=10&destinationId=1&category=ADVENTURE&minPrice=1000&maxPrice=50000&date=2026-03-21", "host": ["{{baseUrl}}"], "path": ["api","v1","activities"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"},{"key":"destinationId","value":"1"},{"key":"category","value":"ADVENTURE"},{"key":"minPrice","value":"1000"},{"key":"maxPrice","value":"50000"},{"key":"date","value":"2026-03-21"}] } }
+				},
+				{
+					"name": "Actividades - Destacadas",
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities/featured?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api","v1","activities","featured"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+				},
+				{
+					"name": "Actividades - Recomendadas",
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities/recommended?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api","v1","activities","recommended"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+				},
+				{
+					"name": "Recomendadas + filtro destino",
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities/recommended?page=0&size=10&destinationId=1", "host": ["{{baseUrl}}"], "path": ["api","v1","activities","recommended"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"},{"key":"destinationId","value":"1"}] } }
+				},
+				{
+					"name": "Recomendadas + filtro categoría",
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities/recommended?page=0&size=10&category=ADVENTURE", "host": ["{{baseUrl}}"], "path": ["api","v1","activities","recommended"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"},{"key":"category","value":"ADVENTURE"}] } }
+				},
+				{
+					"name": "Detalle de Actividad",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('200',()=>pm.response.to.have.status(200));pm.test('Tiene campos',()=>{var j=pm.response.json();pm.expect(j).to.have.property('id');pm.expect(j).to.have.property('name');});"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities/1", "host": ["{{baseUrl}}"], "path": ["api","v1","activities","1"] } }
+				},
+				{
+					"name": "Detalle de Actividad (fecha)",
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/api/v1/activities/1?date=2026-03-21", "host": ["{{baseUrl}}"], "path": ["api","v1","activities","1"], "query": [{"key":"date","value":"2026-03-21"}] } }
+				}
+			]
+		},
+		{
+			"name": "Security Tests",
+			"item": [
+				{
+					"name": "401 - Actividades SIN token",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('401',()=>pm.response.to.have.status(401));pm.test('JSON error',()=>{var j=pm.response.json();pm.expect(j).to.have.property('status',401);pm.expect(j).to.have.property('message');});"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/activities?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api","v1","activities"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+				},
+				{
+					"name": "401 - Destinos SIN token",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('401',()=>pm.response.to.have.status(401));"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/destinations", "host": ["{{baseUrl}}"], "path": ["api","v1","destinations"] } }
+				},
+				{
+					"name": "401 - Categorías SIN token",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('401',()=>pm.response.to.have.status(401));"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/categories", "host": ["{{baseUrl}}"], "path": ["api","v1","categories"] } }
+				},
+				{
+					"name": "401 - Recomendadas con token inválido",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('401',()=>pm.response.to.have.status(401));"], "type": "text/javascript" }}],
+					"request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer token.invalido.aqui"}], "url": { "raw": "{{baseUrl}}/api/v1/activities/recommended?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api","v1","activities","recommended"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+				},
+				{
+					"name": "200 - Auth login SIN token (público)",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Auth no requiere token (no 401)',()=>pm.expect(pm.response.code).to.not.eql(401));"], "type": "text/javascript" }}],
+					"request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\",\"password\":\"password\"}" }, "url": { "raw": "{{baseUrl}}/api/v1/auth/login", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","login"] } }
+				}
+			]
+		}
+	]
+}
