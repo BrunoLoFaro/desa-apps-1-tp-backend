@@ -5,13 +5,13 @@ services:
     container_name: desa-sqlserver
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
     ports:
       - "1433:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
     healthcheck:
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${MSSQL_SA_PASSWORD}" -C -Q "SELECT 1" || exit 1
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -C -Q "SELECT 1" || exit 1
       interval: 10s
       timeout: 5s
       retries: 10
@@ -25,7 +25,7 @@ services:
       sqlserver:
         condition: service_healthy
     entrypoint: >
-      /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "${MSSQL_SA_PASSWORD}" -C
+      /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "YourStrong!Passw0rd" -C
       -Q "IF DB_ID('desa_db') IS NULL CREATE DATABASE desa_db;"
     restart: "no"
   # ── Spring Boot App ────────────────────────────────
@@ -42,7 +42,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=desa_db;encrypt=false;trustServerCertificate=true"
       SPRING_DATASOURCE_USERNAME: "sa"
-      SPRING_DATASOURCE_PASSWORD: "${MSSQL_SA_PASSWORD}"
+      SPRING_DATASOURCE_PASSWORD: "YourStrong!Passw0rd"
       MAIL_HOST: "${MAIL_HOST}"
       MAIL_PORT: "${MAIL_PORT}"
       MAIL_USERNAME: "${MAIL_USERNAME}"
