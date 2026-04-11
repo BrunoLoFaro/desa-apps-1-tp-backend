@@ -2,6 +2,13 @@
 FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+ENV http_proxy=${HTTP_PROXY}
+ENV https_proxy=${HTTPS_PROXY}
+ENV no_proxy=${NO_PROXY}
+
 # Cache Maven wrapper & dependencies first
 COPY mvnw mvnw.cmd ./
 COPY .mvn .mvn

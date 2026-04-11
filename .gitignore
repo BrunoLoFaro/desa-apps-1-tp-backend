@@ -46,3 +46,4 @@ write_files.py
 .env
 .env.local
 .env.production
+logs/app.log
