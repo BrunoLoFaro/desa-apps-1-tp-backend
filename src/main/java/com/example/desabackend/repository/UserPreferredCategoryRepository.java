@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface UserPreferredCategoryRepository extends JpaRepository<UserPreferredCategoryEntity, Long> {
     List<UserPreferredCategoryEntity> findByUserId(Long userId);
+    void deleteByUserId(Long userId);
 }

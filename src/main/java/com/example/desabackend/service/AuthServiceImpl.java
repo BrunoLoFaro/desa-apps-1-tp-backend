@@ -6,67 +6,70 @@ import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.entity.UserEntity;
 import com.example.desabackend.exception.UnauthorizedException;
 import com.example.desabackend.repository.UserRepository;
-import java.time.LocalDateTime;
+import com.example.desabackend.util.EmailUtils;
 import com.example.desabackend.services.interfaces.IAuthService;
-import java.util.Locale;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthServiceImpl implements IAuthService {
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final LoginResponseBuilder loginResponseBuilder;
 
     public AuthServiceImpl(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            JwtTokenProvider jwtTokenProvider
+            LoginResponseBuilder loginResponseBuilder
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.loginResponseBuilder = loginResponseBuilder;
     }
 
     @Override
     @Transactional(readOnly = true)
     public LoginResponseDto login(LoginRequestDto request) {
-        UserEntity user = userRepository.findByEmailIgnoreCase(normalizeEmail(request.email()))
-                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
+        log.info("Login attempt for email: {}", EmailUtils.normalize(request.email()));
+        try {
+            UserEntity user = userRepository.findByEmailIgnoreCase(EmailUtils.normalize(request.email()))
+                    .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
-        if (Boolean.FALSE.equals(user.getEnabled())) {
-            throw new UnauthorizedException("User account is disabled");
+            if (Boolean.FALSE.equals(user.getEnabled())) {
+                throw new UnauthorizedException("User account is disabled");
+            }
+
+            if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+                throw new UnauthorizedException("Invalid credentials");
+            }
+
+            log.info("Login successful for user: {}", user.getId());
+            return loginResponseBuilder.build(user);
+        } catch (UnauthorizedException ex) {
+            log.warn("Login failed for email {}: {}", request.email(), ex.getMessage());
+            throw ex;
         }
-
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new UnauthorizedException("Invalid credentials");
-        }
-
-        String token = jwtTokenProvider.generateToken(user.getId().toString());
-
-        return new LoginResponseDto(
-                user.getId(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getDni(),
-                token
-        );
     }
 
     @Override
     @Transactional
     public LoginResponseDto register(RegisterRequestDto request) {
-        String normalizedEmail = normalizeEmail(request.email());
+        String normalizedEmail = EmailUtils.normalize(request.email());
+        log.info("Registration attempt for email: {}", normalizedEmail);
 
         if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
+            log.warn("Registration failed: email {} already exists", normalizedEmail);
             throw new IllegalArgumentException("Email already registered");
         }
 
         String normalizedDni = normalizeDni(request.dni());
         if (userRepository.existsByDni(normalizedDni)) {
+            log.warn("Registration failed: DNI {} already exists", normalizedDni);
             throw new IllegalArgumentException("DNI already registered");
         }
 
@@ -76,25 +79,9 @@ public class AuthServiceImpl implements IAuthService {
         user.setFirstName(request.firstName().trim());
         user.setLastName(request.lastName().trim());
         user.setDni(normalizedDni);
-        user.setEnabled(true);
-        user.setCreatedAt(LocalDateTime.now());
-
         UserEntity saved = userRepository.save(user);
-
-        String token = jwtTokenProvider.generateToken(saved.getId().toString());
-
-        return new LoginResponseDto(
-                saved.getId(),
-                saved.getEmail(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getDni(),
-                token
-        );
-    }
-
-    private static String normalizeEmail(String email) {
-        return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+        log.info("Registration successful for user: {}", saved.getId());
+        return loginResponseBuilder.build(saved);
     }
 
     private static String normalizeDni(String dni) {
