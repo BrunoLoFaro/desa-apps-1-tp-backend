@@ -76,9 +76,10 @@ INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_cou
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (35, 12, '2026-04-03 16:00:00', 20, 0, NULL);
 SET IDENTITY_INSERT activity_sessions OFF;
 
--- 5. USER DE PRUEBA (password = "123456" con BCrypt)
+-- 5. USERS DE PRUEBA (password = "123456" con BCrypt)
 SET IDENTITY_INSERT users ON;
-INSERT INTO users (id, email, password_hash, first_name, last_name, dni, enabled, created_at) VALUES (1, 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test', 'User', '11222333', 1, '2026-01-01 00:00:00');
+INSERT INTO users (id, email, password_hash, first_name, last_name, dni, phone, profile_photo_url, enabled, created_at) VALUES (1, 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test', 'User', '11222333', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00');
+INSERT INTO users (id, email, password_hash, first_name, last_name, dni, phone, profile_photo_url, enabled, created_at) VALUES (2, 'maria@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Maria', 'Lopez', '22333444', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00');
 SET IDENTITY_INSERT users OFF;
 
 -- 6. USER PREFERENCES (para /activities/recommended)
@@ -92,3 +93,33 @@ INSERT INTO user_preferred_destinations (id, user_id, destination_id) VALUES (1,
 INSERT INTO user_preferred_destinations (id, user_id, destination_id) VALUES (2, 1, 3);
 INSERT INTO user_preferred_destinations (id, user_id, destination_id) VALUES (3, 1, 4);
 SET IDENTITY_INSERT user_preferred_destinations OFF;
+
+-- 7. BOOKINGS
+SET IDENTITY_INSERT bookings ON;
+-- User 1: completados (sesiones pasadas del 1-abr)
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (1, 1, 1, 2, 0.00, 'COMPLETED', '2026-03-25 10:00:00', NULL);
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (2, 1, 5, 1, 8500.00, 'COMPLETED', '2026-03-26 12:00:00', NULL);
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (3, 1, 9, 2, 30000.00, 'COMPLETED', '2026-03-27 09:00:00', NULL);
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (4, 1, 17, 1, 18000.00, 'COMPLETED', '2026-03-28 08:00:00', NULL);
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (5, 1, 22, 3, 60000.00, 'COMPLETED', '2026-03-29 07:00:00', NULL);
+-- User 1: confirmados (sesiones futuras)
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (6, 1, 13, 2, 70000.00, 'CONFIRMED', '2026-04-01 10:00:00', NULL);
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (7, 1, 18, 1, 18000.00, 'CONFIRMED', '2026-04-01 11:00:00', NULL);
+-- User 1: cancelado
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (8, 1, 3, 2, 0.00, 'CANCELLED', '2026-03-30 14:00:00', '2026-03-31 08:00:00');
+-- User 2: completados
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (9, 2, 1, 1, 0.00, 'COMPLETED', '2026-03-25 11:00:00', NULL);
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (10, 2, 22, 2, 40000.00, 'COMPLETED', '2026-03-29 07:30:00', NULL);
+-- User 2: confirmado
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (11, 2, 29, 2, 130000.00, 'CONFIRMED', '2026-04-02 09:00:00', NULL);
+SET IDENTITY_INSERT bookings OFF;
+
+-- 8. REVIEWS (sobre bookings COMPLETED)
+SET IDENTITY_INSERT reviews ON;
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (1, 1, 1, 1, 1, 5, 5, 'Excelente recorrido por San Telmo, el guia fue muy amable y conocedor.', '2026-04-01 14:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (2, 2, 1, 2, 1, 4, 5, 'El Teatro Colon es impresionante. Muy recomendable.', '2026-04-01 16:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (3, 3, 1, 3, 2, 5, 4, 'Las empanadas y el helado estaban increibles. Gran experiencia gastronomica.', '2026-04-02 10:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (4, 5, 1, 8, 2, 5, 5, 'Las cataratas son impresionantes, una experiencia unica en la vida.', '2026-04-01 18:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (5, 9, 2, 1, 1, 4, 4, 'Lindo paseo, el barrio tiene mucha historia.', '2026-04-01 15:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (6, 10, 2, 8, 2, 5, 5, 'Espectacular! La Garganta del Diablo te deja sin palabras.', '2026-04-01 17:00:00');
+SET IDENTITY_INSERT reviews OFF;
