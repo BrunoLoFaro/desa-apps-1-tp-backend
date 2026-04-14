@@ -15,11 +15,10 @@ import com.example.desabackend.services.interfaces.IOtpService;
 import com.example.desabackend.util.EmailUtils;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,7 +40,6 @@ public class OtpServiceImpl implements IOtpService {
     private final LoginResponseBuilder loginResponseBuilder;
     private final IAuthService authService;
     private final PasswordEncoder passwordEncoder;
-    private final Environment env;
 
     @Value("${spring.mail.from:noreply@xplorenow.com}")
     private String mailFrom;
@@ -52,8 +50,7 @@ public class OtpServiceImpl implements IOtpService {
             JavaMailSender mailSender,
             LoginResponseBuilder loginResponseBuilder,
             IAuthService authService,
-            PasswordEncoder passwordEncoder,
-            Environment env
+            PasswordEncoder passwordEncoder
     ) {
         this.otpRepository = otpRepository;
         this.userRepository = userRepository;
@@ -61,7 +58,6 @@ public class OtpServiceImpl implements IOtpService {
         this.loginResponseBuilder = loginResponseBuilder;
         this.authService = authService;
         this.passwordEncoder = passwordEncoder;
-        this.env = env;
     }
 
     @Override
@@ -263,28 +259,12 @@ public class OtpServiceImpl implements IOtpService {
             mailSender.send(message);
             logger.info("Email sent successfully to: {}", email);
             
-        } catch (Exception e) {
+        } catch (MailException e) {
             logger.error("Failed to send OTP email to {}: {}", email, e.getMessage(), e);
-            
-            // Development fallback: log the OTP code
-            if (isDevelopmentEnvironment()) {
-                logger.warn("DEVELOPMENT MODE - OTP code for {}: {}", email, code);
-            }
-            
-            // Don't throw exception - OTP flow should continue
-            logger.info("OTP generation completed successfully despite email failure");
+
+            // Mail delivery is a hard requirement for OTP flows.
+            throw new RuntimeException("No se pudo enviar el email OTP", e);
         }
-    }
-    
-    private boolean isDevelopmentEnvironment() {
-        String[] activeProfiles = env.getActiveProfiles();
-        for (String profile : activeProfiles) {
-            if (profile.equalsIgnoreCase("dev") || profile.equalsIgnoreCase("development")) {
-                return true;
-            }
-        }
-        // Also check if we're not in production
-        return !Arrays.asList(activeProfiles).contains("prod");
     }
 
 }
