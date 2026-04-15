@@ -21,9 +21,12 @@ public class ProfileController {
         return profileService.getProfile(userId);
     }
 
-    @PutMapping("/{userId}/profile")
-    public UserProfileDto updateProfile(@PathVariable Long userId,
-            @Valid @RequestBody UserProfileUpdateDto dto) {
-        return profileService.updateProfile(userId, dto);
+    @PutMapping(path = "/{userId}/profile", consumes = {"multipart/form-data"})
+    public UserProfileDto updateProfile(
+            @PathVariable Long userId,
+            @RequestPart("data") @Valid UserProfileUpdateDto dto,
+            @RequestPart(value = "profilePhoto", required = false) org.springframework.web.multipart.MultipartFile profilePhoto
+    ) throws java.io.IOException {
+        return profileService.updateProfileWithPhoto(userId, dto, profilePhoto);
     }
 }

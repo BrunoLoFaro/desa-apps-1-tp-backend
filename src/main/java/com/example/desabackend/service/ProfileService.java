@@ -1,3 +1,53 @@
+    @Transactional
+    public UserProfileDto updateProfileWithPhoto(Long userId, UserProfileUpdateDto dto, org.springframework.web.multipart.MultipartFile profilePhoto) throws java.io.IOException {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (dto.firstName() != null) user.setFirstName(dto.firstName().trim());
+        if (dto.lastName() != null) user.setLastName(dto.lastName().trim());
+        if (dto.phone() != null) user.setPhone(dto.phone().trim());
+
+        // Guardar imagen si viene
+        if (profilePhoto != null && !profilePhoto.isEmpty()) {
+            String fileName = "profile_" + userId + "_" + System.currentTimeMillis() + ".jpg";
+            java.nio.file.Path uploadDir = java.nio.file.Paths.get("uploads/profile");
+            java.nio.file.Files.createDirectories(uploadDir);
+            java.nio.file.Path filePath = uploadDir.resolve(fileName);
+            profilePhoto.transferTo(filePath);
+            String url = "/uploads/profile/" + fileName;
+            user.setProfilePhotoUrl(url);
+        } else if (dto.profilePhotoUrl() != null) {
+            user.setProfilePhotoUrl(dto.profilePhotoUrl().trim());
+        }
+        userRepository.save(user);
+
+        if (dto.preferredCategories() != null) {
+            categoryRepo.deleteByUserId(userId);
+            for (String catName : dto.preferredCategories()) {
+                try {
+                    ActivityCategory cat = ActivityCategory.valueOf(catName);
+                    UserPreferredCategoryEntity entity = new UserPreferredCategoryEntity();
+                    entity.setUserId(userId);
+                    entity.setCategory(cat);
+                    categoryRepo.save(entity);
+                } catch (IllegalArgumentException ignored) { }
+            }
+        }
+
+        if (dto.preferredDestinationIds() != null) {
+            destinationPrefRepo.deleteByUserId(userId);
+            for (Long destId : dto.preferredDestinationIds()) {
+                if (destinationRepo.existsById(destId)) {
+                    UserPreferredDestinationEntity entity = new UserPreferredDestinationEntity();
+                    entity.setUserId(userId);
+                    entity.setDestinationId(destId);
+                    destinationPrefRepo.save(entity);
+                }
+            }
+        }
+
+        return getProfile(userId);
+    }
 package com.example.desabackend.service;
 
 import com.example.desabackend.dto.DestinationDto;
