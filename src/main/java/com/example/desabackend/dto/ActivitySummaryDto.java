@@ -14,6 +14,8 @@ public record ActivitySummaryDto(
         int durationMinutes,
         BigDecimal price,
         String currency,
-        int availableSpots
+        int availableSpots,
+        Double avgRating,
+        long reviewCount
 ) {
 }
