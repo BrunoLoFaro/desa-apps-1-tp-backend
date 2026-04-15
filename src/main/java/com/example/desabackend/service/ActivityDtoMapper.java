@@ -7,6 +7,7 @@ import com.example.desabackend.dto.GuideDto;
 import com.example.desabackend.entity.ActivityEntity;
 import com.example.desabackend.entity.ActivitySessionEntity;
 import com.example.desabackend.repository.ActivitySessionRepository;
+import com.example.desabackend.repository.ReviewRepository;
 import java.math.BigDecimal;
 
 final class ActivityDtoMapper {
@@ -17,9 +18,11 @@ final class ActivityDtoMapper {
     private ActivityDtoMapper() {
     }
 
-    static ActivitySummaryDto toSummaryDto(ActivityEntity activity, ActivitySessionRepository.ActivitySummaryAggregate agg) {
+    static ActivitySummaryDto toSummaryDto(ActivityEntity activity, ActivitySessionRepository.ActivitySummaryAggregate agg, ReviewRepository.ActivityRatingAggregate ratingAgg) {
         BigDecimal price = agg != null && agg.getPrice() != null ? agg.getPrice() : activity.getBasePrice();
         int availableSpots = agg != null && agg.getAvailableSpots() != null ? Math.toIntExact(agg.getAvailableSpots()) : 0;
+        Double avgRating = ratingAgg != null ? ratingAgg.getAvgRating() : null;
+        long reviewCount = ratingAgg != null && ratingAgg.getReviewCount() != null ? ratingAgg.getReviewCount() : 0L;
 
         return new ActivitySummaryDto(
                 activity.getId(),
@@ -29,7 +32,9 @@ final class ActivityDtoMapper {
                 nonNullInt(activity.getDurationMinutes()),
                 price,
                 activity.getCurrency(),
-                availableSpots
+                availableSpots,
+                avgRating,
+                reviewCount
         );
     }
 

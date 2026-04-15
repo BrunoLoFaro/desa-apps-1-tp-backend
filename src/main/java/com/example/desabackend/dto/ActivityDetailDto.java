@@ -22,6 +22,8 @@ public record ActivityDetailDto(
         BigDecimal basePrice,
         String currency,
         List<ActivitySessionDto> sessions,
-        int availableSpots
+        int availableSpots,
+        Double avgRating,
+        long reviewCount
 ) {
 }

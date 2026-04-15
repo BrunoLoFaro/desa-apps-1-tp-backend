@@ -6,6 +6,7 @@ import com.example.desabackend.entity.ActivityCategory;
 import com.example.desabackend.entity.ActivityEntity;
 import com.example.desabackend.repository.ActivityRepository;
 import com.example.desabackend.repository.ActivitySessionRepository;
+import com.example.desabackend.repository.ReviewRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +28,18 @@ public class RecommendationService {
 
     private final ActivityRepository activityRepository;
     private final ActivitySessionRepository sessionRepository;
+    private final ReviewRepository reviewRepository;
     private final UserPreferenceService userPreferenceService;
 
     public RecommendationService(
             ActivityRepository activityRepository,
             ActivitySessionRepository sessionRepository,
+            ReviewRepository reviewRepository,
             UserPreferenceService userPreferenceService
     ) {
         this.activityRepository = activityRepository;
         this.sessionRepository = sessionRepository;
+        this.reviewRepository = reviewRepository;
         this.userPreferenceService = userPreferenceService;
     }
 
@@ -90,9 +94,17 @@ public class RecommendationService {
                                 Function.identity(),
                                 (a, b) -> a
                         ));
-
+        Map<Long, ReviewRepository.ActivityRatingAggregate> ratingsByActivityId =
+                (activityIds.isEmpty() ? List.<ReviewRepository.ActivityRatingAggregate>of()
+                        : reviewRepository.aggregateActivityRatings(activityIds))
+                        .stream()
+                        .collect(java.util.stream.Collectors.toMap(
+                                ReviewRepository.ActivityRatingAggregate::getActivityId,
+                                Function.identity(),
+                                (a, b) -> a
+                        ));
         List<ActivitySummaryDto> items = pageResult.getContent().stream()
-                .map(a -> ActivityDtoMapper.toSummaryDto(a, aggregatesByActivityId.get(a.getId())))
+                .map(a -> ActivityDtoMapper.toSummaryDto(a, aggregatesByActivityId.get(a.getId()), ratingsByActivityId.get(a.getId())))
                 .toList();
 
         return new PageResponse<>(

@@ -10,6 +10,7 @@ import com.example.desabackend.entity.ActivitySessionEntity;
 import com.example.desabackend.exception.NotFoundException;
 import com.example.desabackend.repository.ActivityRepository;
 import com.example.desabackend.repository.ActivitySessionRepository;
+import com.example.desabackend.repository.ReviewRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,10 +36,12 @@ public class ActivityCatalogService {
 
     private final ActivityRepository activityRepository;
     private final ActivitySessionRepository sessionRepository;
+    private final ReviewRepository reviewRepository;
 
-    public ActivityCatalogService(ActivityRepository activityRepository, ActivitySessionRepository sessionRepository) {
+    public ActivityCatalogService(ActivityRepository activityRepository, ActivitySessionRepository sessionRepository, ReviewRepository reviewRepository) {
         this.activityRepository = activityRepository;
         this.sessionRepository = sessionRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Transactional(readOnly = true)
@@ -72,9 +75,17 @@ public class ActivityCatalogService {
                                 Function.identity(),
                                 (a, b) -> a
                         ));
-
+        Map<Long, ReviewRepository.ActivityRatingAggregate> ratingsByActivityId =
+                (activityIds.isEmpty() ? List.<ReviewRepository.ActivityRatingAggregate>of()
+                        : reviewRepository.aggregateActivityRatings(activityIds))
+                        .stream()
+                        .collect(java.util.stream.Collectors.toMap(
+                                ReviewRepository.ActivityRatingAggregate::getActivityId,
+                                Function.identity(),
+                                (a, b) -> a
+                        ));
         List<ActivitySummaryDto> items = activitiesPage.getContent().stream()
-                .map(a -> ActivityDtoMapper.toSummaryDto(a, aggregatesByActivityId.get(a.getId())))
+                .map(a -> ActivityDtoMapper.toSummaryDto(a, aggregatesByActivityId.get(a.getId()), ratingsByActivityId.get(a.getId())))
                 .toList();
 
         return new PageResponse<>(
@@ -98,6 +109,10 @@ public class ActivityCatalogService {
 
         int availableSpots = calculateAvailableSpotsForDetail(sessions, date);
 
+        ReviewRepository.ActivityRatingAggregate ratingAgg = reviewRepository.getActivityRating(activityId).orElse(null);
+        Double avgRating = ratingAgg != null ? ratingAgg.getAvgRating() : null;
+        long reviewCount = ratingAgg != null && ratingAgg.getReviewCount() != null ? ratingAgg.getReviewCount() : 0L;
+
         return new ActivityDetailDto(
                 activity.getId(),
                 activity.getName(),
@@ -113,7 +128,9 @@ public class ActivityCatalogService {
                 activity.getBasePrice(),
                 activity.getCurrency(),
                 sessionDtos,
-                availableSpots
+                availableSpots,
+                avgRating,
+                reviewCount
         );
     }
 
