@@ -20,7 +20,7 @@ final class ActivityDtoMapper {
 
     static ActivitySummaryDto toSummaryDto(ActivityEntity activity, ActivitySessionRepository.ActivitySummaryAggregate agg, ReviewRepository.ActivityRatingAggregate ratingAgg) {
         BigDecimal price = agg != null && agg.getPrice() != null ? agg.getPrice() : activity.getBasePrice();
-        int availableSpots = ;
+        int availableSpots = agg != null && agg.getAvailableSpots() != null ? Math.toIntExact(agg.getAvailableSpots()) : 0;
         Double avgRating = ratingAgg != null ? ratingAgg.getAvgRating() : null;
         long reviewCount = ratingAgg != null && ratingAgg.getReviewCount() != null ? ratingAgg.getReviewCount() : 0L;
 
