@@ -34,6 +34,7 @@ public class RecommendationService {
     public RecommendationService(
             ActivityRepository activityRepository,
             ActivitySessionRepository sessionRepository,
+            ReviewRepository reviewRepository,
             UserPreferenceService userPreferenceService
     ) {
         this.activityRepository = activityRepository;
