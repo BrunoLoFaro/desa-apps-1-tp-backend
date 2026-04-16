@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public record BookingSummaryItemDto(
         Long id,
+        Long activityId,
         String activityName,
         String status,
         LocalDateTime sessionStartTime,

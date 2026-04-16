@@ -126,6 +126,7 @@ public class ProfileService {
         List<BookingSummaryItemDto> items = bookingsPage.getContent().stream()
                 .map(b -> new BookingSummaryItemDto(
                         b.getId(),
+                        b.getSession().getActivity().getId(),
                         b.getSession().getActivity().getName(),
                         b.getStatus().name(),
                         b.getSession().getStartTime(),

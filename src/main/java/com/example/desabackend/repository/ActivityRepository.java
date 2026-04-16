@@ -30,6 +30,7 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Long>,
             where (:destinationId is null or a.destination.id = :destinationId)
               and (:category is null or a.category = :category)
               and (:featuredOnly = false or a.featured = true)
+              and (:prefCatEmpty = true or a.category in :preferredCategories)
             order by
               (
                 (case when :prefDestEmpty = true then 0 when a.destination.id in :preferredDestinationIds then 2 else 0 end)
