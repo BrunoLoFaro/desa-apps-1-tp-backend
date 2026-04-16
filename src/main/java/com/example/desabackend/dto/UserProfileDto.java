@@ -2,18 +2,20 @@ package com.example.desabackend.dto;
 
 import java.util.List;
 
-public record UserProfileDto(
-        Long id,
-        String email,
-        String firstName,
-        String lastName,
-        String dni,
-        String phone,
-        String profilePhotoUrl,
-        List<String> preferredCategories,
-        List<DestinationDto> preferredDestinations,
-        long confirmedBookings,
-        long completedBookings,
-        long cancelledBookings
-) {
+public class UserProfileDto {
+        public Long id;
+        public String email;
+        public String firstName;
+        public String lastName;
+        public String dni;
+        public String phone;
+        public String profilePhotoUrl;
+        public String profilePhotoBase64;
+        public List<String> preferredCategories;
+        public List<DestinationDto> preferredDestinations;
+        public long confirmedBookings;
+        public long completedBookings;
+        public long cancelledBookings;
+
+        public UserProfileDto() {}
 }

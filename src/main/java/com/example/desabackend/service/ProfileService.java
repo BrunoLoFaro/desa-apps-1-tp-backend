@@ -52,27 +52,39 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public UserProfileDto getProfile(Long userId) {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+            .orElseThrow(() -> new NotFoundException("User not found"));
 
         List<String> categories = categoryRepo.findByUserId(userId).stream()
-                .map(c -> c.getCategory().name())
-                .toList();
+            .map(c -> c.getCategory().name())
+            .toList();
 
         List<DestinationDto> destinations = destinationPrefRepo.findByUserId(userId).stream()
-                .map(p -> destinationRepo.findById(p.getDestinationId()).orElse(null))
-                .filter(d -> d != null)
-                .map(d -> new DestinationDto(d.getId(), d.getName()))
-                .toList();
+            .map(p -> destinationRepo.findById(p.getDestinationId()).orElse(null))
+            .filter(d -> d != null)
+            .map(d -> new DestinationDto(d.getId(), d.getName()))
+            .toList();
 
         long confirmed = bookingRepository.countByUserIdAndStatus(userId, BookingStatus.CONFIRMED);
         long completed = bookingRepository.countByUserIdAndStatus(userId, BookingStatus.COMPLETED);
         long cancelled = bookingRepository.countByUserIdAndStatus(userId, BookingStatus.CANCELLED);
 
-        return new UserProfileDto(
-                user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(),
-                user.getDni(), user.getPhone(), user.getProfilePhotoUrl(),
-                categories, destinations, confirmed, completed, cancelled
-        );
+        UserProfileDto dto = new UserProfileDto();
+        dto.id = user.getId();
+        dto.email = user.getEmail();
+        dto.firstName = user.getFirstName();
+        dto.lastName = user.getLastName();
+        dto.dni = user.getDni();
+        dto.phone = user.getPhone();
+        dto.profilePhotoUrl = user.getProfilePhotoUrl();
+        dto.preferredCategories = categories;
+        dto.preferredDestinations = destinations;
+        dto.confirmedBookings = confirmed;
+        dto.completedBookings = completed;
+        dto.cancelledBookings = cancelled;
+        if (user.getProfilePhotoBlob() != null) {
+            dto.profilePhotoBase64 = java.util.Base64.getEncoder().encodeToString(user.getProfilePhotoBlob());
+        }
+        return dto;
     }
 
     // ── Preferences ─────────────────────────────────────────────────────────────
@@ -137,14 +149,10 @@ public class ProfileService {
         if (dto.lastName() != null) user.setLastName(dto.lastName().trim());
         if (dto.phone() != null) user.setPhone(dto.phone().trim());
 
-        // Guardar imagen si viene como archivo; si no, usar URL provista en el DTO
+        // Guardar imagen como blob si viene como archivo
         if (profilePhoto != null && !profilePhoto.isEmpty()) {
-            String fileName = "profile_" + userId + "_" + System.currentTimeMillis() + ".jpg";
-            java.nio.file.Path uploadDir = java.nio.file.Paths.get("uploads/profile");
-            java.nio.file.Files.createDirectories(uploadDir);
-            java.nio.file.Path filePath = uploadDir.resolve(fileName);
-            profilePhoto.transferTo(filePath);
-            user.setProfilePhotoUrl("/uploads/profile/" + fileName);
+            user.setProfilePhotoBlob(profilePhoto.getBytes());
+            user.setProfilePhotoUrl(null); // opcional: limpiar URL antigua
         } else if (dto.profilePhotoUrl() != null) {
             user.setProfilePhotoUrl(dto.profilePhotoUrl().trim());
         }
