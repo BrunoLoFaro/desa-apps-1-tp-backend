@@ -7,6 +7,8 @@ import com.example.desabackend.dto.OtpRequestDto;
 import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
 import com.example.desabackend.dto.PasswordResetConfirmDto;
+import com.example.desabackend.dto.RefreshRequestDto;
+import com.example.desabackend.dto.RefreshResponseDto;
 import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.services.interfaces.IAuthService;
 import com.example.desabackend.services.interfaces.IOtpService;
@@ -26,6 +28,11 @@ public class AuthController {
     public AuthController(IAuthService authService, IOtpService otpService) {
         this.authService = authService;
         this.otpService = otpService;
+    }
+
+    @PostMapping("/refresh")
+    public RefreshResponseDto refresh(@Valid @RequestBody RefreshRequestDto request) {
+        return authService.refresh(request);
     }
 
     @PostMapping("/login")

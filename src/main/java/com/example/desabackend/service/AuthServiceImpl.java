@@ -2,6 +2,8 @@ package com.example.desabackend.service;
 
 import com.example.desabackend.dto.LoginRequestDto;
 import com.example.desabackend.dto.LoginResponseDto;
+import com.example.desabackend.dto.RefreshRequestDto;
+import com.example.desabackend.dto.RefreshResponseDto;
 import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.entity.UserEntity;
 import com.example.desabackend.exception.UnauthorizedException;
@@ -21,15 +23,18 @@ public class AuthServiceImpl implements IAuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoginResponseBuilder loginResponseBuilder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthServiceImpl(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            LoginResponseBuilder loginResponseBuilder
+            LoginResponseBuilder loginResponseBuilder,
+            JwtTokenProvider jwtTokenProvider
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.loginResponseBuilder = loginResponseBuilder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -82,6 +87,24 @@ public class AuthServiceImpl implements IAuthService {
         UserEntity saved = userRepository.save(user);
         log.info("Registration successful for user: {}", saved.getId());
         return loginResponseBuilder.build(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RefreshResponseDto refresh(RefreshRequestDto request) {
+        if (!jwtTokenProvider.validateRefreshToken(request.refreshToken())) {
+            throw new UnauthorizedException("Invalid or expired refresh token");
+        }
+        String userId = jwtTokenProvider.getUserIdFromToken(request.refreshToken());
+        UserEntity user = userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            throw new UnauthorizedException("User account is disabled");
+        }
+        String newAccessToken = jwtTokenProvider.generateToken(userId);
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userId);
+        log.info("Token refreshed for user: {}", userId);
+        return new RefreshResponseDto(newAccessToken, newRefreshToken);
     }
 
     private static String normalizeDni(String dni) {
