@@ -75,15 +75,13 @@ public class ProfileService {
         dto.lastName = user.getLastName();
         dto.dni = user.getDni();
         dto.phone = user.getPhone();
-        dto.profilePhotoUrl = user.getProfilePhotoUrl();
+        dto.profilePhotoUrl = null;       // imagen gestionada íntegramente en Android
+        dto.profilePhotoBase64 = null;
         dto.preferredCategories = categories;
         dto.preferredDestinations = destinations;
         dto.confirmedBookings = confirmed;
         dto.completedBookings = completed;
         dto.cancelledBookings = cancelled;
-        if (user.getProfilePhotoBlob() != null) {
-            dto.profilePhotoBase64 = java.util.Base64.getEncoder().encodeToString(user.getProfilePhotoBlob());
-        }
         return dto;
     }
 
@@ -140,22 +138,14 @@ public class ProfileService {
     }
 
     @Transactional
-    public UserProfileDto updateProfileWithPhoto(Long userId, UserProfileUpdateDto dto,
-            org.springframework.web.multipart.MultipartFile profilePhoto) throws java.io.IOException {
+    public UserProfileDto updateProfile(Long userId, UserProfileUpdateDto dto) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (dto.firstName() != null) user.setFirstName(dto.firstName().trim());
         if (dto.lastName() != null) user.setLastName(dto.lastName().trim());
         if (dto.phone() != null) user.setPhone(dto.phone().trim());
-
-        // Guardar imagen como blob si viene como archivo
-        if (profilePhoto != null && !profilePhoto.isEmpty()) {
-            user.setProfilePhotoBlob(profilePhoto.getBytes());
-            user.setProfilePhotoUrl(null); // opcional: limpiar URL antigua
-        } else if (dto.profilePhotoUrl() != null) {
-            user.setProfilePhotoUrl(dto.profilePhotoUrl().trim());
-        }
+        // Imagen gestionada íntegramente en Android — no se guarda en backend
         userRepository.save(user);
 
         if (dto.preferredCategories() != null) {

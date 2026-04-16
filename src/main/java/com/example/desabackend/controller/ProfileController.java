@@ -35,17 +35,16 @@ public class ProfileController {
         return profileService.getProfile(userId);
     }
 
-    @PutMapping(path = "/{userId}/profile", consumes = {"multipart/form-data"})
+    @PutMapping(path = "/{userId}/profile", consumes = {"application/json"})
     public UserProfileDto updateProfile(
             @PathVariable Long userId,
-            @RequestPart("data") @Valid UserProfileUpdateDto dto,
-            @RequestPart(value = "profilePhoto", required = false) org.springframework.web.multipart.MultipartFile profilePhoto
-    ) throws java.io.IOException {
+            @RequestBody @Valid UserProfileUpdateDto dto
+    ) {
         Long authenticatedUserId = AuthUtils.getCurrentUserId();
         if (!authenticatedUserId.equals(userId)) {
             throw new AccessDeniedException("Cannot modify another user's profile");
         }
-        return profileService.updateProfileWithPhoto(userId, dto, profilePhoto);
+        return profileService.updateProfile(userId, dto);
     }
 
     // ── Preferences (sin {userId} en path — userId viene del JWT) ───────────────
