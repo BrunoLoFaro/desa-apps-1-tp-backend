@@ -5,6 +5,7 @@ import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
 import com.example.desabackend.dto.PasswordResetConfirmDto;
 import com.example.desabackend.dto.RegisterRequestDto;
+import com.example.desabackend.exception.EmailDeliveryException;
 import com.example.desabackend.entity.OtpEntity;
 import com.example.desabackend.entity.UserEntity;
 import com.example.desabackend.exception.UnauthorizedException;
@@ -24,6 +25,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 public class OtpServiceImpl implements IOtpService {
@@ -43,6 +45,12 @@ public class OtpServiceImpl implements IOtpService {
 
     @Value("${spring.mail.from:noreply@xplorenow.com}")
     private String mailFrom;
+
+    @Value("${spring.mail.username:}")
+    private String mailUsername;
+
+    @Value("${mail.fail-fast:true}")
+    private boolean mailFailFast;
 
     public OtpServiceImpl(
             OtpRepository otpRepository,
@@ -176,7 +184,14 @@ public class OtpServiceImpl implements IOtpService {
         OtpEntity otpEntity = new OtpEntity(normalizedEmail, code, expiresAt);
         otpRepository.save(otpEntity);
         logger.info("OTP created successfully, sending email to: {}", normalizedEmail);
-        sendOtpEmail(normalizedEmail, code);
+        boolean emailSent = sendOtpEmail(normalizedEmail, code);
+        if (!emailSent) {
+            return new OtpResponseDto(
+                    "Generamos tu código OTP, pero no se pudo enviar el email. "
+                            + "Revisá MailHog o la configuración SMTP y volvé a intentar.",
+                    normalizedEmail
+            );
+        }
         return new OtpResponseDto(successMessage, normalizedEmail);
     }
 
@@ -193,7 +208,15 @@ public class OtpServiceImpl implements IOtpService {
         lastOtp.setExpiresAt(LocalDateTime.now().plusMinutes(OTP_EXPIRATION_MINUTES));
         lastOtp.setAttemptCount(0);
         otpRepository.save(lastOtp);
-        sendOtpEmail(normalizedEmail, newCode);
+        boolean emailSent = sendOtpEmail(normalizedEmail, newCode);
+
+        if (!emailSent) {
+            return new OtpResponseDto(
+                    "Generamos un nuevo código OTP, pero no se pudo enviar el email. "
+                            + "Revisá MailHog o la configuración SMTP y volvé a intentar.",
+                    normalizedEmail
+            );
+        }
 
         return new OtpResponseDto(successMessage, normalizedEmail);
     }
@@ -239,13 +262,16 @@ public class OtpServiceImpl implements IOtpService {
                         "No existe una cuenta registrada con ese email."));
     }
 
-    private void sendOtpEmail(String email, String code) {
+    private boolean sendOtpEmail(String email, String code) {
         try {
             logger.info("Preparing to send OTP email to: {}", email);
-            logger.debug("Mail from: {}, Mail host settings configured", mailFrom);
+            String resolvedFrom = resolveMailFrom();
+            logger.debug("Mail from: {}, Mail host settings configured", resolvedFrom);
             
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(mailFrom);
+            if (StringUtils.hasText(resolvedFrom)) {
+                message.setFrom(resolvedFrom);
+            }
             message.setTo(email);
             message.setSubject("Tu código de acceso - XploreNow");
             message.setText(
@@ -258,13 +284,31 @@ public class OtpServiceImpl implements IOtpService {
             logger.info("Sending email with OTP code to: {}", email);
             mailSender.send(message);
             logger.info("Email sent successfully to: {}", email);
+            return true;
             
         } catch (MailException e) {
-            logger.error("Failed to send OTP email to {}: {}", email, e.getMessage(), e);
-
-            // Mail delivery is a hard requirement for OTP flows.
-            throw new RuntimeException("No se pudo enviar el email OTP", e);
+            Throwable rootCause = e.getMostSpecificCause();
+            logger.error(
+                    "Failed to send OTP email to {}. Cause: {}",
+                    email,
+                    rootCause != null ? rootCause.getMessage() : e.getMessage(),
+                    e
+            );
+            if (mailFailFast) {
+                throw new EmailDeliveryException("No se pudo enviar el email OTP", e);
+            }
+            return false;
         }
+    }
+
+    private String resolveMailFrom() {
+        if (StringUtils.hasText(mailFrom)) {
+            return mailFrom.trim();
+        }
+        if (StringUtils.hasText(mailUsername)) {
+            return mailUsername.trim();
+        }
+        return null;
     }
 
 }
