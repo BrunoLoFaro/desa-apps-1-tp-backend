@@ -115,7 +115,7 @@ public class BookingService {
         String guideName = activity.getGuide() != null ? activity.getGuide().getFullName() : null;
         boolean canReview = booking.getStatus() == BookingStatus.COMPLETED
                 && !reviewRepository.existsByBookingId(booking.getId());
-        return new BookingDto(booking.getId(), session.getId(), activity.getName(), dest, guideName,
+        return new BookingDto(booking.getId(), session.getId(), activity.getId(), activity.getName(), dest, guideName,
                 session.getStartTime(), activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0,
                 booking.getParticipants(), booking.getTotalPrice(), activity.getCurrency(),
                 booking.getStatus(), activity.getCancellationPolicy(),

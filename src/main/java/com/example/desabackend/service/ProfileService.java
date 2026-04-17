@@ -22,7 +22,6 @@ import com.example.desabackend.repository.UserRepository;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,18 +120,25 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public PageResponse<BookingSummaryItemDto> getActivitySummary(Long userId, int page, int size) {
-        Page<BookingEntity> bookingsPage = bookingRepository.findByUserId(
-                userId, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        // findHistory filtra por COMPLETED y hace join fetch de destination + guide
+        Page<BookingEntity> bookingsPage = bookingRepository.findHistory(
+                userId, null, null, null, PageRequest.of(page, size));
         List<BookingSummaryItemDto> items = bookingsPage.getContent().stream()
-                .map(b -> new BookingSummaryItemDto(
-                        b.getId(),
-                        b.getSession().getActivity().getId(),
-                        b.getSession().getActivity().getName(),
-                        b.getStatus().name(),
-                        b.getSession().getStartTime(),
-                        b.getTotalPrice(),
-                        b.getSession().getActivity().getCurrency()
-                ))
+                .map(b -> {
+                    var a = b.getSession().getActivity();
+                    return new BookingSummaryItemDto(
+                            b.getId(),
+                            a.getId(),
+                            a.getName(),
+                            b.getStatus().name(),
+                            b.getSession().getStartTime(),
+                            b.getTotalPrice(),
+                            a.getCurrency(),
+                            a.getDestination().getName(),
+                            a.getGuide() != null ? a.getGuide().getFullName() : null,
+                            a.getDurationMinutes()
+                    );
+                })
                 .toList();
         return new PageResponse<>(items, page, size,
                 bookingsPage.getTotalElements(), bookingsPage.getTotalPages());

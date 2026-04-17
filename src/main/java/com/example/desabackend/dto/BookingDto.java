@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record BookingDto(
         Long id,
         Long sessionId,
+        Long activityId,
         String activityName,
         DestinationDto destination,
         String guideName,

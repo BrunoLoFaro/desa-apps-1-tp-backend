@@ -10,6 +10,9 @@ public record BookingSummaryItemDto(
         String status,
         LocalDateTime sessionStartTime,
         BigDecimal totalPrice,
-        String currency
+        String currency,
+        String destination,
+        String guideName,
+        Integer durationMinutes
 ) {
 }
