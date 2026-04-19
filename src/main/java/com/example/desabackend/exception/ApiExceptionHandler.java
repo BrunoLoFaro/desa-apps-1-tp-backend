@@ -58,6 +58,12 @@ public class ApiExceptionHandler {
         return build(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage(), request);
     }
 
+    @ExceptionHandler(EmailDeliveryException.class)
+    public ResponseEntity<ApiError> handleEmailDelivery(EmailDeliveryException ex, HttpServletRequest request) {
+        log.error("Email delivery failed: {} - Path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        return build(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), request);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
         log.error("Data integrity violation: {} - Path: {}", ex.getMessage(), request.getRequestURI(), ex);
