@@ -47,8 +47,13 @@ public class UserEntity {
     @Column(length = 30)
     private String phone;
 
+
     @Column(name = "profile_photo_url", length = 500)
     private String profilePhotoUrl;
+
+    @jakarta.persistence.Lob
+    @Column(name = "profile_photo_blob")
+    private byte[] profilePhotoBlob;
 
     @Column(nullable = false)
     private Boolean enabled = true;

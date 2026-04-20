@@ -21,13 +21,15 @@ public class LoginResponseBuilder {
 
     public LoginResponseDto build(UserEntity user) {
         String token = jwtTokenProvider.generateToken(user.getId().toString());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId().toString());
         return new LoginResponseDto(
                 user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getDni(),
-                token
+                token,
+                refreshToken
         );
     }
 }

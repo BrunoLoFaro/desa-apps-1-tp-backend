@@ -6,6 +6,7 @@ public record LoginResponseDto(
         String firstName,
         String lastName,
         String dni,
-        String token
+        String token,
+        String refreshToken
 ) {
 }
