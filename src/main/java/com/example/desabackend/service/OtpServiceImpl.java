@@ -5,9 +5,9 @@ import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
 import com.example.desabackend.dto.PasswordResetConfirmDto;
 import com.example.desabackend.dto.RegisterRequestDto;
-import com.example.desabackend.exception.EmailDeliveryException;
 import com.example.desabackend.entity.OtpEntity;
 import com.example.desabackend.entity.UserEntity;
+import com.example.desabackend.exception.EmailDeliveryException;
 import com.example.desabackend.exception.UnauthorizedException;
 import com.example.desabackend.repository.OtpRepository;
 import com.example.desabackend.repository.UserRepository;
@@ -73,8 +73,10 @@ public class OtpServiceImpl implements IOtpService {
     public OtpResponseDto requestSignupOtp(String email) {
         String normalizedEmail = EmailUtils.normalize(email);
         ensureEmailIsAvailable(normalizedEmail);
-        return createOtp(normalizedEmail,
-                "Código OTP enviado al email. Válido por " + OTP_EXPIRATION_MINUTES + " minutos.");
+        return createOtp(
+                normalizedEmail,
+                "Código OTP enviado al email. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
+        );
     }
 
     @Override
@@ -267,7 +269,7 @@ public class OtpServiceImpl implements IOtpService {
             logger.info("Preparing to send OTP email to: {}", email);
             String resolvedFrom = resolveMailFrom();
             logger.debug("Mail from: {}, Mail host settings configured", resolvedFrom);
-            
+
             SimpleMailMessage message = new SimpleMailMessage();
             if (StringUtils.hasText(resolvedFrom)) {
                 message.setFrom(resolvedFrom);
@@ -276,16 +278,16 @@ public class OtpServiceImpl implements IOtpService {
             message.setSubject("Tu código de acceso - XploreNow");
             message.setText(
                     "Tu código OTP es: " + code + "\n\n"
-                    + "Este código expirará en " + OTP_EXPIRATION_MINUTES + " minutos.\n\n"
-                    + "Si no solicitaste este código, ignorá este mensaje.\n\n"
-                    + "XploreNow Team"
+                            + "Este código expirará en " + OTP_EXPIRATION_MINUTES + " minutos.\n\n"
+                            + "Si no solicitaste este código, ignorá este mensaje.\n\n"
+                            + "XploreNow Team"
             );
-            
+
             logger.info("Sending email with OTP code to: {}", email);
             mailSender.send(message);
             logger.info("Email sent successfully to: {}", email);
             return true;
-            
+
         } catch (MailException e) {
             Throwable rootCause = e.getMostSpecificCause();
             logger.error(
@@ -310,5 +312,4 @@ public class OtpServiceImpl implements IOtpService {
         }
         return null;
     }
-
 }
