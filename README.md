@@ -38,7 +38,12 @@ Stack: **Spring Boot 4.0.3 · Java 17 · SQL Server · Azure App Service**
 | `MAIL_PORT` | Puerto SMTP | `587` |
 | `MAIL_USERNAME` | Email de envío | `tu-email@gmail.com` |
 | `MAIL_PASSWORD` | App password de Gmail | *(generar en Google Account → Security → App Passwords)* |
-| `MAIL_FROM` | Dirección "From" del email | `noreply@xplorenow.com` |
+| `MAIL_FROM` | Dirección "From" del email (en Gmail, usar el mismo correo o un alias verificado) | `tu-email@gmail.com` |
+| `MAIL_FAIL_FAST` | Si el correo falla, corta el flujo con error explícito | `true` |
+
+> En desarrollo local con Docker Compose, el backend usa MailHog automáticamente.
+> Para correrlo fuera de Docker, creá `src/main/resources/application-local.properties`
+> o definí las variables SMTP manualmente.
 
 ### 3. JWT
 
@@ -70,6 +75,15 @@ docker compose up --build
 ```
 
 Esto levanta SQL Server + la app Spring Boot juntos.
+También levanta **MailHog** para SMTP local y activa el perfil `local`, por lo que el flujo OTP funciona sin credenciales reales.
+
+UI de MailHog:
+
+```bash
+http://localhost:8025
+```
+
+Ahí podés ver los mails OTP enviados por el backend.
 
 ### Crear `application-local.properties`
 

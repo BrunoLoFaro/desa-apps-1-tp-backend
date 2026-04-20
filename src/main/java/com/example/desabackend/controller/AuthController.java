@@ -13,6 +13,8 @@ import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.services.interfaces.IAuthService;
 import com.example.desabackend.services.interfaces.IOtpService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final IAuthService authService;
     private final IOtpService otpService;
@@ -47,7 +51,15 @@ public class AuthController {
 
     @PostMapping("/signup/otp/request")
     public OtpResponseDto requestSignupOtp(@Valid @RequestBody OtpRequestDto request) {
-        return otpService.requestSignupOtp(request.email());
+        logger.info("Received signup OTP request for email={}", request.email());
+        try {
+            OtpResponseDto response = otpService.requestSignupOtp(request.email());
+            logger.info("Signup OTP request processed for email={}, message={}", request.email(), response.message());
+            return response;
+        } catch (Exception e) {
+            logger.error("Error processing signup OTP request for email={}: {}", request.email(), e.getMessage(), e);
+            throw e;
+        }
     }
 
     @PostMapping("/signup/otp/resend")
