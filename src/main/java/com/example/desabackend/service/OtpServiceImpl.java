@@ -7,6 +7,7 @@ import com.example.desabackend.dto.PasswordResetConfirmDto;
 import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.entity.OtpEntity;
 import com.example.desabackend.entity.UserEntity;
+import com.example.desabackend.exception.EmailDeliveryException;
 import com.example.desabackend.exception.UnauthorizedException;
 import com.example.desabackend.repository.OtpRepository;
 import com.example.desabackend.repository.UserRepository;
@@ -263,7 +264,7 @@ public class OtpServiceImpl implements IOtpService {
             logger.error("Failed to send OTP email to {}: {}", email, e.getMessage(), e);
 
             // Mail delivery is a hard requirement for OTP flows.
-            throw new RuntimeException("No se pudo enviar el email OTP", e);
+            throw new EmailDeliveryException("No se pudo enviar el email OTP", e);
         }
     }
 
