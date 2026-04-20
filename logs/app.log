@@ -1,361 +1,207 @@
-2026-04-07 16:56:25.109 INFO  [main] [] c.e.d.DesaBackendApplication - Starting DesaBackendApplication v0.0.1-SNAPSHOT using Java 17.0.18 with PID 1 (/app/app.jar started by root in /app)
-2026-04-07 16:56:25.112 DEBUG [main] [] c.e.d.DesaBackendApplication - Running with Spring Boot v4.0.3, Spring v7.0.5
-2026-04-07 16:56:25.113 INFO  [main] [] c.e.d.DesaBackendApplication - No active profile set, falling back to 1 default profile: "default"
-2026-04-07 16:56:25.751 INFO  [main] [] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-04-07 16:56:25.831 INFO  [main] [] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 69 ms. Found 8 JPA repository interfaces.
-2026-04-07 16:56:26.469 INFO  [main] [] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-04-07 16:56:26.483 INFO  [main] [] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-04-07 16:56:26.486 INFO  [main] [] o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-04-07 16:56:26.487 INFO  [main] [] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.18]
-2026-04-07 16:56:26.551 INFO  [main] [] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1383 ms
-2026-04-07 16:56:26.639 DEBUG [main] [] c.e.d.config.RequestIdFilter - Filter 'requestIdFilter' configured for use
-2026-04-07 16:56:27.320 INFO  [main] [] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-04-07 16:56:27.359 INFO  [main] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-04-07 16:56:27.591 INFO  [main] [] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: d8cb1412-4ff5-41d5-90c1-fe9fb6d4e423
-2026-04-07 16:56:27.594 INFO  [main] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-04-07 16:56:27.678 WARN  [main] [] org.hibernate.orm.deprecation - HHH90000025: SQLServerDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-07 16:56:29.304 INFO  [main] [] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-04-07 16:56:29.426 INFO  [main] [] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-04-07 16:56:31.633 INFO  [main] [] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-04-07 16:56:31.659 INFO  [main] [] o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2026-04-07 16:56:31.693 INFO  [main] [] c.e.d.DesaBackendApplication - Started DesaBackendApplication in 7.177 seconds (process running for 7.645)
-2026-04-07 17:30:50.299 INFO  [http-nio-8080-exec-1] [] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-04-07 17:30:50.379 ERROR [http-nio-8080-exec-1] [7dae09b4] c.e.d.exception.ApiExceptionHandler - Internal server error at /api/v1/auth/signup/otp/request: Required request body is missing: public com.example.desabackend.dto.OtpResponseDto com.example.desabackend.controller.AuthController.requestSignupOtp(com.example.desabackend.dto.OtpRequestDto)
-org.springframework.http.converter.HttpMessageNotReadableException: Required request body is missing: public com.example.desabackend.dto.OtpResponseDto com.example.desabackend.controller.AuthController.requestSignupOtp(com.example.desabackend.dto.OtpRequestDto)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.readWithMessageConverters(RequestResponseBodyMethodProcessor.java:184)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:156)
-	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)
-	at org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:224)
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:174)
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
-	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at com.example.desabackend.config.RequestIdFilter.doFilterInternal(RequestIdFilter.java:24)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
-	at java.base/java.lang.Thread.run(Unknown Source)
-2026-04-07 14:32:29.592 INFO  [restartedMain] [] c.e.d.DesaBackendApplication - Starting DesaBackendApplication using Java 21.0.9 with PID 21260 (C:\Users\tomas\Desktop\desa-apps-1-tp-backend\target\classes started by tomas in C:\Users\tomas\Desktop\desa-apps-1-tp-backend)
-2026-04-07 14:32:29.594 DEBUG [restartedMain] [] c.e.d.DesaBackendApplication - Running with Spring Boot v4.0.3, Spring v7.0.5
-2026-04-07 14:32:29.595 INFO  [restartedMain] [] c.e.d.DesaBackendApplication - No active profile set, falling back to 1 default profile: "default"
-2026-04-07 14:32:29.636 INFO  [restartedMain] [] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-04-07 14:32:29.636 INFO  [restartedMain] [] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-04-07 14:32:30.149 INFO  [restartedMain] [] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-04-07 14:32:30.241 INFO  [restartedMain] [] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 83 ms. Found 8 JPA repository interfaces.
-2026-04-07 14:32:30.929 INFO  [restartedMain] [] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-04-07 14:32:30.942 INFO  [restartedMain] [] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-04-07 14:32:30.944 INFO  [restartedMain] [] o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-04-07 14:32:30.945 INFO  [restartedMain] [] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.18]
-2026-04-07 14:32:30.982 INFO  [restartedMain] [] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1343 ms
-2026-04-07 14:32:31.035 DEBUG [restartedMain] [] c.e.d.config.RequestIdFilter - Filter 'requestIdFilter' configured for use
-2026-04-07 14:32:31.651 INFO  [restartedMain] [] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-04-07 14:32:31.684 INFO  [restartedMain] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-04-07 14:32:31.924 INFO  [restartedMain] [] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: fbc183b0-5483-4bbd-afdc-a7adaa353247
-2026-04-07 14:32:31.925 INFO  [restartedMain] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-04-07 14:32:31.995 WARN  [restartedMain] [] org.hibernate.orm.deprecation - HHH90000025: SQLServerDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-07 14:32:33.234 INFO  [restartedMain] [] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-04-07 14:32:33.341 INFO  [restartedMain] [] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-04-07 14:32:35.437 INFO  [restartedMain] [] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-04-07 14:32:35.445 WARN  [restartedMain] [] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
-2026-04-07 14:32:35.446 INFO  [restartedMain] [] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-04-07 14:32:35.449 INFO  [restartedMain] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-04-07 14:32:35.452 INFO  [restartedMain] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-04-07 14:32:35.461 INFO  [restartedMain] [] o.s.b.a.l.ConditionEvaluationReportLogger - 
+2026-04-16 00:06:23.577 INFO  [http-nio-8080-exec-4] [cf154512] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.login
+2026-04-16 00:06:23.589 DEBUG [http-nio-8080-exec-4] [cf154512] c.e.desabackend.config.LoggingAspect - Service method called: AuthServiceImpl.login
+2026-04-16 00:06:23.590 INFO  [http-nio-8080-exec-4] [cf154512] c.e.d.service.AuthServiceImpl - Login attempt for email: gabitoaran@gmail.com
+2026-04-16 00:06:23.639 INFO  [http-nio-8080-exec-4] [cf154512] c.e.d.service.AuthServiceImpl - Login successful for user: 1
+2026-04-16 00:06:23.640 DEBUG [http-nio-8080-exec-4] [cf154512] c.e.desabackend.config.LoggingAspect - Service method AuthServiceImpl.login completed
+2026-04-16 00:06:23.642 DEBUG [http-nio-8080-exec-4] [cf154512] c.e.desabackend.config.LoggingAspect - Controller method AuthController.login completed successfully
+2026-04-16 00:06:23.672 INFO  [http-nio-8080-exec-3] [6071cb8c] c.e.desabackend.config.LoggingAspect - Controller method called: ActivityController.listFeatured
+2026-04-16 00:06:23.673 DEBUG [http-nio-8080-exec-3] [6071cb8c] c.e.desabackend.config.LoggingAspect - Service method called: ActivityCatalogService.listActivities
+2026-04-16 00:06:23.673 INFO  [http-nio-8080-exec-5] [53dcc1e3] c.e.desabackend.config.LoggingAspect - Controller method called: ActivityController.listActivities
+2026-04-16 00:06:23.675 DEBUG [http-nio-8080-exec-5] [53dcc1e3] c.e.desabackend.config.LoggingAspect - Service method called: ActivityCatalogService.listActivities
+2026-04-16 00:06:23.680 DEBUG [http-nio-8080-exec-3] [6071cb8c] c.e.desabackend.config.LoggingAspect - Service method ActivityCatalogService.listActivities completed
+2026-04-16 00:06:23.681 DEBUG [http-nio-8080-exec-3] [6071cb8c] c.e.desabackend.config.LoggingAspect - Controller method ActivityController.listFeatured completed successfully
+2026-04-16 00:06:23.684 DEBUG [http-nio-8080-exec-5] [53dcc1e3] c.e.desabackend.config.LoggingAspect - Service method ActivityCatalogService.listActivities completed
+2026-04-16 00:06:23.685 DEBUG [http-nio-8080-exec-5] [53dcc1e3] c.e.desabackend.config.LoggingAspect - Controller method ActivityController.listActivities completed successfully
+2026-04-16 00:06:26.360 INFO  [http-nio-8080-exec-6] [8bb3668f] c.e.desabackend.config.LoggingAspect - Controller method called: BookingController.listMyBookings
+2026-04-16 00:06:26.362 DEBUG [http-nio-8080-exec-6] [8bb3668f] c.e.desabackend.config.LoggingAspect - Service method called: BookingService.listMyBookings
+2026-04-16 00:06:26.382 DEBUG [http-nio-8080-exec-6] [8bb3668f] c.e.desabackend.config.LoggingAspect - Service method BookingService.listMyBookings completed
+2026-04-16 00:06:26.384 DEBUG [http-nio-8080-exec-6] [8bb3668f] c.e.desabackend.config.LoggingAspect - Controller method BookingController.listMyBookings completed successfully
+2026-04-16 00:06:30.172 INFO  [http-nio-8080-exec-7] [89d8e7c3] c.e.desabackend.config.LoggingAspect - Controller method called: BookingController.listMyBookings
+2026-04-16 00:06:30.174 DEBUG [http-nio-8080-exec-7] [89d8e7c3] c.e.desabackend.config.LoggingAspect - Service method called: BookingService.listMyBookings
+2026-04-16 00:06:30.194 DEBUG [http-nio-8080-exec-7] [89d8e7c3] c.e.desabackend.config.LoggingAspect - Service method BookingService.listMyBookings completed
+2026-04-16 00:06:30.196 DEBUG [http-nio-8080-exec-7] [89d8e7c3] c.e.desabackend.config.LoggingAspect - Controller method BookingController.listMyBookings completed successfully
+2026-04-16 00:10:49.877 INFO  [SpringApplicationShutdownHook] [] o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-16 00:10:49.882 INFO  [tomcat-shutdown] [] o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-16 00:10:49.890 INFO  [SpringApplicationShutdownHook] [] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-16 00:10:49.898 INFO  [SpringApplicationShutdownHook] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-16 00:10:49.900 INFO  [SpringApplicationShutdownHook] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-16 00:10:57.935 INFO  [main] [] c.e.d.DesaBackendApplication - Starting DesaBackendApplication v0.0.1-SNAPSHOT using Java 17.0.18 with PID 1 (/app/app.jar started by root in /app)
+2026-04-16 00:10:57.938 DEBUG [main] [] c.e.d.DesaBackendApplication - Running with Spring Boot v4.0.3, Spring v7.0.5
+2026-04-16 00:10:57.939 INFO  [main] [] c.e.d.DesaBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-16 00:10:58.639 INFO  [main] [] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-16 00:10:58.810 INFO  [main] [] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 160 ms. Found 10 JPA repository interfaces.
+2026-04-16 00:10:59.541 INFO  [main] [] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-16 00:10:59.556 INFO  [main] [] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-16 00:10:59.562 INFO  [main] [] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-16 00:10:59.562 INFO  [main] [] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-04-16 00:10:59.598 INFO  [main] [] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1605 ms
+2026-04-16 00:10:59.664 DEBUG [main] [] c.e.d.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2026-04-16 00:10:59.666 DEBUG [main] [] c.e.d.config.RequestIdFilter - Filter 'requestIdFilter' configured for use
+2026-04-16 00:11:00.409 INFO  [main] [] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-16 00:11:00.439 INFO  [main] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-16 00:11:01.501 WARN  [main] [] org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 0, SQLState: 08S01
+2026-04-16 00:11:01.501 WARN  [main] [] org.hibernate.orm.jdbc.error - The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".
+2026-04-16 00:11:01.502 WARN  [main] [] org.hibernate.orm.jdbc - HHH100046: Could not obtain connection to query JDBC database metadata
+org.hibernate.exception.JDBCConnectionException: Unable to obtain isolated JDBC connection [The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".] [n/a]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:80)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:34)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:115)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:101)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:51)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:366)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironment(JdbcEnvironmentInitiator.java:143)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:120)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:80)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:133)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:260)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:235)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:212)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:44)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:251)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:203)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1392)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.populateSessionFactoryBuilder(EntityManagerFactoryBuilderImpl.java:1472)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1454)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1864)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1813)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at com.example.desabackend.DesaBackendApplication.main(DesaBackendApplication.java:15)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:106)
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64)
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40)
+Caused by: com.microsoft.sqlserver.jdbc.SQLServerException: The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".
+	at com.microsoft.sqlserver.jdbc.SQLServerException.makeFromDriverError(SQLServerException.java:250)
+	at com.microsoft.sqlserver.jdbc.SQLServerException.convertConnectExceptionToSQLServerException(SQLServerException.java:316)
+	at com.microsoft.sqlserver.jdbc.SocketFinder.findSocket(IOBuffer.java:2611)
+	at com.microsoft.sqlserver.jdbc.TDSChannel.open(IOBuffer.java:736)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.connectHelper(SQLServerConnection.java:4201)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.login(SQLServerConnection.java:3817)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.connectInternal(SQLServerConnection.java:3591)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.connect(SQLServerConnection.java:2286)
+	at com.microsoft.sqlserver.jdbc.SQLServerDriver.connect(SQLServerDriver.java:1371)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:48)
+	... 44 common frames omitted
+2026-04-16 00:11:01.534 WARN  [main] [] org.hibernate.orm.deprecation - HHH90000025: SQLServerDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-16 00:11:02.488 INFO  [main] [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-16 00:11:03.490 WARN  [main] [] org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 0, SQLState: 08S01
+2026-04-16 00:11:03.491 WARN  [main] [] org.hibernate.orm.jdbc.error - The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".
+2026-04-16 00:11:03.495 ERROR [main] [] o.s.o.j.LocalContainerEntityManagerFactoryBean - Failed to initialize JPA EntityManagerFactory: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".] [n/a]
+2026-04-16 00:11:03.495 WARN  [main] [] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".] [n/a]
+2026-04-16 00:11:03.497 INFO  [main] [] o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-04-16 00:11:03.502 INFO  [main] [] o.s.b.a.l.ConditionEvaluationReportLogger - 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2026-04-07 14:32:35.474 ERROR [restartedMain] [] o.s.b.d.LoggingFailureAnalysisReporter - 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Web server failed to start. Port 8080 was already in use.
-
-Action:
-
-Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
-
-2026-04-07 17:33:05.099 INFO  [http-nio-8080-exec-2] [9827641b] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.requestSignupOtp
-2026-04-07 17:33:05.126 DEBUG [http-nio-8080-exec-2] [9827641b] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.requestSignupOtp
-2026-04-07 17:33:05.331 WARN  [http-nio-8080-exec-2] [9827641b] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp failed: Este email ya está registrado. Usá login o recuperá tu contraseña.
-2026-04-07 17:33:05.339 ERROR [http-nio-8080-exec-2] [9827641b] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp failed: Este email ya está registrado. Usá login o recuperá tu contraseña.
-java.lang.IllegalArgumentException: Este email ya está registrado. Usá login o recuperá tu contraseña.
-	at com.example.desabackend.service.OtpServiceImpl.ensureEmailIsAvailable(OtpServiceImpl.java:235)
-	at com.example.desabackend.service.OtpServiceImpl.requestSignupOtp(OtpServiceImpl.java:71)
+2026-04-16 00:11:03.520 ERROR [main] [] o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".] [n/a]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1817)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at com.example.desabackend.DesaBackendApplication.main(DesaBackendApplication.java:15)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
 	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
-	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
-	at com.example.desabackend.config.LoggingAspect.logServiceMethods(LoggingAspect.java:36)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
-	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
-	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:133)
-	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:371)
-	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:130)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.example.desabackend.service.OtpServiceImpl$$SpringCGLIB$$0.requestSignupOtp(<generated>)
-	at com.example.desabackend.controller.AuthController.requestSignupOtp(AuthController.java:43)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
-	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
-	at com.example.desabackend.config.LoggingAspect.logControllerMethods(LoggingAspect.java:21)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
-	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.example.desabackend.controller.AuthController$$SpringCGLIB$$0.requestSignupOtp(<generated>)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
-	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at com.example.desabackend.config.RequestIdFilter.doFilterInternal(RequestIdFilter.java:24)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
-	at java.base/java.lang.Thread.run(Unknown Source)
-2026-04-07 17:33:05.343 WARN  [http-nio-8080-exec-2] [9827641b] c.e.d.exception.ApiExceptionHandler - Bad request: Este email ya está registrado. Usá login o recuperá tu contraseña. - Path: /api/v1/auth/signup/otp/request
-2026-04-07 17:35:57.531 INFO  [http-nio-8080-exec-3] [1e307956] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.requestSignupOtp
-2026-04-07 17:35:57.534 DEBUG [http-nio-8080-exec-3] [1e307956] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.requestSignupOtp
-2026-04-07 17:35:57.537 INFO  [http-nio-8080-exec-3] [1e307956] c.e.d.service.OtpServiceImpl - Creating OTP for email: nuevo-email-test@example.com
-2026-04-07 17:35:57.597 INFO  [http-nio-8080-exec-3] [1e307956] c.e.d.service.OtpServiceImpl - OTP created successfully, sending email to: nuevo-email-test@example.com
-2026-04-07 17:35:57.597 INFO  [http-nio-8080-exec-3] [1e307956] c.e.d.service.OtpServiceImpl - Preparing to send OTP email to: nuevo-email-test@example.com
-2026-04-07 17:35:57.598 DEBUG [http-nio-8080-exec-3] [1e307956] c.e.d.service.OtpServiceImpl - Mail from: noreply@xplorenow.com, Mail host settings configured
-2026-04-07 17:35:57.599 INFO  [http-nio-8080-exec-3] [1e307956] c.e.d.service.OtpServiceImpl - Sending email with OTP code to: nuevo-email-test@example.com
-2026-04-07 17:36:01.918 INFO  [http-nio-8080-exec-3] [1e307956] c.e.d.service.OtpServiceImpl - Email sent successfully to: nuevo-email-test@example.com
-2026-04-07 17:36:01.919 DEBUG [http-nio-8080-exec-3] [1e307956] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp completed
-2026-04-07 17:36:01.935 DEBUG [http-nio-8080-exec-3] [1e307956] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp completed successfully
-2026-04-07 17:38:05.772 INFO  [http-nio-8080-exec-5] [476a27a8] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.requestSignupOtp
-2026-04-07 17:38:05.777 DEBUG [http-nio-8080-exec-5] [476a27a8] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.requestSignupOtp
-2026-04-07 17:38:05.784 INFO  [http-nio-8080-exec-5] [476a27a8] c.e.d.service.OtpServiceImpl - Creating OTP for email: tomasgoncalves123@gmail.com
-2026-04-07 17:38:05.789 INFO  [http-nio-8080-exec-5] [476a27a8] c.e.d.service.OtpServiceImpl - OTP created successfully, sending email to: tomasgoncalves123@gmail.com
-2026-04-07 17:38:05.790 INFO  [http-nio-8080-exec-5] [476a27a8] c.e.d.service.OtpServiceImpl - Preparing to send OTP email to: tomasgoncalves123@gmail.com
-2026-04-07 17:38:05.790 DEBUG [http-nio-8080-exec-5] [476a27a8] c.e.d.service.OtpServiceImpl - Mail from: noreply@xplorenow.com, Mail host settings configured
-2026-04-07 17:38:05.791 INFO  [http-nio-8080-exec-5] [476a27a8] c.e.d.service.OtpServiceImpl - Sending email with OTP code to: tomasgoncalves123@gmail.com
-2026-04-07 17:38:08.849 INFO  [http-nio-8080-exec-5] [476a27a8] c.e.d.service.OtpServiceImpl - Email sent successfully to: tomasgoncalves123@gmail.com
-2026-04-07 17:38:08.849 DEBUG [http-nio-8080-exec-5] [476a27a8] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp completed
-2026-04-07 17:38:08.854 DEBUG [http-nio-8080-exec-5] [476a27a8] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp completed successfully
-2026-04-07 17:40:28.041 INFO  [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.verifySignupOtpCode
-2026-04-07 17:40:28.047 DEBUG [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.verifySignupOtpCode
-2026-04-07 17:40:28.127 DEBUG [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.verifySignupOtpCode completed
-2026-04-07 17:40:28.130 DEBUG [http-nio-8080-exec-7] [38ae56cd] c.e.desabackend.config.LoggingAspect - Controller method AuthController.verifySignupOtpCode completed successfully
-2026-04-07 17:40:51.502 INFO  [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.completeSignupWithOtp
-2026-04-07 17:40:51.507 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.completeSignupWithOtp
-2026-04-07 17:40:51.516 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method called: AuthServiceImpl.register
-2026-04-07 17:40:51.517 INFO  [http-nio-8080-exec-8] [391ac581] c.e.d.service.AuthServiceImpl - Registration attempt for email: tomasgoncalves123@gmail.com
-2026-04-07 17:40:51.611 INFO  [http-nio-8080-exec-8] [391ac581] c.e.d.service.AuthServiceImpl - Registration successful for user: 10001
-2026-04-07 17:40:51.695 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method AuthServiceImpl.register completed
-2026-04-07 17:40:51.698 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.completeSignupWithOtp completed
-2026-04-07 17:40:51.719 DEBUG [http-nio-8080-exec-8] [391ac581] c.e.desabackend.config.LoggingAspect - Controller method AuthController.completeSignupWithOtp completed successfully
-2026-04-07 17:41:47.967 INFO  [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.requestSignupOtp
-2026-04-07 17:41:47.972 DEBUG [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.requestSignupOtp
-2026-04-07 17:41:47.976 WARN  [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp failed: Este email ya está registrado. Usá login o recuperá tu contraseña.
-2026-04-07 17:41:47.978 ERROR [http-nio-8080-exec-10] [77924168] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp failed: Este email ya está registrado. Usá login o recuperá tu contraseña.
-java.lang.IllegalArgumentException: Este email ya está registrado. Usá login o recuperá tu contraseña.
-	at com.example.desabackend.service.OtpServiceImpl.ensureEmailIsAvailable(OtpServiceImpl.java:235)
-	at com.example.desabackend.service.OtpServiceImpl.requestSignupOtp(OtpServiceImpl.java:71)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
-	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
-	at com.example.desabackend.config.LoggingAspect.logServiceMethods(LoggingAspect.java:36)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
-	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
-	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:133)
-	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:371)
-	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:130)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.example.desabackend.service.OtpServiceImpl$$SpringCGLIB$$0.requestSignupOtp(<generated>)
-	at com.example.desabackend.controller.AuthController.requestSignupOtp(AuthController.java:43)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
-	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
-	at com.example.desabackend.config.LoggingAspect.logControllerMethods(LoggingAspect.java:21)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
-	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.example.desabackend.controller.AuthController$$SpringCGLIB$$0.requestSignupOtp(<generated>)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
-	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
-	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at com.example.desabackend.config.RequestIdFilter.doFilterInternal(RequestIdFilter.java:24)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
-	at java.base/java.lang.Thread.run(Unknown Source)
-2026-04-07 17:41:47.983 WARN  [http-nio-8080-exec-10] [77924168] c.e.d.exception.ApiExceptionHandler - Bad request: Este email ya está registrado. Usá login o recuperá tu contraseña. - Path: /api/v1/auth/signup/otp/request
-2026-04-07 17:41:58.097 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Controller method called: AuthController.requestSignupOtp
-2026-04-07 17:41:58.099 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Service method called: OtpServiceImpl.requestSignupOtp
-2026-04-07 17:41:58.102 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Creating OTP for email: test@gmail.com
-2026-04-07 17:41:58.105 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - OTP created successfully, sending email to: test@gmail.com
-2026-04-07 17:41:58.106 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Preparing to send OTP email to: test@gmail.com
-2026-04-07 17:41:58.107 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Mail from: noreply@xplorenow.com, Mail host settings configured
-2026-04-07 17:41:58.107 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Sending email with OTP code to: test@gmail.com
-2026-04-07 17:42:01.416 INFO  [http-nio-8080-exec-3] [80bf0e17] c.e.d.service.OtpServiceImpl - Email sent successfully to: test@gmail.com
-2026-04-07 17:42:01.417 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Service method OtpServiceImpl.requestSignupOtp completed
-2026-04-07 17:42:01.426 DEBUG [http-nio-8080-exec-3] [80bf0e17] c.e.desabackend.config.LoggingAspect - Controller method AuthController.requestSignupOtp completed successfully
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:106)
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64)
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40)
+Caused by: jakarta.persistence.PersistenceException: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".] [n/a]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:448)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1864)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1813)
+	... 22 common frames omitted
+Caused by: org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".] [n/a]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:80)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:34)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:115)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:101)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:71)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:37)
+	at org.hibernate.tool.schema.internal.exec.ImprovedExtractionContextImpl.getJdbcConnection(ImprovedExtractionContextImpl.java:61)
+	at org.hibernate.tool.schema.extract.spi.ExtractionContext.getQueryResults(ExtractionContext.java:41)
+	at org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorLegacyImpl.extractMetadata(SequenceInformationExtractorLegacyImpl.java:36)
+	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.initializeSequences(DatabaseInformationImpl.java:73)
+	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.<init>(DatabaseInformationImpl.java:63)
+	at org.hibernate.tool.schema.extract.internal.CachingDatabaseInformationImpl.<init>(CachingDatabaseInformationImpl.java:43)
+	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.buildDatabaseInformation(GroupedSchemaMigratorImpl.java:112)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:83)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:269)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$1(SchemaManagementToolCoordinator.java:101)
+	at java.base/java.util.HashMap.forEach(Unknown Source)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:100)
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:35)
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:33)
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:323)
+	at org.hibernate.internal.SessionFactoryRegistry.instantiateSessionFactory(SessionFactoryRegistry.java:64)
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:437)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1456)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+	... 26 common frames omitted
+Caused by: com.microsoft.sqlserver.jdbc.SQLServerException: The TCP/IP connection to the host sqlserver, port 1433 has failed. Error: "Connection refused. Verify the connection properties. Make sure that an instance of SQL Server is running on the host and accepting TCP/IP connections at the port. Make sure that TCP connections to the port are not blocked by a firewall.".
+	at com.microsoft.sqlserver.jdbc.SQLServerException.makeFromDriverError(SQLServerException.java:250)
+	at com.microsoft.sqlserver.jdbc.SQLServerException.convertConnectExceptionToSQLServerException(SQLServerException.java:316)
+	at com.microsoft.sqlserver.jdbc.SocketFinder.findSocket(IOBuffer.java:2611)
+	at com.microsoft.sqlserver.jdbc.TDSChannel.open(IOBuffer.java:736)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.connectHelper(SQLServerConnection.java:4201)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.login(SQLServerConnection.java:3817)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.connectInternal(SQLServerConnection.java:3591)
+	at com.microsoft.sqlserver.jdbc.SQLServerConnection.connect(SQLServerConnection.java:2286)
+	at com.microsoft.sqlserver.jdbc.SQLServerDriver.connect(SQLServerDriver.java:1371)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:44)
+	... 48 common frames omitted

@@ -6,4 +6,3 @@ public class EmailDeliveryException extends RuntimeException {
         super(message, cause);
     }
 }
-

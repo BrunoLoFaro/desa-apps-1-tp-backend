@@ -15,6 +15,7 @@ import com.example.desabackend.repository.BookingRepository;
 import com.example.desabackend.repository.ReviewRepository;
 import com.example.desabackend.repository.UserRepository;
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -27,17 +28,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BookingService {
 
+    private static final int REVIEW_WINDOW_HOURS = 48;
+
     private final BookingRepository bookingRepository;
     private final ActivitySessionRepository sessionRepository;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final Clock clock;
 
     public BookingService(BookingRepository bookingRepository, ActivitySessionRepository sessionRepository,
-                          UserRepository userRepository, ReviewRepository reviewRepository) {
+                          UserRepository userRepository, ReviewRepository reviewRepository, Clock clock) {
         this.bookingRepository = bookingRepository;
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
+        this.clock = clock;
     }
 
     @Transactional
@@ -113,8 +118,12 @@ public class BookingService {
         DestinationDto dest = activity.getDestination() != null
                 ? new DestinationDto(activity.getDestination().getId(), activity.getDestination().getName()) : null;
         String guideName = activity.getGuide() != null ? activity.getGuide().getFullName() : null;
-        boolean canReview = booking.getStatus() == BookingStatus.COMPLETED
-                && !reviewRepository.existsByBookingId(booking.getId());
+        boolean canReview = false;
+        if (booking.getStatus() == BookingStatus.COMPLETED && !reviewRepository.existsByBookingId(booking.getId())) {
+            LocalDateTime sessionEnd = session.getStartTime()
+                    .plusMinutes(activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0);
+            canReview = !LocalDateTime.now(clock).isAfter(sessionEnd.plusHours(REVIEW_WINDOW_HOURS));
+        }
         return new BookingDto(booking.getId(), session.getId(), activity.getName(), dest, guideName,
                 session.getStartTime(), activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0,
                 booking.getParticipants(), booking.getTotalPrice(), activity.getCurrency(),
