@@ -1,4 +1,12 @@
 services:
+  # ── SMTP local para desarrollo (captura mails OTP) ──
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: desa-mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI: http://localhost:8025
+
   # ── SQL Server 2022 ────────────────────────────────
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -39,19 +47,28 @@ services:
     depends_on:
       sqlserver-init:
         condition: service_completed_successfully
+      mailhog:
+        condition: service_started
     environment:
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       SPRING_DATASOURCE_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=desa_db;encrypt=false;trustServerCertificate=true"
       SPRING_DATASOURCE_USERNAME: "sa"
       SPRING_DATASOURCE_PASSWORD: "YourStrong!Passw0rd"
-      MAIL_HOST: "${MAIL_HOST}"
-      MAIL_PORT: "${MAIL_PORT}"
-      MAIL_USERNAME: "${MAIL_USERNAME}"
-      MAIL_PASSWORD: "${MAIL_PASSWORD}"
-      MAIL_FROM: "${MAIL_FROM}"
+      MAIL_HOST: "${MAIL_HOST:-mailhog}"
+      MAIL_PORT: "${MAIL_PORT:-1025}"
+      MAIL_USERNAME: "${MAIL_USERNAME:-}"
+      MAIL_PASSWORD: "${MAIL_PASSWORD:-}"
+      MAIL_FROM: "${MAIL_FROM:-noreply@xplorenow.local}"
+      MAIL_SMTP_AUTH: "${MAIL_SMTP_AUTH:-false}"
+      MAIL_SMTP_STARTTLS_ENABLE: "${MAIL_SMTP_STARTTLS_ENABLE:-false}"
+      MAIL_SMTP_STARTTLS_REQUIRED: "${MAIL_SMTP_STARTTLS_REQUIRED:-false}"
+      MAIL_SMTP_SSL_TRUST: "${MAIL_SMTP_SSL_TRUST:-*}"
+      MAIL_FAIL_FAST: "${MAIL_FAIL_FAST:-false}"
     ports:
       - "8080:8080"
     volumes:
-      - ./logs:/app/logs
+      - desa-logs:/app/logs
 
 volumes:
   sqlserver-data:
+  desa-logs:
