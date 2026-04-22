@@ -18,7 +18,7 @@ final class ActivityDtoMapper {
     private ActivityDtoMapper() {
     }
 
-    static ActivitySummaryDto toSummaryDto(ActivityEntity activity, ActivitySessionRepository.ActivitySummaryAggregate agg, ReviewRepository.ActivityRatingAggregate ratingAgg) {
+    static ActivitySummaryDto toSummaryDto(ActivityEntity activity, ActivitySessionRepository.ActivitySummaryAggregate agg, ReviewRepository.ActivityRatingAggregate ratingAgg, boolean isFavorite) {
         BigDecimal price = agg != null && agg.getPrice() != null ? agg.getPrice() : activity.getBasePrice();
         int availableSpots = agg != null && agg.getAvailableSpots() != null ? Math.toIntExact(agg.getAvailableSpots()) : 0;
         Double avgRating = ratingAgg != null ? ratingAgg.getAvgRating() : null;
@@ -34,7 +34,8 @@ final class ActivityDtoMapper {
                 activity.getCurrency(),
                 availableSpots,
                 avgRating,
-                reviewCount
+                reviewCount,
+                isFavorite
         );
     }
 

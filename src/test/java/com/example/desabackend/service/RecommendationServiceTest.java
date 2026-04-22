@@ -5,6 +5,7 @@ import com.example.desabackend.entity.ActivityEntity;
 import com.example.desabackend.entity.DestinationEntity;
 import com.example.desabackend.repository.ActivityRepository;
 import com.example.desabackend.repository.ActivitySessionRepository;
+import com.example.desabackend.repository.FavoriteRepository;
 import com.example.desabackend.repository.ReviewRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,12 +34,14 @@ class RecommendationServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private UserPreferenceService userPreferenceService;
+    @Mock
+    private FavoriteRepository favoriteRepository;
 
     private RecommendationService service;
 
     @BeforeEach
     void setUp() {
-        service = new RecommendationService(activityRepository, sessionRepository, reviewRepository, userPreferenceService);
+        service = new RecommendationService(activityRepository, sessionRepository, reviewRepository, userPreferenceService, favoriteRepository);
     }
 
     @Test
@@ -67,6 +70,7 @@ class RecommendationServiceTest {
             .thenReturn(List.of(sessionAgg));
         when(reviewRepository.aggregateActivityRatings(eq(List.of(5L))))
             .thenReturn(List.of(ratingAgg));
+        when(favoriteRepository.findByUserIdOrderByCreatedAtDesc(99L)).thenReturn(List.of());
 
         var result = service.listRecommended(99L, 0, 10, null, null);
 

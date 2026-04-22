@@ -16,6 +16,7 @@ public record ActivitySummaryDto(
         String currency,
         int availableSpots,
         Double avgRating,
-        long reviewCount
+        long reviewCount,
+        boolean isFavorite
 ) {
 }

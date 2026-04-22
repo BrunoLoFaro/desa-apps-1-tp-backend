@@ -7,6 +7,7 @@ import com.example.desabackend.entity.DestinationEntity;
 import com.example.desabackend.entity.GuideEntity;
 import com.example.desabackend.repository.ActivityRepository;
 import com.example.desabackend.repository.ActivitySessionRepository;
+import com.example.desabackend.repository.FavoriteRepository;
 import com.example.desabackend.repository.ReviewRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,12 +37,14 @@ class ActivityCatalogServiceTest {
     private ActivitySessionRepository sessionRepository;
     @Mock
     private ReviewRepository reviewRepository;
+    @Mock
+    private FavoriteRepository favoriteRepository;
 
     private ActivityCatalogService service;
 
     @BeforeEach
     void setUp() {
-        service = new ActivityCatalogService(activityRepository, sessionRepository, reviewRepository);
+        service = new ActivityCatalogService(activityRepository, sessionRepository, reviewRepository, favoriteRepository);
     }
 
     @Test
@@ -57,8 +60,9 @@ class ActivityCatalogServiceTest {
             .thenReturn(List.of(sessionAgg));
         when(reviewRepository.aggregateActivityRatings(eq(List.of(1L))))
             .thenReturn(List.of(ratingAgg));
+        when(favoriteRepository.findByUserIdOrderByCreatedAtDesc(77L)).thenReturn(List.of());
 
-        var result = service.listActivities(0, 10, null, null, null, null, null, false);
+        var result = service.listActivities(0, 10, null, null, null, null, null, false, 77L);
 
         assertThat(result.items()).hasSize(1);
         assertThat(result.items().get(0).avgRating()).isEqualTo(4.8);
@@ -81,8 +85,9 @@ class ActivityCatalogServiceTest {
         when(sessionRepository.findFutureByActivityId(eq(2L), any(LocalDateTime.class)))
                 .thenReturn(List.of(session));
         when(reviewRepository.getActivityRating(2L)).thenReturn(Optional.empty());
+        when(favoriteRepository.existsByUserIdAndActivityId(77L, 2L)).thenReturn(false);
 
-        var result = service.getActivityDetail(2L, null);
+        var result = service.getActivityDetail(2L, null, 77L);
 
         assertThat(result.avgRating()).isNull();
         assertThat(result.reviewCount()).isZero();
