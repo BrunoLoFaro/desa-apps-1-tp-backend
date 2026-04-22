@@ -1,7 +1,6 @@
 package com.example.desabackend.services.interfaces;
 
 import com.example.desabackend.dto.LoginResponseDto;
-import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
 import com.example.desabackend.dto.PasswordResetConfirmDto;
 
@@ -11,9 +10,9 @@ public interface IOtpService {
 
     OtpResponseDto resendSignupOtp(String email);
 
-    OtpResponseDto verifySignupOtpCode(String email, String code);
+    LoginResponseDto verifySignupOtpCode(String email, String code);
 
-    LoginResponseDto completeSignupWithOtp(OtpRegistrationCompleteDto request);
+    OtpResponseDto sendLoginOtp(String email);
 
     OtpResponseDto requestPasswordReset(String email);
 
