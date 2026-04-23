@@ -9,6 +9,7 @@ import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.entity.UserEntity;
 import com.example.desabackend.exception.UnauthorizedException;
 import com.example.desabackend.repository.UserRepository;
+import java.util.Optional;
 import com.example.desabackend.services.interfaces.IAuthService;
 import com.example.desabackend.services.interfaces.IOtpService;
 import com.example.desabackend.util.EmailUtils;
@@ -74,9 +75,23 @@ public class AuthServiceImpl implements IAuthService {
         String normalizedEmail = EmailUtils.normalize(request.email());
         log.info("Registration attempt for email: {}", normalizedEmail);
 
-        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
-            log.warn("Registration failed: email {} already exists", normalizedEmail);
-            throw new IllegalArgumentException("Este email ya está registrado. Usá login o recuperá tu contraseña.");
+        Optional<UserEntity> existing = userRepository.findByEmailIgnoreCase(normalizedEmail);
+        if (existing.isPresent()) {
+            UserEntity existingUser = existing.get();
+            if (Boolean.TRUE.equals(existingUser.getEnabled())) {
+                log.warn("Registration failed: email {} already active", normalizedEmail);
+                throw new IllegalArgumentException("Este email ya está registrado. Usá login o recuperá tu contraseña.");
+            }
+            // Usuario pendiente de verificación: actualiza datos y reenvía OTP
+            log.info("Pending user found for {}, updating and resending OTP.", normalizedEmail);
+            existingUser.setPasswordHash(passwordEncoder.encode(request.password()));
+            existingUser.setFirstName(request.firstName().trim());
+            existingUser.setLastName(request.lastName().trim());
+            if (StringUtils.hasText(request.phone())) {
+                existingUser.setPhone(request.phone().trim());
+            }
+            userRepository.save(existingUser);
+            return otpService.requestSignupOtp(normalizedEmail);
         }
 
         UserEntity user = new UserEntity();
