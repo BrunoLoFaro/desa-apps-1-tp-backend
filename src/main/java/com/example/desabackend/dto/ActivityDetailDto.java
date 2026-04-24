@@ -10,6 +10,7 @@ import java.util.List;
 public record ActivityDetailDto(
         Long id,
         String name,
+        String imageUrl,
         DestinationDto destination,
         ActivityCategory category,
         String description,
