@@ -11,9 +11,11 @@ import com.example.desabackend.exception.NotFoundException;
 import com.example.desabackend.repository.ActivityRepository;
 import com.example.desabackend.repository.ActivitySessionRepository;
 import com.example.desabackend.repository.ReviewRepository;
+import com.example.desabackend.repository.FavoriteRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,11 +39,13 @@ public class ActivityCatalogService {
     private final ActivityRepository activityRepository;
     private final ActivitySessionRepository sessionRepository;
     private final ReviewRepository reviewRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    public ActivityCatalogService(ActivityRepository activityRepository, ActivitySessionRepository sessionRepository, ReviewRepository reviewRepository) {
+    public ActivityCatalogService(ActivityRepository activityRepository, ActivitySessionRepository sessionRepository, ReviewRepository reviewRepository, FavoriteRepository favoriteRepository) {
         this.activityRepository = activityRepository;
         this.sessionRepository = sessionRepository;
         this.reviewRepository = reviewRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +57,8 @@ public class ActivityCatalogService {
             LocalDate date,
             BigDecimal minPrice,
             BigDecimal maxPrice,
-            boolean featuredOnly
+            boolean featuredOnly,
+            Long userId
     ) {
         int safePage = page == null ? 0 : Math.max(0, page);
         int safeSize = size == null ? 10 : Math.min(100, Math.max(1, size));
@@ -67,6 +72,12 @@ public class ActivityCatalogService {
                 .map(ActivityEntity::getId)
                 .filter(Objects::nonNull)
                 .toList();
+
+        List<Long> favoriteIds = userId != null ?
+                favoriteRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                        .map(f -> f.getActivity().getId())
+                        .toList() :
+                List.of();
 
         Map<Long, ActivitySessionRepository.ActivitySummaryAggregate> aggregatesByActivityId =
                 aggregateForSummary(activityIds, date, minPrice, maxPrice, now).stream()
@@ -85,7 +96,7 @@ public class ActivityCatalogService {
                                 (a, b) -> a
                         ));
         List<ActivitySummaryDto> items = activitiesPage.getContent().stream()
-                .map(a -> ActivityDtoMapper.toSummaryDto(a, aggregatesByActivityId.get(a.getId()), ratingsByActivityId.get(a.getId())))
+                .map(a -> ActivityDtoMapper.toSummaryDto(a, aggregatesByActivityId.get(a.getId()), ratingsByActivityId.get(a.getId()), favoriteIds.contains(a.getId())))
                 .toList();
 
         return new PageResponse<>(
@@ -98,7 +109,7 @@ public class ActivityCatalogService {
     }
 
     @Transactional(readOnly = true)
-    public ActivityDetailDto getActivityDetail(Long activityId, LocalDate date) {
+    public ActivityDetailDto getActivityDetail(Long activityId, LocalDate date, Long userId) {
         ActivityEntity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new NotFoundException("Activity not found: " + activityId));
 
@@ -112,6 +123,8 @@ public class ActivityCatalogService {
         ReviewRepository.ActivityRatingAggregate ratingAgg = reviewRepository.getActivityRating(activityId).orElse(null);
         Double avgRating = ratingAgg != null ? ratingAgg.getAvgRating() : null;
         long reviewCount = ratingAgg != null && ratingAgg.getReviewCount() != null ? ratingAgg.getReviewCount() : 0L;
+
+        boolean isFavorite = userId != null && favoriteRepository.existsByUserIdAndActivityId(userId, activityId);
 
         return new ActivityDetailDto(
                 activity.getId(),
@@ -130,8 +143,54 @@ public class ActivityCatalogService {
                 sessionDtos,
                 availableSpots,
                 avgRating,
-                reviewCount
+                reviewCount,
+                isFavorite
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<ActivitySummaryDto> getActivitiesByIds(List<Long> activityIds, Long userId) {
+        if (activityIds == null || activityIds.isEmpty()) {
+            return List.of();
+        }
+
+        Map<Long, ActivityEntity> byId = activityRepository.findAllById(activityIds).stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        ActivityEntity::getId,
+                        Function.identity(),
+                        (a, b) -> a
+                ));
+
+        Map<Long, ActivitySessionRepository.ActivitySummaryAggregate> aggregatesByActivityId =
+                aggregateForSummary(activityIds, null, null, null, LocalDateTime.now()).stream()
+                        .collect(java.util.stream.Collectors.toMap(
+                                ActivitySessionRepository.ActivitySummaryAggregate::getActivityId,
+                                Function.identity(),
+                                (a, b) -> a
+                        ));
+
+        Map<Long, ReviewRepository.ActivityRatingAggregate> ratingsByActivityId =
+                reviewRepository.aggregateActivityRatings(activityIds).stream()
+                        .collect(java.util.stream.Collectors.toMap(
+                                ReviewRepository.ActivityRatingAggregate::getActivityId,
+                                Function.identity(),
+                                (a, b) -> a
+                        ));
+
+        var favoriteIdSet = userId != null
+                ? new HashSet<>(favoriteRepository.findByUserIdOrderByCreatedAtDesc(userId).stream().map(f -> f.getActivity().getId()).toList())
+                : java.util.Collections.<Long>emptySet();
+
+        return activityIds.stream()
+                .map(byId::get)
+                .filter(Objects::nonNull)
+                .map(a -> ActivityDtoMapper.toSummaryDto(
+                        a,
+                        aggregatesByActivityId.get(a.getId()),
+                        ratingsByActivityId.get(a.getId()),
+                        favoriteIdSet.contains(a.getId())
+                ))
+                .toList();
     }
 
     private List<ActivitySessionRepository.ActivitySummaryAggregate> aggregateForSummary(List<Long> activityIds, LocalDate date) {

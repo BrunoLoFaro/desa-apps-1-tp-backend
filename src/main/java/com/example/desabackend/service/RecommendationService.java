@@ -6,8 +6,10 @@ import com.example.desabackend.entity.ActivityCategory;
 import com.example.desabackend.entity.ActivityEntity;
 import com.example.desabackend.repository.ActivityRepository;
 import com.example.desabackend.repository.ActivitySessionRepository;
+import com.example.desabackend.repository.FavoriteRepository;
 import com.example.desabackend.repository.ReviewRepository;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 /**
  * Recommended activities use-case.
- *
  * Ranking is based on user preferences (destinations/categories) with simple scoring and deterministic tie-breakers.
  */
 public class RecommendationService {
@@ -30,17 +31,20 @@ public class RecommendationService {
     private final ActivitySessionRepository sessionRepository;
     private final ReviewRepository reviewRepository;
     private final UserPreferenceService userPreferenceService;
+    private final FavoriteRepository favoriteRepository;
 
     public RecommendationService(
             ActivityRepository activityRepository,
             ActivitySessionRepository sessionRepository,
             ReviewRepository reviewRepository,
-            UserPreferenceService userPreferenceService
+            UserPreferenceService userPreferenceService,
+            FavoriteRepository favoriteRepository
     ) {
         this.activityRepository = activityRepository;
         this.sessionRepository = sessionRepository;
         this.reviewRepository = reviewRepository;
         this.userPreferenceService = userPreferenceService;
+        this.favoriteRepository = favoriteRepository;
     }
 
     @Transactional(readOnly = true)
@@ -103,8 +107,18 @@ public class RecommendationService {
                                 Function.identity(),
                                 (a, b) -> a
                         ));
+
+        var favoriteIds = new HashSet<>(favoriteRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(f -> f.getActivity().getId())
+                .toList());
+
         List<ActivitySummaryDto> items = pageResult.getContent().stream()
-                .map(a -> ActivityDtoMapper.toSummaryDto(a, aggregatesByActivityId.get(a.getId()), ratingsByActivityId.get(a.getId())))
+                .map(a -> ActivityDtoMapper.toSummaryDto(
+                        a,
+                        aggregatesByActivityId.get(a.getId()),
+                        ratingsByActivityId.get(a.getId()),
+                        favoriteIds.contains(a.getId())
+                ))
                 .toList();
 
         return new PageResponse<>(

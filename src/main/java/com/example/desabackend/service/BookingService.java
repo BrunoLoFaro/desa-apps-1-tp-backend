@@ -124,7 +124,7 @@ public class BookingService {
                     .plusMinutes(activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0);
             canReview = !LocalDateTime.now(clock).isAfter(sessionEnd.plusHours(REVIEW_WINDOW_HOURS));
         }
-        return new BookingDto(booking.getId(), session.getId(), activity.getName(), dest, guideName,
+        return new BookingDto(booking.getId(), session.getId(), activity.getId(), activity.getName(), dest, guideName,
                 session.getStartTime(), activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0,
                 booking.getParticipants(), booking.getTotalPrice(), activity.getCurrency(),
                 booking.getStatus(), activity.getCancellationPolicy(),

@@ -93,6 +93,22 @@ Accept: {{json}}
 }
 
 ### ============================================
+### FAVORITOS
+### ============================================
+
+### Obtener favoritos (requiere token)
+GET {{baseUrl}}/favorites
+Authorization: Bearer {{token}}
+
+### Agregar a favoritos (requiere token)
+POST {{baseUrl}}/favorites/1
+Authorization: Bearer {{token}}
+
+### Quitar de favoritos (requiere token)
+DELETE {{baseUrl}}/favorites/1
+Authorization: Bearer {{token}}
+
+### ============================================
 ### FLUJO LOGIN CLÁSICO (Email + Contraseña)
 ### ============================================
 
