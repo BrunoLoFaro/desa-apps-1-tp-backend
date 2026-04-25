@@ -38,16 +38,16 @@ INSERT INTO activities (id, name, image_url, description, includes_text, meeting
 SET IDENTITY_INSERT activities OFF;
 
 -- Actualiza image_url en filas existentes (se ejecuta siempre, idempotente)
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1544986581-efac024faf62' WHERE id = 1;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/17914080/pexels-photo-17914080.jpeg' WHERE id = 1;
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1503095396549-807759245b35' WHERE id = 2;
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836' WHERE id = 3;
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1501785888041-af3ef285b470' WHERE id = 4;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1519681393784-d120267933ba' WHERE id = 5;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/2702805/pexels-photo-2702805.jpeg' WHERE id = 5;
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee' WHERE id = 6;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e' WHERE id = 7;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad' WHERE id = 8;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop' WHERE id = 9;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff' WHERE id = 10;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/13858336/pexels-photo-13858336.jpeg' WHERE id = 7;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/29714312/pexels-photo-29714312.jpeg' WHERE id = 8;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/10553977/pexels-photo-10553977.jpeg' WHERE id = 9;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/26654240/pexels-photo-26654240.jpeg' WHERE id = 10;
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e' WHERE id = 11;
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e' WHERE id = 12;
 
