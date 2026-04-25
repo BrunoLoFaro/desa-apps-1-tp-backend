@@ -39,7 +39,7 @@ class ActivityDtoMapperTest {
         when(ratingAgg.getAvgRating()).thenReturn(4.6);
         when(ratingAgg.getReviewCount()).thenReturn(11L);
 
-        var dto = ActivityDtoMapper.toSummaryDto(activity, sessionAgg, ratingAgg);
+        var dto = ActivityDtoMapper.toSummaryDto(activity, sessionAgg, ratingAgg, true);
 
         assertThat(dto.price()).isEqualByComparingTo("1200.00");
         assertThat(dto.availableSpots()).isEqualTo(8);
@@ -63,7 +63,7 @@ class ActivityDtoMapperTest {
         destination.setName("CABA");
         activity.setDestination(destination);
 
-        var dto = ActivityDtoMapper.toSummaryDto(activity, null, null);
+        var dto = ActivityDtoMapper.toSummaryDto(activity, null, null, false);
 
         assertThat(dto.price()).isEqualByComparingTo("0.00");
         assertThat(dto.availableSpots()).isZero();

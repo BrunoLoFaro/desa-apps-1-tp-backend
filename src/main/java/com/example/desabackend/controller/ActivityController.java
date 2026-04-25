@@ -50,7 +50,8 @@ public class ActivityController {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice
     ) {
-        return catalogService.listActivities(page, size, destinationId, category, date, minPrice, maxPrice, false);
+        Long userId = AuthUtils.getCurrentUserId();
+        return catalogService.listActivities(page, size, destinationId, category, date, minPrice, maxPrice, false, userId);
     }
 
     @GetMapping("/activities/featured")
@@ -63,7 +64,8 @@ public class ActivityController {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice
     ) {
-        return catalogService.listActivities(page, size, destinationId, category, date, minPrice, maxPrice, true);
+        Long userId = AuthUtils.getCurrentUserId();
+        return catalogService.listActivities(page, size, destinationId, category, date, minPrice, maxPrice, true, userId);
     }    @GetMapping("/activities/recommended")
     public PageResponse<ActivitySummaryDto> listRecommended(
             @RequestParam(required = false) @Min(0) Integer page,
@@ -80,7 +82,8 @@ public class ActivityController {
             @PathVariable Long activityId,
             @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate date
     ) {
-        return catalogService.getActivityDetail(activityId, date);
+        Long userId = AuthUtils.getCurrentUserId();
+        return catalogService.getActivityDetail(activityId, date, userId);
     }
 
     @GetMapping("/categories")
