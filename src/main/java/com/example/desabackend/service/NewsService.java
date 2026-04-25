@@ -53,7 +53,6 @@ public class NewsService {
     /**
      * Fetch paginated list of news from XploreNow API.
      * Results are cached for 5 minutes (configurable via cache.news.ttl).
-     * Falls back to mock data if external API fails.
      */
     @Cacheable(value = "newsList", key = "'list_' + #page + '_' + #size")
     public PageResponse<NewsDto> listNews(Integer page, Integer size) {
@@ -69,18 +68,17 @@ public class NewsService {
 
             return parseNewsListResponse(response, safePage, safeSize);
         } catch (WebClientResponseException e) {
-            logger.warn("Error fetching news from XploreNow API: {}, using mock data", e.getStatusCode());
-            return getMockNewsList(safePage, safeSize);
+            logger.error("Error fetching news from XploreNow API: {}", e.getStatusCode());
+            throw new RuntimeException("Failed to fetch news from external API", e);
         } catch (Exception e) {
-            logger.warn("Unexpected error fetching news, using mock data: {}", e.getMessage());
-            return getMockNewsList(safePage, safeSize);
+            logger.error("Unexpected error fetching news", e);
+            throw new RuntimeException("Unexpected error fetching news", e);
         }
     }
 
     /**
      * Fetch detailed information for a specific news item.
      * Results are cached for 5 minutes.
-     * Falls back to mock data if external API fails.
      */
     @Cacheable(value = "newsDetail", key = "#newsId")
     public NewsDetailDto getNewsDetail(Long newsId) {
@@ -96,148 +94,11 @@ public class NewsService {
             if (e.getStatusCode().value() == 404) {
                 throw new NotFoundException("News not found: " + newsId);
             }
-            logger.warn("Error fetching news detail from XploreNow API: {}, using mock data", e.getStatusCode());
-            return getMockNewsDetail(newsId);
+            logger.error("Error fetching news detail from XploreNow API: {}", e.getStatusCode());
+            throw new RuntimeException("Failed to fetch news detail from external API", e);
         } catch (Exception e) {
-            logger.warn("Unexpected error fetching news detail, using mock data: {}", e.getMessage());
-            return getMockNewsDetail(newsId);
-        }
-    }
-
-    /**
-     * Returns mock news data for testing when external API is unavailable.
-     */
-    private PageResponse<NewsDto> getMockNewsList(int page, int size) {
-        List<NewsDto> mockItems = new ArrayList<>();
-        
-        mockItems.add(new NewsDto(
-                1L,
-                "¡Nueva ruta de senderismo en la Patagonia!",
-                "Descubre los paisajes más impresionantes de la Patagonia con nuestra nueva ruta guiada.",
-                "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-                NewsType.NEWS,
-                null,
-                LocalDateTime.now().minusDays(2),
-                LocalDateTime.now().plusDays(30)
-        ));
-        
-        mockItems.add(new NewsDto(
-                2L,
-                "50% de descuento en excursiones a Bariloche",
-                "Aprovecha esta oferta especial para visitar Bariloche con precio reducido.",
-                "https://images.unsplash.com/photo-1531310197838-673665d45428?w=800",
-                NewsType.OFFER,
-                10L,
-                LocalDateTime.now().minusDays(1),
-                LocalDateTime.now().plusDays(7)
-        ));
-        
-        mockItems.add(new NewsDto(
-                3L,
-                "Destacado: Cataratas del Iguazú",
-                "Una de las maravillas naturales del mundo te espera. Reserva ahora tu viaje.",
-                "https://images.unsplash.com/photo-1591175493419-990a2d9bfe9a?w=800",
-                NewsType.FEATURED_DESTINATION,
-                15L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(60)
-        ));
-        
-        mockItems.add(new NewsDto(
-                4L,
-                "Nuevo tour gastronómico en Mendoza",
-                "Disfruta de los mejores vinos y comidas típicas de la región.",
-                "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-                NewsType.NEWS,
-                null,
-                LocalDateTime.now().minusDays(5),
-                null
-        ));
-        
-        mockItems.add(new NewsDto(
-                5L,
-                "Pack familiar: 2x1 en parques temáticos",
-                "Lleva a tu familia a divertirse con esta oferta exclusiva por tiempo limitado.",
-                "https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?w=800",
-                NewsType.OFFER,
-                20L,
-                LocalDateTime.now().minusHours(12),
-                LocalDateTime.now().plusDays(3)
-        ));
-
-        int totalElements = mockItems.size();
-        int totalPages = (int) Math.ceil((double) totalElements / size);
-        
-        return new PageResponse<>(mockItems, page, size, totalElements, totalPages);
-    }
-
-    /**
-     * Returns mock news detail for testing when external API is unavailable.
-     */
-    private NewsDetailDto getMockNewsDetail(Long newsId) {
-        LocalDateTime now = LocalDateTime.now();
-        
-        switch (newsId.intValue()) {
-            case 1:
-                return new NewsDetailDto(
-                        1L,
-                        "¡Nueva ruta de senderismo en la Patagonia!",
-                        "Descubre los paisajes más impresionantes de la Patagonia con nuestra nueva ruta guiada.",
-                        "Hemos lanzado una emocionante nueva ruta de senderismo que te llevará a través de los paisajes más espectaculares de la Patagonia. Esta ruta de 3 días incluye caminatas por glaciares, lagos cristalinos y montañas imponentes. Contarás con guías expertos, equipo de alta calidad y alojamiento en refugios confortables. No te pierdas esta oportunidad única de explorar uno de los destinos más impresionantes del mundo.",
-                        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-                        NewsType.NEWS,
-                        null,
-                        null,
-                        now.minusDays(2),
-                        now.plusDays(30),
-                        "Reservar ahora",
-                        null
-                );
-            case 2:
-                return new NewsDetailDto(
-                        2L,
-                        "50% de descuento en excursiones a Bariloche",
-                        "Aprovecha esta oferta especial para visitar Bariloche con precio reducido.",
-                        "Por tiempo limitado, ofrecemos un 50% de descuento en todas nuestras excursiones a Bariloche. Incluye transporte, alojamiento en hotel 4 estrellas y visitas a los principales puntos turísticos: Cerro Catedral, Lago Nahuel Huapi, Circuito Chico y más. Esta oferta es válida hasta fin de mes. ¡No te la pierdas!",
-                        "https://images.unsplash.com/photo-1531310197838-673665d45428?w=800",
-                        NewsType.OFFER,
-                        10L,
-                        "Excursión a Bariloche",
-                        now.minusDays(1),
-                        now.plusDays(7),
-                        "Ver oferta",
-                        null
-                );
-            case 3:
-                return new NewsDetailDto(
-                        3L,
-                        "Destacado: Cataratas del Iguazú",
-                        "Una de las maravillas naturales del mundo te espera. Reserva ahora tu viaje.",
-                        "Las Cataratas del Iguazú son una de las maravillas naturales del mundo y un destino que debes visitar al menos una vez en la vida. Nuestro paquete incluye vuelos, alojamiento en hotel frente a las cataratas, visitas guiadas a ambos lados (argentino y brasileño), y excursiones en bote por debajo de las cascadas. Una experiencia inolvidable te espera.",
-                        "https://images.unsplash.com/photo-1591175493419-990a2d9bfe9a?w=800",
-                        NewsType.FEATURED_DESTINATION,
-                        15L,
-                        "Tour a Cataratas del Iguazú",
-                        now,
-                        now.plusDays(60),
-                        "Reservar viaje",
-                        null
-                );
-            default:
-                return new NewsDetailDto(
-                        newsId,
-                        "Noticia de prueba",
-                        "Esta es una noticia de prueba para demostrar la funcionalidad.",
-                        "Contenido completo de la noticia de prueba. Aquí puedes ver más detalles sobre la noticia cuando la API externa no está disponible.",
-                        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-                        NewsType.NEWS,
-                        null,
-                        null,
-                        now,
-                        null,
-                        null,
-                        null
-                );
+            logger.error("Unexpected error fetching news detail", e);
+            throw new RuntimeException("Unexpected error fetching news detail", e);
         }
     }
 
