@@ -13,6 +13,7 @@ public record BookingSummaryItemDto(
         String currency,
         String destination,
         String guideName,
-        Integer durationMinutes
+        Integer durationMinutes,
+        String imageUrl
 ) {
 }

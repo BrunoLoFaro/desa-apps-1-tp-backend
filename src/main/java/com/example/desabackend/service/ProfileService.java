@@ -136,7 +136,8 @@ public class ProfileService {
                             a.getCurrency(),
                             a.getDestination().getName(),
                             a.getGuide() != null ? a.getGuide().getFullName() : null,
-                            a.getDurationMinutes()
+                            a.getDurationMinutes(),
+                            a.getImageUrl()
                     );
                 })
                 .toList();
