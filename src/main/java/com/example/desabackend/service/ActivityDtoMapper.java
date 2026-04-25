@@ -27,6 +27,7 @@ final class ActivityDtoMapper {
         return new ActivitySummaryDto(
                 activity.getId(),
                 activity.getName(),
+                activity.getImageUrl(),
                 toDestinationDto(activity),
                 activity.getCategory(),
                 nonNullInt(activity.getDurationMinutes()),

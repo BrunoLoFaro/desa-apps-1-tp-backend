@@ -36,7 +36,12 @@ public class ActivityEntity {
     private Long id;
 
     @Column(nullable = false, length = 200)
-    private String name;    @Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
+    private String name;
+
+    @Column(length = 500)
+    private String imageUrl;
+
+    @Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
     @Column(columnDefinition = "NVARCHAR(MAX)")

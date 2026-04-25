@@ -129,6 +129,7 @@ public class ActivityCatalogService {
         return new ActivityDetailDto(
                 activity.getId(),
                 activity.getName(),
+                activity.getImageUrl(),
                 ActivityDtoMapper.toDestinationDto(activity),
                 activity.getCategory(),
                 activity.getDescription(),
