@@ -7,7 +7,6 @@ public class UserProfileDto {
         public String email;
         public String firstName;
         public String lastName;
-        public String dni;
         public String phone;
         public String profilePhotoUrl;
         public String profilePhotoBase64;

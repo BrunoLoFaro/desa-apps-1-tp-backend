@@ -21,8 +21,7 @@ import lombok.Setter;
 @Table(
         name = "users",
         indexes = {
-                @Index(name = "idx_users_email", columnList = "email", unique = true),
-                @Index(name = "idx_users_dni", columnList = "dni", unique = true)
+                @Index(name = "idx_users_email", columnList = "email", unique = true)
         }
 )
 public class UserEntity {
@@ -37,12 +36,11 @@ public class UserEntity {
     @Column(name = "password_hash", nullable = false, length = 100)
     private String passwordHash;
 
-        @Column(name = "first_name", nullable = false, length = 80)
-        private String firstName;
+    @Column(name = "first_name", nullable = false, length = 80)
+    private String firstName;
 
-        @Column(name = "last_name", nullable = false, length = 80)
-        private String lastName;        @Column(nullable = false, unique = true, length = 20)
-        private String dni;
+    @Column(name = "last_name", nullable = false, length = 80)
+    private String lastName;
 
     @Column(length = 30)
     private String phone;
@@ -56,7 +54,7 @@ public class UserEntity {
     private byte[] profilePhotoBlob;
 
     @Column(nullable = false)
-    private Boolean enabled = true;
+    private Boolean enabled = false;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -64,6 +62,6 @@ public class UserEntity {
     @PrePersist
     private void prePersist() {
         if (createdAt == null) createdAt = LocalDateTime.now();
-        if (enabled == null) enabled = true;
+        if (enabled == null) enabled = false;
     }
 }

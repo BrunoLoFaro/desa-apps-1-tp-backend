@@ -27,7 +27,6 @@ public class LoginResponseBuilder {
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getDni(),
                 token,
                 refreshToken
         );

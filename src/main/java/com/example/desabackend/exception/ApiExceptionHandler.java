@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @ControllerAdvice
-/**
- * Centralized REST error mapping to a stable JSON shape for Android.
- */
 public class ApiExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
@@ -26,7 +24,17 @@ public class ApiExceptionHandler {
             String error,
             String message,
             String path
-    ) {
+    ) {}
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .filter(m -> m != null && !m.isBlank())
+                .findFirst()
+                .orElse("Error de validación en los datos enviados.");
+        log.warn("Validation error: {} - Path: {}", message, request.getRequestURI());
+        return build(HttpStatus.BAD_REQUEST, message, request);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -37,14 +45,13 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiError> handleUnauthorized(UnauthorizedException ex, HttpServletRequest request) {
-        log.warn("Unauthorized access: {} - Path: {}", ex.getMessage(), request.getRequestURI());
+        log.warn("Unauthorized: {} - Path: {}", ex.getMessage(), request.getRequestURI());
         return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
     }
 
     @ExceptionHandler({
             MethodArgumentTypeMismatchException.class,
             MissingServletRequestParameterException.class,
-            MethodArgumentNotValidException.class,
             IllegalArgumentException.class
     })
     public ResponseEntity<ApiError> handleBadRequest(Exception ex, HttpServletRequest request) {
@@ -61,19 +68,23 @@ public class ApiExceptionHandler {
     @ExceptionHandler(EmailDeliveryException.class)
     public ResponseEntity<ApiError> handleEmailDelivery(EmailDeliveryException ex, HttpServletRequest request) {
         log.error("Email delivery failed: {} - Path: {}", ex.getMessage(), request.getRequestURI(), ex);
-        return build(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), request);
+        return build(HttpStatus.SERVICE_UNAVAILABLE,
+                "No pudimos enviar el código de verificación. Verificá tu correo o reintentá más tarde.",
+                request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
         log.error("Data integrity violation: {} - Path: {}", ex.getMessage(), request.getRequestURI(), ex);
-        return build(HttpStatus.BAD_REQUEST, "Datos invalidos o duplicados", request);
+        return build(HttpStatus.BAD_REQUEST, "Datos inválidos o duplicados.", request);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleInternal(Exception ex, HttpServletRequest request) {
         log.error("Internal server error at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", request);
+        return build(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Ocurrió un error en el servidor. Por favor, reintentá más tarde.",
+                request);
     }
 
     private static ResponseEntity<ApiError> build(HttpStatus status, String message, HttpServletRequest request) {
