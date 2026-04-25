@@ -10,6 +10,8 @@ public interface IOtpService {
 
     OtpResponseDto resendSignupOtp(String email);
 
+    OtpResponseDto resendLoginOtp(String email);
+
     LoginResponseDto verifySignupOtpCode(String email, String code);
 
     OtpResponseDto sendLoginOtp(String email);

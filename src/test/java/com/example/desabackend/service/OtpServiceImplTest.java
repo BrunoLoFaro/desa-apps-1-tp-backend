@@ -75,13 +75,15 @@ class OtpServiceImplTest {
     }
 
     @Test
-    void requestSignupOtp_noUser_createsOtpAnyway() {
+    void requestSignupOtp_noUser_throwsIllegalArgument() {
         when(userRepository.findByEmailIgnoreCase("new@test.com")).thenReturn(Optional.empty());
 
-        OtpResponseDto result = otpService.requestSignupOtp("new@test.com");
+        assertThatThrownBy(() -> otpService.requestSignupOtp("new@test.com"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("No existe");
 
-        verify(otpRepository).save(any(OtpEntity.class));
-        assertThat(result.email()).isEqualTo("new@test.com");
+        verify(otpRepository, never()).save(any(OtpEntity.class));
+        verify(mailSender, never()).send(any(SimpleMailMessage.class));
     }
 
     // ── resendSignupOtp ────────────────────────────────────────────────────────

@@ -76,8 +76,6 @@ public class OtpServiceImpl implements IOtpService {
     @Transactional
     public OtpResponseDto resendSignupOtp(String email) {
         String normalizedEmail = EmailUtils.normalize(email);
-        // No se verifica el estado del usuario: funciona tanto para registro (pendiente)
-        // como para login OTP (activo). Solo se requiere que haya un OTP no verificado.
         if (!userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new IllegalArgumentException("No existe una cuenta con ese email.");
         }
@@ -85,6 +83,23 @@ public class OtpServiceImpl implements IOtpService {
                 normalizedEmail,
                 "No hay un OTP pendiente para este email. Solicitá uno nuevo.",
                 "Nuevo código OTP reenviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
+        );
+    }
+
+    @Override
+    @Transactional
+    public OtpResponseDto resendLoginOtp(String email) {
+        String normalizedEmail = EmailUtils.normalize(email);
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("No existe una cuenta con ese email."));
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            throw new IllegalArgumentException(
+                    "Tu cuenta aún no está verificada. Completá el registro primero.");
+        }
+        return resendOtpInternal(
+                normalizedEmail,
+                "No hay un OTP pendiente para este email. Solicitá uno nuevo.",
+                "Nuevo código de acceso reenviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
         );
     }
 
@@ -274,12 +289,13 @@ public class OtpServiceImpl implements IOtpService {
     }
 
     private void requirePendingUser(String normalizedEmail) {
-        userRepository.findByEmailIgnoreCase(normalizedEmail).ifPresent(user -> {
-            if (Boolean.TRUE.equals(user.getEnabled())) {
-                throw new IllegalArgumentException(
-                        "Este email ya está registrado. Usá login o recuperá tu contraseña.");
-            }
-        });
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe una cuenta con ese email."));
+        if (Boolean.TRUE.equals(user.getEnabled())) {
+            throw new IllegalArgumentException(
+                    "Este email ya está registrado. Usá login o recuperá tu contraseña.");
+        }
     }
 
     private UserEntity requireExistingUser(String normalizedEmail) {

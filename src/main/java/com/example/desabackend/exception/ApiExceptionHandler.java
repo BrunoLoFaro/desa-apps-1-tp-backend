@@ -60,8 +60,8 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiError> handleConflict(IllegalStateException ex, HttpServletRequest request) {
-        log.warn("Conflict: {} - Path: {}", ex.getMessage(), request.getRequestURI());
+    public ResponseEntity<ApiError> handleTooManyRequests(IllegalStateException ex, HttpServletRequest request) {
+        log.warn("Too many requests: {} - Path: {}", ex.getMessage(), request.getRequestURI());
         return build(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage(), request);
     }
 

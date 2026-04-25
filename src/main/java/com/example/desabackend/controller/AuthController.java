@@ -72,7 +72,7 @@ public class AuthController {
 
     @PostMapping("/otp/resend")
     public OtpResponseDto resendLoginOtp(@Valid @RequestBody OtpRequestDto request) {
-        return otpService.resendSignupOtp(request.email());
+        return otpService.resendLoginOtp(request.email());
     }
 
     @PostMapping("/otp/verify")

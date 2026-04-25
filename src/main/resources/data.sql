@@ -78,8 +78,8 @@ SET IDENTITY_INSERT activity_sessions OFF;
 
 -- 5. USERS DE PRUEBA (password = "123456" con BCrypt)
 SET IDENTITY_INSERT users ON;
-INSERT INTO users (id, email, password_hash, first_name, last_name, dni, phone, profile_photo_url, enabled, created_at) VALUES (1, 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test', 'User', '11222333', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00');
-INSERT INTO users (id, email, password_hash, first_name, last_name, dni, phone, profile_photo_url, enabled, created_at) VALUES (2, 'maria@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Maria', 'Lopez', '22333444', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00');
+INSERT INTO users (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at) VALUES (1, 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test', 'User', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00');
+INSERT INTO users (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at) VALUES (2, 'maria@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Maria', 'Lopez', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00');
 SET IDENTITY_INSERT users OFF;
 
 -- 6. USER PREFERENCES (para /activities/recommended)
