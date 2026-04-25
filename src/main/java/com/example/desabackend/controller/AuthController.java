@@ -77,7 +77,7 @@ public class AuthController {
 
     @PostMapping("/otp/verify")
     public LoginResponseDto verifyLoginOtp(@Valid @RequestBody OtpCodeVerificationDto request) {
-        return otpService.verifySignupOtpCode(request.email(), request.code());
+        return otpService.verifyLoginOtp(request.email(), request.code());
     }
 
     // ── Recupero de contraseña ────────────────────────────────────────────────

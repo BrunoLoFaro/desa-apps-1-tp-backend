@@ -36,14 +36,11 @@ public class UserEntity {
     @Column(name = "password_hash", nullable = false, length = 100)
     private String passwordHash;
 
-        @Column(name = "first_name", nullable = false, length = 80)
-        private String firstName;
+    @Column(name = "first_name", nullable = false, length = 80)
+    private String firstName;
 
-        @Column(name = "last_name", nullable = false, length = 80)
-        private String lastName;
-
-        @Column(nullable = true, length = 20)
-        private String dni;
+    @Column(name = "last_name", nullable = false, length = 80)
+    private String lastName;
 
     @Column(length = 30)
     private String phone;
@@ -65,6 +62,6 @@ public class UserEntity {
     @PrePersist
     private void prePersist() {
         if (createdAt == null) createdAt = LocalDateTime.now();
-        if (enabled == null) enabled = true;
+        if (enabled == null) enabled = false;
     }
 }

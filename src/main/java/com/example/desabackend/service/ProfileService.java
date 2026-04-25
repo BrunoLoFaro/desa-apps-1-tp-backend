@@ -72,7 +72,6 @@ public class ProfileService {
         dto.email = user.getEmail();
         dto.firstName = user.getFirstName();
         dto.lastName = user.getLastName();
-        dto.dni = user.getDni();
         dto.phone = user.getPhone();
         dto.profilePhotoUrl = null;       // imagen gestionada íntegramente en Android
         dto.profilePhotoBase64 = null;

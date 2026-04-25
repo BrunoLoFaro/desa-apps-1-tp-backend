@@ -10,7 +10,6 @@ public record OtpRegistrationCompleteDto(
         @NotBlank @Pattern(regexp = "^\\d{6}$") String code,
         @NotBlank @Size(min = 6, max = 72) String password,
         @NotBlank @Size(min = 2, max = 80) String firstName,
-        @NotBlank @Size(min = 2, max = 80) String lastName,
-        @NotBlank @Pattern(regexp = "^[0-9]{7,10}$") String dni
+        @NotBlank @Size(min = 2, max = 80) String lastName
 ) {
 }

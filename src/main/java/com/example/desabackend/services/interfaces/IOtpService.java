@@ -14,6 +14,9 @@ public interface IOtpService {
 
     OtpResponseDto sendLoginOtp(String email);
 
+    /** Verifica el OTP para un usuario ya activo (login OTP). No activa cuentas pendientes. */
+    LoginResponseDto verifyLoginOtp(String email, String code);
+
     OtpResponseDto requestPasswordReset(String email);
 
     OtpResponseDto resendPasswordReset(String email);

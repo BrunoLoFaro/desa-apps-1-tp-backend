@@ -110,6 +110,25 @@ public class OtpServiceImpl implements IOtpService {
 
     @Override
     @Transactional
+    public LoginResponseDto verifyLoginOtp(String email, String code) {
+        String normalizedEmail = EmailUtils.normalize(email);
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("No existe una cuenta con ese email."));
+
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            throw new IllegalArgumentException(
+                    "Tu cuenta aún no está verificada. Completá el registro primero.");
+        }
+
+        OtpEntity otp = getActiveOtp(normalizedEmail);
+        validateOtpCode(otp, code);
+        markOtpVerified(otp);
+
+        return loginResponseBuilder.build(user);
+    }
+
+    @Override
+    @Transactional
     public OtpResponseDto sendLoginOtp(String email) {
         String normalizedEmail = EmailUtils.normalize(email);
         UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
