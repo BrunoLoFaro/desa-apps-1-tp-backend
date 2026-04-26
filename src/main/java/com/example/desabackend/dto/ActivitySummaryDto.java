@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public record ActivitySummaryDto(
         Long id,
         String name,
+        String imageUrl,
         DestinationDto destination,
         ActivityCategory category,
         int durationMinutes,

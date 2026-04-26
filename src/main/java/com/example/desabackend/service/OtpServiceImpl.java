@@ -1,17 +1,14 @@
 package com.example.desabackend.service;
 
 import com.example.desabackend.dto.LoginResponseDto;
-import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
 import com.example.desabackend.dto.PasswordResetConfirmDto;
-import com.example.desabackend.dto.RegisterRequestDto;
 import com.example.desabackend.entity.OtpEntity;
 import com.example.desabackend.entity.UserEntity;
 import com.example.desabackend.exception.EmailDeliveryException;
 import com.example.desabackend.exception.UnauthorizedException;
 import com.example.desabackend.repository.OtpRepository;
 import com.example.desabackend.repository.UserRepository;
-import com.example.desabackend.services.interfaces.IAuthService;
 import com.example.desabackend.services.interfaces.IOtpService;
 import com.example.desabackend.util.EmailUtils;
 import java.security.SecureRandom;
@@ -33,14 +30,12 @@ public class OtpServiceImpl implements IOtpService {
     private static final Logger logger = LoggerFactory.getLogger(OtpServiceImpl.class);
     private static final int OTP_EXPIRATION_MINUTES = 10;
     private static final int MAX_OTP_ATTEMPTS = 5;
-    // FIX: SecureRandom en lugar de Random (java.util.Random es predecible)
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final OtpRepository otpRepository;
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
     private final LoginResponseBuilder loginResponseBuilder;
-    private final IAuthService authService;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${spring.mail.from:noreply@xplorenow.com}")
@@ -57,14 +52,12 @@ public class OtpServiceImpl implements IOtpService {
             UserRepository userRepository,
             JavaMailSender mailSender,
             LoginResponseBuilder loginResponseBuilder,
-            IAuthService authService,
             PasswordEncoder passwordEncoder
     ) {
         this.otpRepository = otpRepository;
         this.userRepository = userRepository;
         this.mailSender = mailSender;
         this.loginResponseBuilder = loginResponseBuilder;
-        this.authService = authService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -72,7 +65,7 @@ public class OtpServiceImpl implements IOtpService {
     @Transactional
     public OtpResponseDto requestSignupOtp(String email) {
         String normalizedEmail = EmailUtils.normalize(email);
-        ensureEmailIsAvailable(normalizedEmail);
+        requirePendingUser(normalizedEmail);
         return createOtp(
                 normalizedEmail,
                 "Código OTP enviado al email. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
@@ -83,50 +76,93 @@ public class OtpServiceImpl implements IOtpService {
     @Transactional
     public OtpResponseDto resendSignupOtp(String email) {
         String normalizedEmail = EmailUtils.normalize(email);
-        ensureEmailIsAvailable(normalizedEmail);
+        if (!userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
+            throw new IllegalArgumentException("No existe una cuenta con ese email.");
+        }
         return resendOtpInternal(
                 normalizedEmail,
-                "No hay un OTP pendiente para este email. Solicita uno nuevo primero.",
+                "No hay un OTP pendiente para este email. Solicitá uno nuevo.",
                 "Nuevo código OTP reenviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
         );
     }
 
     @Override
     @Transactional
-    public OtpResponseDto verifySignupOtpCode(String email, String code) {
+    public OtpResponseDto resendLoginOtp(String email) {
         String normalizedEmail = EmailUtils.normalize(email);
-        ensureEmailIsAvailable(normalizedEmail);
-        OtpEntity otp = getActiveOtp(normalizedEmail);
-        validateOtpCode(otp, code);
-        return new OtpResponseDto("Código válido.", normalizedEmail);
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("No existe una cuenta con ese email."));
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            throw new IllegalArgumentException(
+                    "Tu cuenta aún no está verificada. Completá el registro primero.");
+        }
+        return resendOtpInternal(
+                normalizedEmail,
+                "No hay un OTP pendiente para este email. Solicitá uno nuevo.",
+                "Nuevo código de acceso reenviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
+        );
     }
 
     @Override
     @Transactional
-    public LoginResponseDto completeSignupWithOtp(OtpRegistrationCompleteDto request) {
-        String normalizedEmail = EmailUtils.normalize(request.email());
-        ensureEmailIsAvailable(normalizedEmail);
+    public LoginResponseDto verifySignupOtpCode(String email, String code) {
+        String normalizedEmail = EmailUtils.normalize(email);
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("No existe una cuenta con ese email."));
 
         OtpEntity otp = getActiveOtp(normalizedEmail);
-        validateOtpCode(otp, request.code());
-
-        LoginResponseDto response = authService.register(new RegisterRequestDto(
-                normalizedEmail,
-                request.password(),
-                request.firstName(),
-                request.lastName(),
-                request.dni()
-        ));
-
+        validateOtpCode(otp, code);
         markOtpVerified(otp);
-        return response;
+
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            user.setEnabled(true);
+            userRepository.save(user);
+            logger.info("User {} activated after OTP verification.", normalizedEmail);
+        }
+
+        return loginResponseBuilder.build(user);
+    }
+
+    @Override
+    @Transactional
+    public LoginResponseDto verifyLoginOtp(String email, String code) {
+        String normalizedEmail = EmailUtils.normalize(email);
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("No existe una cuenta con ese email."));
+
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            throw new IllegalArgumentException(
+                    "Tu cuenta aún no está verificada. Completá el registro primero.");
+        }
+
+        OtpEntity otp = getActiveOtp(normalizedEmail);
+        validateOtpCode(otp, code);
+        markOtpVerified(otp);
+
+        return loginResponseBuilder.build(user);
+    }
+
+    @Override
+    @Transactional
+    public OtpResponseDto sendLoginOtp(String email) {
+        String normalizedEmail = EmailUtils.normalize(email);
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe una cuenta registrada con ese email."));
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            throw new IllegalArgumentException(
+                    "Tu cuenta aún no está verificada. Completá el registro primero.");
+        }
+        return createOtp(
+                normalizedEmail,
+                "Código de acceso enviado. Válido por " + OTP_EXPIRATION_MINUTES + " minutos."
+        );
     }
 
     @Override
     @Transactional
     public OtpResponseDto requestPasswordReset(String email) {
         String normalizedEmail = EmailUtils.normalize(email);
-        // FIX: respuesta genérica para no revelar si el email existe (user enumeration)
         String successMessage =
                 "Si existe una cuenta con este email, recibirás un código de recuperación.";
         if (!userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
@@ -148,7 +184,7 @@ public class OtpServiceImpl implements IOtpService {
     }
 
     @Override
-    @Transactional  // FIX: era @Transactional(readOnly=true) pero validateOtpCode escribe attemptCount
+    @Transactional
     public OtpResponseDto verifyPasswordResetCode(String email, String code) {
         String normalizedEmail = EmailUtils.normalize(email);
         requireExistingUser(normalizedEmail);
@@ -158,7 +194,7 @@ public class OtpServiceImpl implements IOtpService {
     }
 
     @Override
-    @Transactional  // FIX: faltaba @Transactional — sin esto, un fallo parcial deja estado inconsistente
+    @Transactional
     public LoginResponseDto confirmPasswordReset(PasswordResetConfirmDto request) {
         String normalizedEmail = EmailUtils.normalize(request.email());
         UserEntity user = requireExistingUser(normalizedEmail);
@@ -167,6 +203,9 @@ public class OtpServiceImpl implements IOtpService {
         validateOtpCode(otp, request.code());
 
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        if (Boolean.FALSE.equals(user.getEnabled())) {
+            user.setEnabled(true);
+        }
         UserEntity savedUser = userRepository.save(user);
         markOtpVerified(otp);
 
@@ -199,8 +238,6 @@ public class OtpServiceImpl implements IOtpService {
 
     private OtpResponseDto resendOtpInternal(
             String normalizedEmail, String notFoundMessage, String successMessage) {
-        // FIX: solo buscar OTPs no verificados (antes usaba findTopByEmailOrderByCreatedAtDesc
-        //      que podía encontrar un OTP ya verificado)
         OtpEntity lastOtp = otpRepository
                 .findTopByEmailAndVerifiedFalseOrderByCreatedAtDesc(normalizedEmail)
                 .orElseThrow(() -> new IllegalArgumentException(notFoundMessage));
@@ -228,16 +265,16 @@ public class OtpServiceImpl implements IOtpService {
                 .findTopByEmailAndVerifiedFalseAndExpiresAtAfterOrderByCreatedAtDesc(
                         normalizedEmail, LocalDateTime.now())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "No hay un código OTP activo o válido para este email. Solicita uno nuevo."));
+                        "No hay un código OTP activo o válido para este email. Solicitá uno nuevo."));
     }
 
     private void validateOtpCode(OtpEntity otp, String code) {
         if (otp.getAttemptCount() >= MAX_OTP_ATTEMPTS) {
             throw new IllegalStateException(
-                    "Demasiados intentos fallidos. Solicita un nuevo código OTP.");
+                    "Demasiados intentos fallidos. Solicitá un nuevo código OTP.");
         }
         if (otp.isExpired()) {
-            throw new IllegalArgumentException("El código OTP ha expirado. Solicita uno nuevo.");
+            throw new IllegalArgumentException("El código OTP ha expirado. Solicitá uno nuevo.");
         }
         if (!otp.getCode().equals(code)) {
             otp.setAttemptCount(otp.getAttemptCount() + 1);
@@ -251,8 +288,11 @@ public class OtpServiceImpl implements IOtpService {
         otpRepository.save(otp);
     }
 
-    private void ensureEmailIsAvailable(String normalizedEmail) {
-        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
+    private void requirePendingUser(String normalizedEmail) {
+        UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe una cuenta con ese email."));
+        if (Boolean.TRUE.equals(user.getEnabled())) {
             throw new IllegalArgumentException(
                     "Este email ya está registrado. Usá login o recuperá tu contraseña.");
         }

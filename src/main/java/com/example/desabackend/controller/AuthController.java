@@ -4,7 +4,6 @@ import com.example.desabackend.dto.LoginRequestDto;
 import com.example.desabackend.dto.LoginResponseDto;
 import com.example.desabackend.dto.OtpCodeVerificationDto;
 import com.example.desabackend.dto.OtpRequestDto;
-import com.example.desabackend.dto.OtpRegistrationCompleteDto;
 import com.example.desabackend.dto.OtpResponseDto;
 import com.example.desabackend.dto.PasswordResetConfirmDto;
 import com.example.desabackend.dto.RefreshRequestDto;
@@ -44,23 +43,14 @@ public class AuthController {
         return authService.login(request);
     }
 
+    /** Crea un usuario pendiente de verificación y dispara el OTP al email. */
     @PostMapping("/register")
-    public LoginResponseDto register(@Valid @RequestBody RegisterRequestDto request) {
+    public OtpResponseDto register(@Valid @RequestBody RegisterRequestDto request) {
+        logger.info("Register request for email={}", request.email());
         return authService.register(request);
     }
 
-    @PostMapping("/signup/otp/request")
-    public OtpResponseDto requestSignupOtp(@Valid @RequestBody OtpRequestDto request) {
-        logger.info("Received signup OTP request for email={}", request.email());
-        try {
-            OtpResponseDto response = otpService.requestSignupOtp(request.email());
-            logger.info("Signup OTP request processed for email={}, message={}", request.email(), response.message());
-            return response;
-        } catch (Exception e) {
-            logger.error("Error processing signup OTP request for email={}: {}", request.email(), e.getMessage(), e);
-            throw e;
-        }
-    }
+    // ── OTP signup (verificación de cuenta tras registro) ─────────────────────
 
     @PostMapping("/signup/otp/resend")
     public OtpResponseDto resendSignupOtp(@Valid @RequestBody OtpRequestDto request) {
@@ -68,14 +58,29 @@ public class AuthController {
     }
 
     @PostMapping("/signup/otp/verify")
-    public OtpResponseDto verifySignupOtpCode(@Valid @RequestBody OtpCodeVerificationDto request) {
+    public LoginResponseDto verifySignupOtpCode(@Valid @RequestBody OtpCodeVerificationDto request) {
         return otpService.verifySignupOtpCode(request.email(), request.code());
     }
 
-    @PostMapping("/signup/otp/complete")
-    public LoginResponseDto completeSignupWithOtp(@Valid @RequestBody OtpRegistrationCompleteDto request) {
-        return otpService.completeSignupWithOtp(request);
+    // ── OTP login (ingresar con código de un solo uso) ────────────────────────
+
+    @PostMapping("/otp/send")
+    public OtpResponseDto sendLoginOtp(@Valid @RequestBody OtpRequestDto request) {
+        logger.info("OTP login request for email={}", request.email());
+        return otpService.sendLoginOtp(request.email());
     }
+
+    @PostMapping("/otp/resend")
+    public OtpResponseDto resendLoginOtp(@Valid @RequestBody OtpRequestDto request) {
+        return otpService.resendLoginOtp(request.email());
+    }
+
+    @PostMapping("/otp/verify")
+    public LoginResponseDto verifyLoginOtp(@Valid @RequestBody OtpCodeVerificationDto request) {
+        return otpService.verifyLoginOtp(request.email(), request.code());
+    }
+
+    // ── Recupero de contraseña ────────────────────────────────────────────────
 
     @PostMapping("/password-reset/request")
     public OtpResponseDto requestPasswordReset(@Valid @RequestBody OtpRequestDto request) {
