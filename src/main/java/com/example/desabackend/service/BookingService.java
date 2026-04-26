@@ -128,6 +128,6 @@ public class BookingService {
                 session.getStartTime(), activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0,
                 booking.getParticipants(), booking.getTotalPrice(), activity.getCurrency(),
                 booking.getStatus(), activity.getCancellationPolicy(),
-                booking.getCreatedAt(), booking.getCancelledAt(), canReview);
+                booking.getCreatedAt(), booking.getCancelledAt(), canReview, booking.getVoucherCode());
     }
 }
