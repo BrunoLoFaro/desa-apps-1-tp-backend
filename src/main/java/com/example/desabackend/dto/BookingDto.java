@@ -21,6 +21,7 @@ public record BookingDto(
         LocalDateTime createdAt,
         LocalDateTime cancelledAt,
         boolean canReview,
-        String voucherCode
+        String voucherCode,
+        String meetingPoint
 ) {
 }
