@@ -1,0 +1,714 @@
+{
+  "info": {
+    "_postman_id": "xplorenow-auth-flow-v1",
+    "name": "XploreNow – Auth Flow",
+    "description": "Flujo completo: registro, verificación OTP, login con contraseña, login con OTP y recuperación de contraseña.\n\nVariables de colección:\n- baseUrl: URL base del backend\n- email / password: credenciales de prueba\n- accessToken / refreshToken: se auto-completan tras login o verify\n- otpCode: ingresar manualmente tras recibir el email",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",      "value": "http://localhost:8080/api/v1", "type": "string" },
+    { "key": "email",        "value": "test@example.com",             "type": "string" },
+    { "key": "password",     "value": "Password1@",                   "type": "string" },
+    { "key": "newPassword",  "value": "NewPass99!",                   "type": "string" },
+    { "key": "firstName",    "value": "Test",                         "type": "string" },
+    { "key": "lastName",     "value": "User",                         "type": "string" },
+    { "key": "phone",        "value": "1122334455",                   "type": "string" },
+    { "key": "otpCode",      "value": "000000",                       "type": "string",  "description": "Ingresar el código recibido por email antes de llamar a /verify" },
+    { "key": "accessToken",  "value": "",                             "type": "string",  "description": "Se completa automáticamente tras login/verify exitoso" },
+    { "key": "refreshToken", "value": "",                             "type": "string",  "description": "Se completa automáticamente tras login/verify exitoso" },
+    { "key": "userId",       "value": "",                             "type": "string",  "description": "Se completa automáticamente tras login/verify exitoso" }
+  ],
+  "item": [
+
+    {
+      "name": "1. Sign Up Flow",
+      "description": "Registro de cuenta nueva y verificación con código OTP.\nOrden: Register → (recibir email) → Verify OTP\nSi no llega el email: Resend OTP → Verify OTP",
+      "item": [
+
+        {
+          "name": "1.1 Registrar usuario nuevo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"firstName\": \"{{firstName}}\",\n  \"lastName\": \"{{lastName}}\",\n  \"phone\": \"{{phone}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Crea usuario pendiente (enabled=false) y envía OTP al email.\nRetorna OtpResponseDto { message, email }.\nSi el usuario ya existe como pendiente: actualiza datos y reenvía OTP.\nSi ya existe como activo: 400 error."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Respuesta tiene email', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('email');",
+                  "    pm.expect(body).to.have.property('message');",
+                  "    console.log('Mensaje:', body.message);",
+                  "    console.log('Revisá el email o MailHog (http://localhost:8025) para obtener el código OTP.');",
+                  "    console.log('Luego actualizá la variable \"otpCode\" con el código recibido.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "1.2 Verificar OTP de registro",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/signup/otp/verify", "host": ["{{baseUrl}}"], "path": ["auth","signup","otp","verify"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"{{otpCode}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Valida el OTP. Si es correcto: activa la cuenta (enabled=true) y devuelve JWT.\nRetorna LoginResponseDto { userId, email, firstName, lastName, token, refreshToken }.\nActualiza automáticamente accessToken y refreshToken en la colección."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Devuelve token JWT', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('token');",
+                  "    pm.expect(body).to.have.property('refreshToken');",
+                  "    pm.expect(body).to.have.property('userId');",
+                  "    pm.collectionVariables.set('accessToken', body.token);",
+                  "    pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "    pm.collectionVariables.set('userId', String(body.userId));",
+                  "    console.log('Usuario activado. Token guardado en colección.');",
+                  "    console.log('userId:', body.userId, '| email:', body.email);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "1.3 Reenviar OTP de registro",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/signup/otp/resend", "host": ["{{baseUrl}}"], "path": ["auth","signup","otp","resend"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Reenvía el OTP de registro si el usuario está pendiente de verificación.\nReutiliza el OTP existente no verificado, renueva código y expiración.\nRetorna OtpResponseDto { message, email }."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Respuesta tiene email', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('email');",
+                  "    console.log('Nuevo OTP enviado. Revisá el email o MailHog.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "2. Login con Contraseña",
+      "description": "Login clásico con email y contraseña. La cuenta debe estar activa (enabled=true).",
+      "item": [
+
+        {
+          "name": "2.1 Login con email y contraseña",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Valida credenciales. Requiere cuenta activa (enabled=true).\nRetorna LoginResponseDto { userId, email, firstName, lastName, token, refreshToken }.\nErrores:\n- 401 si email no existe o contraseña incorrecta\n- 401 si cuenta no está verificada"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Devuelve token JWT', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('token');",
+                  "    pm.expect(body).to.have.property('refreshToken');",
+                  "    pm.expect(body.token).to.be.a('string').and.not.empty;",
+                  "    pm.collectionVariables.set('accessToken', body.token);",
+                  "    pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "    pm.collectionVariables.set('userId', String(body.userId));",
+                  "    console.log('Login OK. userId:', body.userId, '| nombre:', body.firstName, body.lastName);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "2.2 Credenciales inválidas (error esperado 401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"contraseña_incorrecta_123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Verifica que contraseña incorrecta retorna 401 con mensaje de error."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401 (esperado)', () => pm.response.to.have.status(401));",
+                  "pm.test('Mensaje de error presente', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('message');",
+                  "    console.log('Error recibido:', body.message);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "2.3 Refrescar access token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/refresh", "host": ["{{baseUrl}}"], "path": ["auth","refresh"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Genera nuevo par access/refresh token usando el refresh token.\nRetorna RefreshResponseDto { token, refreshToken }."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Nuevos tokens generados', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('token');",
+                  "    pm.expect(body).to.have.property('refreshToken');",
+                  "    pm.collectionVariables.set('accessToken', body.token);",
+                  "    pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "    console.log('Token refrescado OK.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "3. Login con OTP (sin contraseña)",
+      "description": "Login usando código de un solo uso enviado al email.\nOrden: Enviar OTP → (recibir email) → Verificar OTP\nLa cuenta debe estar activa (enabled=true).",
+      "item": [
+
+        {
+          "name": "3.1 Solicitar OTP de login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/otp/send", "host": ["{{baseUrl}}"], "path": ["auth","otp","send"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Genera y envía OTP al email del usuario activo.\nRetorna OtpResponseDto { message, email }.\nError 400 si usuario no existe o si la cuenta no está verificada."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('OTP enviado', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('email');",
+                  "    console.log('OTP de login enviado a:', body.email);",
+                  "    console.log('Revisá el email o MailHog (http://localhost:8025) y actualizá la variable \"otpCode\".');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "3.2 Verificar OTP de login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/otp/verify", "host": ["{{baseUrl}}"], "path": ["auth","otp","verify"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"{{otpCode}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Valida el OTP de login. No activa cuentas pendientes.\nRetorna LoginResponseDto { userId, email, firstName, lastName, token, refreshToken }."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Login OTP exitoso', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('token');",
+                  "    pm.expect(body).to.have.property('refreshToken');",
+                  "    pm.collectionVariables.set('accessToken', body.token);",
+                  "    pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "    pm.collectionVariables.set('userId', String(body.userId));",
+                  "    console.log('Login OTP OK. userId:', body.userId);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "3.3 Reenviar OTP de login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/otp/resend", "host": ["{{baseUrl}}"], "path": ["auth","otp","resend"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Reenvía el OTP de login. Renueva código y expiración del OTP existente.\nRetorna OtpResponseDto { message, email }."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('OTP reenviado', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('email');",
+                  "    console.log('Nuevo OTP de login enviado a:', body.email);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "3.4 OTP inválido (error esperado 401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/otp/verify", "host": ["{{baseUrl}}"], "path": ["auth","otp","verify"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"000000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Verifica que código incorrecto retorna 401. Incrementa attemptCount (máx 5 intentos)."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401 (esperado)', () => pm.response.to.have.status(401));",
+                  "pm.test('Mensaje de error presente', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('message');",
+                  "    console.log('Error recibido:', body.message);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "4. Recuperación de Contraseña",
+      "description": "Reseteo de contraseña via OTP.\nOrden: Solicitar reset → (recibir email) → Verificar código → Confirmar nuevo password",
+      "item": [
+
+        {
+          "name": "4.1 Solicitar código de recuperación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/password-reset/request", "host": ["{{baseUrl}}"], "path": ["auth","password-reset","request"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Envía OTP de recuperación al email. Si el email no existe: retorna 200 igual (seguridad).\nRetorna OtpResponseDto { message, email }."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Respuesta ambigua (por seguridad)', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('message');",
+                  "    console.log('Mensaje:', body.message);",
+                  "    console.log('Si el email existe, revisá el email o MailHog para obtener el código.');",
+                  "    console.log('Actualizá la variable \"otpCode\" antes de llamar a /verify o /confirm.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "4.2 Verificar código de recuperación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/password-reset/verify", "host": ["{{baseUrl}}"], "path": ["auth","password-reset","verify"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"{{otpCode}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Valida que el código OTP es correcto (paso opcional antes de mostrar form de nueva contraseña).\nNo marca el OTP como usado. El código sigue vigente para el paso /confirm.\nRetorna OtpResponseDto { message, email }."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Código válido', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('message');",
+                  "    console.log('Código validado. Procedé a /confirm para cambiar la contraseña.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "4.3 Confirmar nueva contraseña",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/password-reset/confirm", "host": ["{{baseUrl}}"], "path": ["auth","password-reset","confirm"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"{{otpCode}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Valida OTP, cambia la contraseña y marca OTP como usado.\nnewPassword: mínimo 6 caracteres, máximo 72.\nRetorna LoginResponseDto con token nuevo (el usuario queda logueado)."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Contraseña cambiada, JWT devuelto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('token');",
+                  "    pm.expect(body).to.have.property('refreshToken');",
+                  "    pm.collectionVariables.set('accessToken', body.token);",
+                  "    pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "    pm.collectionVariables.set('userId', String(body.userId));",
+                  "    console.log('Contraseña actualizada. Token guardado. userId:', body.userId);",
+                  "    console.log('Actualizá la variable \"password\" con el nuevo valor para futuros logins.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "4.4 Reenviar código de recuperación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/password-reset/resend", "host": ["{{baseUrl}}"], "path": ["auth","password-reset","resend"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Reenvía el OTP de recuperación. Requiere que ya exista un OTP pendiente.\nRetorna OtpResponseDto { message, email }."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Código reenviado', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('email');",
+                  "    console.log('Código de recuperación reenviado a:', body.email);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "5. Casos de Error (Validación)",
+      "description": "Requests con datos inválidos para verificar que el backend retorna los errores correctos.",
+      "item": [
+
+        {
+          "name": "5.1 Register – email inválido (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"no-es-un-email\",\n  \"password\": \"Password1@\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 – validación email', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensaje de validación', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.include('correo');",
+                  "    console.log('Error:', body.message);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "5.2 Register – contraseña corta (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"corta\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 – contraseña corta', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensaje de validación', () => {",
+                  "    const body = pm.response.json();",
+                  "    console.log('Error:', body.message);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "5.3 OTP verify – código no tiene 6 dígitos (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/otp/verify", "host": ["{{baseUrl}}"], "path": ["auth","otp","verify"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 – código inválido', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensaje de validación', () => {",
+                  "    const body = pm.response.json();",
+                  "    console.log('Error:', body.message);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "5.4 Login – email no registrado (401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"noexiste@example.com\",\n  \"password\": \"Password1@\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401 – usuario inexistente', () => pm.response.to.have.status(401));",
+                  "pm.test('Mensaje credenciales inválidas', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.include('Credenciales');",
+                  "    console.log('Error:', body.message);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "5.5 Login OTP – cuenta no verificada (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/otp/send", "host": ["{{baseUrl}}"], "path": ["auth","otp","send"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"pendiente@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Verifica que un usuario pendiente (enabled=false) no puede usar login OTP."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 – cuenta no verificada', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensaje verificación pendiente', () => {",
+                  "    const body = pm.response.json();",
+                  "    console.log('Error:', body.message);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{accessToken}}", "type": "string" }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script global: log status y tiempo en todas las requests",
+          "console.log(`[${pm.info.requestName}] ${pm.response.status} | ${pm.response.responseTime}ms`);"
+        ]
+      }
+    }
+  ]
+}
