@@ -14,6 +14,7 @@ public record HistoryItemDto(
         int participants,
         BigDecimal totalPrice,
         String currency,
-        ReviewSummaryDto review
+        ReviewSummaryDto review,
+        boolean canReview
 ) {
 }

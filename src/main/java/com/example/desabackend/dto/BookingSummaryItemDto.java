@@ -14,6 +14,7 @@ public record BookingSummaryItemDto(
         String destination,
         String guideName,
         Integer durationMinutes,
-        String imageUrl
+        String imageUrl,
+        boolean canReview
 ) {
 }

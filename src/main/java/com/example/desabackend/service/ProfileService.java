@@ -19,6 +19,8 @@ import com.example.desabackend.repository.DestinationRepository;
 import com.example.desabackend.repository.UserPreferredCategoryRepository;
 import com.example.desabackend.repository.UserPreferredDestinationRepository;
 import com.example.desabackend.repository.UserRepository;
+import com.example.desabackend.repository.ReviewRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,19 +35,22 @@ public class ProfileService {
     private final UserPreferredDestinationRepository destinationPrefRepo;
     private final DestinationRepository destinationRepo;
     private final BookingRepository bookingRepository;
+    private final ReviewRepository reviewRepository;
 
     public ProfileService(
             UserRepository userRepository,
             UserPreferredCategoryRepository categoryRepo,
             UserPreferredDestinationRepository destinationPrefRepo,
             DestinationRepository destinationRepo,
-            BookingRepository bookingRepository
+            BookingRepository bookingRepository,
+            ReviewRepository reviewRepository
     ) {
         this.userRepository = userRepository;
         this.categoryRepo = categoryRepo;
         this.destinationPrefRepo = destinationPrefRepo;
         this.destinationRepo = destinationRepo;
         this.bookingRepository = bookingRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Transactional(readOnly = true)
@@ -117,32 +122,39 @@ public class ProfileService {
 
     // ── Activity Summary ─────────────────────────────────────────────────────────
 
-    @Transactional(readOnly = true)
-    public PageResponse<BookingSummaryItemDto> getActivitySummary(Long userId, int page, int size) {
-        // findHistory filtra por COMPLETED y hace join fetch de destination + guide
-        Page<BookingEntity> bookingsPage = bookingRepository.findHistory(
+            @Transactional(readOnly = true)
+            public PageResponse<BookingSummaryItemDto> getActivitySummary(Long userId, int page, int size) {
+            // findHistory filtra por COMPLETED y hace join fetch de destination + guide
+            Page<BookingEntity> bookingsPage = bookingRepository.findHistory(
                 userId, null, null, null, PageRequest.of(page, size));
-        List<BookingSummaryItemDto> items = bookingsPage.getContent().stream()
+            List<BookingSummaryItemDto> items = bookingsPage.getContent().stream()
                 .map(b -> {
                     var a = b.getSession().getActivity();
+                    boolean canReview = false;
+                    if (b.getStatus() == BookingStatus.COMPLETED && !reviewRepository.existsByBookingId(b.getId())) {
+                        LocalDateTime sessionEnd = b.getSession().getStartTime()
+                                .plusMinutes(a.getDurationMinutes() != null ? a.getDurationMinutes() : 0);
+                        canReview = !LocalDateTime.now().isAfter(sessionEnd.plusHours(48));
+                    }
                     return new BookingSummaryItemDto(
-                            b.getId(),
-                            a.getId(),
-                            a.getName(),
-                            b.getStatus().name(),
-                            b.getSession().getStartTime(),
-                            b.getTotalPrice(),
-                            a.getCurrency(),
-                            a.getDestination().getName(),
-                            a.getGuide() != null ? a.getGuide().getFullName() : null,
-                            a.getDurationMinutes(),
-                            a.getImageUrl()
+                        b.getId(),
+                        a.getId(),
+                        a.getName(),
+                        b.getStatus().name(),
+                        b.getSession().getStartTime(),
+                        b.getTotalPrice(),
+                        a.getCurrency(),
+                        a.getDestination().getName(),
+                        a.getGuide() != null ? a.getGuide().getFullName() : null,
+                        a.getDurationMinutes(),
+                        a.getImageUrl(),
+                        canReview
                     );
                 })
                 .toList();
-        return new PageResponse<>(items, page, size,
+            return new PageResponse<>(items, page, size,
                 bookingsPage.getTotalElements(), bookingsPage.getTotalPages());
-    }
+            }
 
     @Transactional
     public UserProfileDto updateProfile(Long userId, UserProfileUpdateDto dto) {
