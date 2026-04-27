@@ -58,8 +58,9 @@ public class NewsService {
     }
 
     /**
-     * Fetch paginated list of news from XploreNow API.
-     * If external API fails, falls back to free activities from database as promotions.
+     * Fetch paginated list of news.
+     * - Promotions (OFFER) always come from free activities in database
+     * - News (NEWS) come from external API if available
      * Results are cached for 5 minutes (configurable via cache.news.ttl).
      */
     @Cacheable(value = "newsList", key = "'list_' + #page + '_' + #size")
@@ -67,27 +68,48 @@ public class NewsService {
         int safePage = page == null ? 0 : Math.max(0, page);
         int safeSize = size == null ? 10 : Math.min(100, Math.max(1, size));
 
+        // Always get free activities as promotions from database
+        List<NewsDto> promotions = getFreeActivitiesAsPromotions();
+
+        // Try to get news from external API
+        List<NewsDto> news = new ArrayList<>();
         try {
             String response = webClient.get()
                     .uri(newsEndpoint)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block(timeout);
-
-            return parseNewsListResponse(response, safePage, safeSize);
-        } catch (WebClientResponseException e) {
-            logger.warn("External API unavailable ({}), falling back to free activities from database", e.getStatusCode());
-            return getFreeActivitiesAsPromotions(safePage, safeSize);
+            PageResponse<NewsDto> apiResponse = parseNewsListResponse(response, safePage, safeSize);
+            news = apiResponse.items().stream()
+                    .filter(item -> item.type() == NewsType.NEWS)
+                    .toList();
         } catch (Exception e) {
-            logger.warn("External API error, falling back to free activities from database: {}", e.getMessage());
-            return getFreeActivitiesAsPromotions(safePage, safeSize);
+            logger.warn("External API unavailable, skipping news: {}", e.getMessage());
         }
+
+        // Combine promotions and news
+        List<NewsDto> allItems = new ArrayList<>();
+        allItems.addAll(promotions);
+        allItems.addAll(news);
+
+        // Apply pagination
+        int start = safePage * safeSize;
+        int end = Math.min(start + safeSize, allItems.size());
+        List<NewsDto> paginatedItems = allItems.subList(start, end);
+
+        return new PageResponse<>(
+                paginatedItems,
+                safePage,
+                safeSize,
+                allItems.size(),
+                (int) Math.ceil((double) allItems.size() / safeSize)
+        );
     }
 
     /**
-     * Fallback method: returns free activities from database as OFFER type promotions.
+     * Returns free activities from database as OFFER type promotions.
      */
-    private PageResponse<NewsDto> getFreeActivitiesAsPromotions(int page, int size) {
+    private List<NewsDto> getFreeActivitiesAsPromotions() {
         List<ActivityEntity> freeActivities = activityRepository.findAll().stream()
                 .filter(activity -> activity.getBasePrice().compareTo(BigDecimal.ZERO) == 0)
                 .toList();
@@ -105,19 +127,7 @@ public class NewsService {
                     null
             ));
         }
-
-        // Apply pagination
-        int start = page * size;
-        int end = Math.min(start + size, items.size());
-        List<NewsDto> paginatedItems = items.subList(start, end);
-
-        return new PageResponse<>(
-                paginatedItems,
-                page,
-                size,
-                items.size(),
-                (int) Math.ceil((double) items.size() / size)
-        );
+        return items;
     }
 
     /**
