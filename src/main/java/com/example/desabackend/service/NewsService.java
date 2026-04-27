@@ -4,9 +4,12 @@ import com.example.desabackend.dto.NewsDto;
 import com.example.desabackend.dto.NewsDetailDto;
 import com.example.desabackend.dto.NewsType;
 import com.example.desabackend.dto.PageResponse;
+import com.example.desabackend.entity.ActivityEntity;
 import com.example.desabackend.exception.NotFoundException;
+import com.example.desabackend.repository.ActivityRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -34,17 +38,20 @@ public class NewsService {
     private final ObjectMapper objectMapper;
     private final String newsEndpoint;
     private final Duration timeout;
+    private final ActivityRepository activityRepository;
 
     public NewsService(
             WebClient.Builder webClientBuilder,
             ObjectMapper objectMapper,
             @Value("${xplorenow.api.base-url}") String baseUrl,
             @Value("${xplorenow.api.news-endpath}") String newsEndpoint,
-            @Value("${xplorenow.api.timeout:5000}") int timeoutMs
+            @Value("${xplorenow.api.timeout:5000}") int timeoutMs,
+            @Autowired ActivityRepository activityRepository
     ) {
         this.objectMapper = objectMapper;
         this.newsEndpoint = newsEndpoint;
         this.timeout = Duration.ofMillis(timeoutMs);
+        this.activityRepository = activityRepository;
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl)
                 .build();
@@ -52,6 +59,7 @@ public class NewsService {
 
     /**
      * Fetch paginated list of news from XploreNow API.
+     * If external API fails, falls back to free activities from database as promotions.
      * Results are cached for 5 minutes (configurable via cache.news.ttl).
      */
     @Cacheable(value = "newsList", key = "'list_' + #page + '_' + #size")
@@ -68,12 +76,48 @@ public class NewsService {
 
             return parseNewsListResponse(response, safePage, safeSize);
         } catch (WebClientResponseException e) {
-            logger.error("Error fetching news from XploreNow API: {}", e.getStatusCode());
-            throw new RuntimeException("Failed to fetch news from external API", e);
+            logger.warn("External API unavailable ({}), falling back to free activities from database", e.getStatusCode());
+            return getFreeActivitiesAsPromotions(safePage, safeSize);
         } catch (Exception e) {
-            logger.error("Unexpected error fetching news", e);
-            throw new RuntimeException("Unexpected error fetching news", e);
+            logger.warn("External API error, falling back to free activities from database: {}", e.getMessage());
+            return getFreeActivitiesAsPromotions(safePage, safeSize);
         }
+    }
+
+    /**
+     * Fallback method: returns free activities from database as OFFER type promotions.
+     */
+    private PageResponse<NewsDto> getFreeActivitiesAsPromotions(int page, int size) {
+        List<ActivityEntity> freeActivities = activityRepository.findAll().stream()
+                .filter(activity -> activity.getBasePrice().compareTo(BigDecimal.ZERO) == 0)
+                .toList();
+
+        List<NewsDto> items = new ArrayList<>();
+        for (ActivityEntity activity : freeActivities) {
+            items.add(new NewsDto(
+                    activity.getId(),
+                    activity.getName(),
+                    "¡GRATIS! " + activity.getName(),
+                    activity.getImageUrl(),
+                    NewsType.OFFER,
+                    activity.getId(),
+                    LocalDateTime.now(),
+                    null
+            ));
+        }
+
+        // Apply pagination
+        int start = page * size;
+        int end = Math.min(start + size, items.size());
+        List<NewsDto> paginatedItems = items.subList(start, end);
+
+        return new PageResponse<>(
+                paginatedItems,
+                page,
+                size,
+                items.size(),
+                (int) Math.ceil((double) items.size() / size)
+        );
     }
 
     /**
