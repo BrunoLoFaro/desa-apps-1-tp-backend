@@ -68,8 +68,8 @@ public class NewsService {
         int safePage = page == null ? 0 : Math.max(0, page);
         int safeSize = size == null ? 10 : Math.min(100, Math.max(1, size));
 
-        // Always get free activities as promotions from database
-        List<NewsDto> promotions = getFreeActivitiesAsPromotions();
+        // Always get promotional activities (free and discounted) from database
+        List<NewsDto> promotions = getPromotionalActivities();
 
         // Try to get news from external API
         List<NewsDto> news = new ArrayList<>();
@@ -107,27 +107,54 @@ public class NewsService {
     }
 
     /**
-     * Returns free activities from database as OFFER type promotions.
+     * Returns free activities and activities with discounts from database as OFFER type promotions.
      */
-    private List<NewsDto> getFreeActivitiesAsPromotions() {
-        List<ActivityEntity> freeActivities = activityRepository.findAll().stream()
-                .filter(activity -> activity.getBasePrice().compareTo(BigDecimal.ZERO) == 0)
-                .toList();
+    private List<NewsDto> getPromotionalActivities() {
+        try {
+            List<ActivityEntity> allActivities = activityRepository.findAll();
+            logger.info("Total activities in database: {}", allActivities.size());
 
-        List<NewsDto> items = new ArrayList<>();
-        for (ActivityEntity activity : freeActivities) {
-            items.add(new NewsDto(
-                    activity.getId(),
-                    activity.getName(),
-                    "¡GRATIS! " + activity.getName(),
-                    activity.getImageUrl(),
-                    NewsType.OFFER,
-                    activity.getId(),
-                    LocalDateTime.now(),
-                    null
-            ));
+            List<ActivityEntity> promotionalActivities = allActivities.stream()
+                    .filter(activity -> {
+                        boolean isFree = activity.getBasePrice().compareTo(BigDecimal.ZERO) == 0;
+                        boolean hasDiscount = activity.getDiscountPercentage() != null && activity.getDiscountPercentage() > 0;
+                        boolean isPromotional = isFree || hasDiscount;
+
+                        if (isPromotional) {
+                            String reason = isFree ? "FREE" : "DISCOUNT " + activity.getDiscountPercentage() + "%";
+                            logger.info("Promotional activity found: {} (price: {}, reason: {})", activity.getName(), activity.getBasePrice(), reason);
+                        }
+                        return isPromotional;
+                    })
+                    .toList();
+
+            logger.info("Promotional activities count: {}", promotionalActivities.size());
+
+            List<NewsDto> items = new ArrayList<>();
+            for (ActivityEntity activity : promotionalActivities) {
+                String description;
+                if (activity.getBasePrice().compareTo(BigDecimal.ZERO) == 0) {
+                    description = "¡GRATIS! " + activity.getName();
+                } else {
+                    description = activity.getDiscountPercentage() + "% OFF - " + activity.getName();
+                }
+
+                items.add(new NewsDto(
+                        activity.getId(),
+                        activity.getName(),
+                        description,
+                        activity.getImageUrl(),
+                        NewsType.OFFER,
+                        activity.getId(),
+                        LocalDateTime.now(),
+                        null
+                ));
+            }
+            return items;
+        } catch (Exception e) {
+            logger.error("Error fetching promotional activities from database", e);
+            return new ArrayList<>();
         }
-        return items;
     }
 
     /**

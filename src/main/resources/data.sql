@@ -137,3 +137,15 @@ INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_ra
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (5, 9, 2, 1, 1, 4, 4, 'Lindo paseo, el barrio tiene mucha historia.', '2026-04-01 15:00:00');
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (6, 10, 2, 8, 2, 5, 5, 'Espectacular! La Garganta del Diablo te deja sin palabras.', '2026-04-01 17:00:00');
 SET IDENTITY_INSERT reviews OFF;
+
+-- 9. ADD DISCOUNTS TO PROMOTIONAL ACTIVITIES
+-- Add 20% discount to Tour gastronomico por Palermo
+UPDATE activities SET discount_percentage = 20 WHERE id = 3;
+-- Add 15% discount to Excursion Alta Montana
+UPDATE activities SET discount_percentage = 15 WHERE id = 4;
+-- Add 25% discount to Degustacion de vinos en Lujan de Cuyo
+UPDATE activities SET discount_percentage = 25 WHERE id = 5;
+-- Add 10% discount to Circuito Chico en bici
+UPDATE activities SET discount_percentage = 10 WHERE id = 6;
+-- Add 30% discount to Kayak en el Nahuel Huapi
+UPDATE activities SET discount_percentage = 30 WHERE id = 7;

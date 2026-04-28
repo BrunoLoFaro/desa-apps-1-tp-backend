@@ -145,7 +145,8 @@ public class ActivityCatalogService {
                 availableSpots,
                 avgRating,
                 reviewCount,
-                isFavorite
+                isFavorite,
+                activity.getDiscountPercentage()
         );
     }
 
