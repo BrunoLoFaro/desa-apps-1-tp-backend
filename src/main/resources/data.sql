@@ -1,5 +1,6 @@
 -- SEED DATA - SQL Server - plain INSERTs with default ; separator
--- Duplicate-key errors on re-run are ignored by continue-on-error=true
+-- Duplicate-key errors on re-run are ignored by continue-on-error=true.
+-- The user seed below uses MERGE so password hashes are refreshed on restart.
 
 -- 1. DESTINATIONS
 SET IDENTITY_INSERT destinations ON;
@@ -92,8 +93,26 @@ SET IDENTITY_INSERT activity_sessions OFF;
 
 -- 5. USERS DE PRUEBA (password = "123456" con BCrypt)
 SET IDENTITY_INSERT users ON;
-INSERT INTO users (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at) VALUES (1, 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test', 'User', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00');
-INSERT INTO users (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at) VALUES (2, 'maria@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Maria', 'Lopez', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00');
+MERGE users AS target
+USING (
+	VALUES
+		(1, 'test@example.com', '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Test', 'User', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00'),
+		(2, 'maria@example.com', '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Maria', 'Lopez', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00')
+) AS source (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at)
+ON target.id = source.id
+WHEN MATCHED THEN
+	UPDATE SET
+		email = source.email,
+		password_hash = source.password_hash,
+		first_name = source.first_name,
+		last_name = source.last_name,
+		phone = source.phone,
+		profile_photo_url = source.profile_photo_url,
+		enabled = source.enabled,
+		created_at = source.created_at
+WHEN NOT MATCHED THEN
+	INSERT (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at)
+	VALUES (source.id, source.email, source.password_hash, source.first_name, source.last_name, source.phone, source.profile_photo_url, source.enabled, source.created_at);
 SET IDENTITY_INSERT users OFF;
 
 -- 6. USER PREFERENCES (para /activities/recommended)
