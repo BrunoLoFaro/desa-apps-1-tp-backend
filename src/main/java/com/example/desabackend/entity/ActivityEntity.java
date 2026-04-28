@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -80,4 +81,8 @@ public class ActivityEntity {
 
     @OneToMany(mappedBy = "activity", fetch = FetchType.LAZY)
     private List<ActivitySessionEntity> sessions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "activity", fetch = FetchType.LAZY)
+    @OrderBy("position ASC")
+    private List<ActivityItineraryPointEntity> itineraryPoints = new ArrayList<>();
 }

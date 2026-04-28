@@ -132,3 +132,18 @@ INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_ra
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (5, 9, 2, 1, 1, 4, 4, 'Lindo paseo, el barrio tiene mucha historia.', '2026-04-01 15:00:00');
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (6, 10, 2, 8, 2, 5, 5, 'Espectacular! La Garganta del Diablo te deja sin palabras.', '2026-04-01 17:00:00');
 SET IDENTITY_INSERT reviews OFF;
+
+-- =========================================================
+-- Itinerarios (Punto 27 - Feature 10)
+-- Nota: requiere la tabla activity_itinerary_points (JPA ddl-auto=update)
+-- =========================================================
+INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES
+  (1, 1, 'Plaza Dorrego', 'Plaza Dorrego, San Telmo, Buenos Aires'),
+  (1, 2, 'Mercado de San Telmo', 'Mercado de San Telmo, Bolivar 970, Buenos Aires'),
+  (1, 3, 'Calle Defensa', 'Defensa, San Telmo, Buenos Aires');
+
+INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES
+  (4, 1, 'Villavicencio', 'Villavicencio, Mendoza'),
+  (4, 2, 'Uspallata', 'Uspallata, Mendoza'),
+  (4, 3, 'Puente del Inca', 'Puente del Inca, Mendoza'),
+  (4, 4, 'Mirador del Aconcagua', 'Parque Provincial Aconcagua, Mendoza');

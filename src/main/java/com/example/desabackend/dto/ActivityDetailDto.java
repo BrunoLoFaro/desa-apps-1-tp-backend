@@ -16,6 +16,7 @@ public record ActivityDetailDto(
         String description,
         String includesText,
         String meetingPoint,
+        List<ItineraryPointDto> itineraryPoints,
         GuideDto guide,
         int durationMinutes,
         String language,

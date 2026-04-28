@@ -120,6 +120,14 @@ spring.sql.init.mode=always
 sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d desa_db -i src/main/resources/data.sql
 ```
 
+### Seed de itinerarios (Feature 10)
+
+Para cargar puntos de itinerario (punto 27) en una DB ya existente:
+
+```bash
+sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d desa_db -i scripts/seed_itinerary.sql
+```
+
 **Usuarios de prueba** (password: `123456`):
 - `test@example.com` (id=1)
 - `maria@example.com` (id=2)

@@ -3,6 +3,7 @@ package com.example.desabackend.service;
 import com.example.desabackend.dto.ActivityDetailDto;
 import com.example.desabackend.dto.ActivitySessionDto;
 import com.example.desabackend.dto.ActivitySummaryDto;
+import com.example.desabackend.dto.ItineraryPointDto;
 import com.example.desabackend.dto.PageResponse;
 import com.example.desabackend.entity.ActivityCategory;
 import com.example.desabackend.entity.ActivityEntity;
@@ -15,6 +16,7 @@ import com.example.desabackend.repository.FavoriteRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -126,6 +128,17 @@ public class ActivityCatalogService {
 
         boolean isFavorite = userId != null && favoriteRepository.existsByUserIdAndActivityId(userId, activityId);
 
+        List<ItineraryPointDto> itineraryPoints = activity.getItineraryPoints() == null
+                ? List.of()
+                : activity.getItineraryPoints().stream()
+                        .sorted(Comparator.comparingInt(p -> p.getPosition() != null ? p.getPosition() : 0))
+                        .map(p -> new ItineraryPointDto(
+                                p.getName(),
+                                p.getAddress(),
+                                p.getPosition() != null ? p.getPosition() : 0
+                        ))
+                        .toList();
+
         return new ActivityDetailDto(
                 activity.getId(),
                 activity.getName(),
@@ -135,6 +148,7 @@ public class ActivityCatalogService {
                 activity.getDescription(),
                 activity.getIncludesText(),
                 activity.getMeetingPoint(),
+                itineraryPoints,
                 ActivityDtoMapper.toGuideDto(activity),
                 ActivityDtoMapper.nonNullInt(activity.getDurationMinutes()),
                 activity.getLanguage(),
