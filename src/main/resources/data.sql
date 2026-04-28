@@ -110,22 +110,17 @@ SET IDENTITY_INSERT user_preferred_destinations OFF;
 
 -- 7. BOOKINGS
 SET IDENTITY_INSERT bookings ON;
--- User 1: completados (sesiones pasadas del 1-abr)
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (1, 1, 1, 2, 0.00, 'COMPLETED', '2026-03-25 10:00:00', NULL);
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (2, 1, 5, 1, 8500.00, 'COMPLETED', '2026-03-26 12:00:00', NULL);
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (3, 1, 9, 2, 30000.00, 'COMPLETED', '2026-03-27 09:00:00', NULL);
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (4, 1, 17, 1, 18000.00, 'COMPLETED', '2026-03-28 08:00:00', NULL);
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (5, 1, 22, 3, 60000.00, 'COMPLETED', '2026-03-29 07:00:00', NULL);
--- User 1: confirmados (sesiones futuras)
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (6, 1, 13, 2, 70000.00, 'CONFIRMED', '2026-04-01 10:00:00', NULL);
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (7, 1, 18, 1, 18000.00, 'CONFIRMED', '2026-04-01 11:00:00', NULL);
--- User 1: cancelado
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (8, 1, 3, 2, 0.00, 'CANCELLED', '2026-03-30 14:00:00', '2026-03-31 08:00:00');
--- User 2: completados
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (9, 2, 1, 1, 0.00, 'COMPLETED', '2026-03-25 11:00:00', NULL);
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (10, 2, 22, 2, 40000.00, 'COMPLETED', '2026-03-29 07:30:00', NULL);
--- User 2: confirmado
-INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at) VALUES (11, 2, 29, 2, 130000.00, 'CONFIRMED', '2026-04-02 09:00:00', NULL);
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (1, 1, 1, 2, 0.00, 'COMPLETED', '2026-03-25 10:00:00', NULL, 'XPN-BOOK1');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (2, 1, 5, 1, 8500.00, 'COMPLETED', '2026-03-26 12:00:00', NULL, 'XPN-BOOK2');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (3, 1, 9, 2, 30000.00, 'COMPLETED', '2026-03-27 09:00:00', NULL, 'XPN-BOOK3');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (4, 1, 17, 1, 18000.00, 'COMPLETED', '2026-03-28 08:00:00', NULL, 'XPN-BOOK4');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (5, 1, 22, 3, 60000.00, 'COMPLETED', '2026-03-29 07:00:00', NULL, 'XPN-BOOK5');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (6, 1, 13, 2, 70000.00, 'CONFIRMED', '2026-04-01 10:00:00', NULL, 'XPN-BOOK6');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (7, 1, 18, 1, 18000.00, 'CONFIRMED', '2026-04-01 11:00:00', NULL, 'XPN-BOOK7');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (8, 1, 3, 2, 0.00, 'CANCELLED', '2026-03-30 14:00:00', '2026-03-31 08:00:00', 'XPN-BOOK8');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (9, 2, 1, 1, 0.00, 'COMPLETED', '2026-03-25 11:00:00', NULL, 'XPN-BOOK9');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (10, 2, 22, 2, 40000.00, 'COMPLETED', '2026-03-29 07:30:00', NULL, 'XPN-BOOK10');
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (11, 2, 29, 2, 130000.00, 'CONFIRMED', '2026-04-02 09:00:00', NULL, 'XPN-BOOK11');
 SET IDENTITY_INSERT bookings OFF;
 
 -- 8. REVIEWS (sobre bookings COMPLETED)
