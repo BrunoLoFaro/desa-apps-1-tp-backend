@@ -15,6 +15,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -61,9 +62,13 @@ public class BookingEntity {
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
 
+    @Column(name = "voucher_code", unique = true, length = 20)
+    private String voucherCode;
+
     @PrePersist
     private void prePersist() {
         if (createdAt == null) createdAt = LocalDateTime.now();
         if (status == null) status = BookingStatus.CONFIRMED;
+        if (voucherCode == null) voucherCode = "XPN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 }
