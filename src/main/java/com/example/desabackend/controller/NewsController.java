@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 /**
  * News endpoints for the mobile Home screen.
- * Fetches news, offers, and featured destinations from XploreNow external API.
+ * Fetches news, offers, and featured destinations from the database.
  */
 public class NewsController {
 

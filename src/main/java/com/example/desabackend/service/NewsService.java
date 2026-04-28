@@ -5,97 +5,67 @@ import com.example.desabackend.dto.NewsDetailDto;
 import com.example.desabackend.dto.NewsType;
 import com.example.desabackend.dto.PageResponse;
 import com.example.desabackend.entity.ActivityEntity;
+import com.example.desabackend.entity.NewsEntity;
 import com.example.desabackend.exception.NotFoundException;
 import com.example.desabackend.repository.ActivityRepository;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.desabackend.repository.NewsRepository;
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 /**
- * Service to fetch news, offers, and featured destinations from XploreNow external API.
- * Implements caching to avoid overloading the external API.
+ * Service to fetch news, offers, and featured destinations from the database.
+ * - NEWS: stored in the news table
+ * - OFFER: generated dynamically from free and discounted activities
+ * - FEATURED_DESTINATION: generated dynamically from featured activities
  */
 @Service
 public class NewsService {
 
     private static final Logger logger = LoggerFactory.getLogger(NewsService.class);
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    private final WebClient webClient;
-    private final ObjectMapper objectMapper;
-    private final String newsEndpoint;
-    private final Duration timeout;
+    private final NewsRepository newsRepository;
     private final ActivityRepository activityRepository;
 
-    public NewsService(
-            WebClient.Builder webClientBuilder,
-            ObjectMapper objectMapper,
-            @Value("${xplorenow.api.base-url}") String baseUrl,
-            @Value("${xplorenow.api.news-endpath}") String newsEndpoint,
-            @Value("${xplorenow.api.timeout:5000}") int timeoutMs,
-            @Autowired ActivityRepository activityRepository
-    ) {
-        this.objectMapper = objectMapper;
-        this.newsEndpoint = newsEndpoint;
-        this.timeout = Duration.ofMillis(timeoutMs);
+    public NewsService(NewsRepository newsRepository, ActivityRepository activityRepository) {
+        this.newsRepository = newsRepository;
         this.activityRepository = activityRepository;
-        this.webClient = webClientBuilder
-                .baseUrl(baseUrl)
-                .build();
     }
 
     /**
      * Fetch paginated list of news.
-     * - Promotions (OFFER) always come from free activities in database
-     * - News (NEWS) come from external API if available
-     * Results are cached for 5 minutes (configurable via cache.news.ttl).
+     * - Promotions (OFFER) from free and discounted activities
+     * - News (NEWS) from the news table
+     * - Featured destinations (FEATURED_DESTINATION) from featured activities
+     * Results are cached for 5 minutes.
      */
     @Cacheable(value = "newsList", key = "'list_' + #page + '_' + #size")
     public PageResponse<NewsDto> listNews(Integer page, Integer size) {
         int safePage = page == null ? 0 : Math.max(0, page);
         int safeSize = size == null ? 10 : Math.min(100, Math.max(1, size));
 
-        // Always get promotional activities (free and discounted) from database
+        // Get all items from database
         List<NewsDto> promotions = getPromotionalActivities();
+        List<NewsDto> news = getNewsFromDatabase();
+        List<NewsDto> featured = getFeaturedDestinations();
 
-        // Try to get news from external API
-        List<NewsDto> news = new ArrayList<>();
-        try {
-            String response = webClient.get()
-                    .uri(newsEndpoint)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block(timeout);
-            PageResponse<NewsDto> apiResponse = parseNewsListResponse(response, safePage, safeSize);
-            news = apiResponse.items().stream()
-                    .filter(item -> item.type() == NewsType.NEWS)
-                    .toList();
-        } catch (Exception e) {
-            logger.warn("External API unavailable, skipping news: {}", e.getMessage());
-        }
-
-        // Combine promotions and news
+        // Combine: offers first, then news, then featured destinations
         List<NewsDto> allItems = new ArrayList<>();
         allItems.addAll(promotions);
         allItems.addAll(news);
+        allItems.addAll(featured);
 
         // Apply pagination
         int start = safePage * safeSize;
         int end = Math.min(start + safeSize, allItems.size());
-        List<NewsDto> paginatedItems = allItems.subList(start, end);
+        List<NewsDto> paginatedItems = start < allItems.size()
+                ? allItems.subList(start, end)
+                : List.of();
 
         return new PageResponse<>(
                 paginatedItems,
@@ -104,6 +74,71 @@ public class NewsService {
                 allItems.size(),
                 (int) Math.ceil((double) allItems.size() / safeSize)
         );
+    }
+
+    /**
+     * Fetch detailed information for a specific news item.
+     * Results are cached for 5 minutes.
+     */
+    @Cacheable(value = "newsDetail", key = "#newsId")
+    public NewsDetailDto getNewsDetail(Long newsId) {
+        NewsEntity entity = newsRepository.findById(newsId)
+                .orElseThrow(() -> new NotFoundException("News not found: " + newsId));
+
+        String relatedActivityName = null;
+        if (entity.getRelatedActivityId() != null) {
+            try {
+                ActivityEntity activity = activityRepository.findById(entity.getRelatedActivityId()).orElse(null);
+                if (activity != null) {
+                    relatedActivityName = activity.getName();
+                }
+            } catch (Exception e) {
+                logger.warn("Could not find related activity {} for news {}", entity.getRelatedActivityId(), newsId);
+            }
+        }
+
+        return new NewsDetailDto(
+                entity.getId(),
+                entity.getTitle(),
+                entity.getDescription(),
+                entity.getFullContent() != null ? entity.getFullContent() : entity.getDescription(),
+                entity.getImageUrl(),
+                entity.getType(),
+                entity.getRelatedActivityId(),
+                relatedActivityName,
+                entity.getPublishedAt(),
+                entity.getValidUntil(),
+                entity.getCtaText(),
+                entity.getCtaLink()
+        );
+    }
+
+    /**
+     * Returns news articles from the database, ordered by published date.
+     */
+    private List<NewsDto> getNewsFromDatabase() {
+        try {
+            List<NewsEntity> newsEntities = newsRepository.findByTypeOrderByPublishedAtDesc(NewsType.NEWS);
+            logger.info("News articles from database: {}", newsEntities.size());
+
+            List<NewsDto> items = new ArrayList<>();
+            for (NewsEntity entity : newsEntities) {
+                items.add(new NewsDto(
+                        entity.getId(),
+                        entity.getTitle(),
+                        entity.getDescription(),
+                        entity.getImageUrl(),
+                        entity.getType(),
+                        entity.getRelatedActivityId(),
+                        entity.getPublishedAt(),
+                        entity.getValidUntil()
+                ));
+            }
+            return items;
+        } catch (Exception e) {
+            logger.error("Error fetching news from database", e);
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -158,154 +193,39 @@ public class NewsService {
     }
 
     /**
-     * Fetch detailed information for a specific news item.
-     * Results are cached for 5 minutes.
+     * Returns featured activities as FEATURED_DESTINATION type items.
      */
-    @Cacheable(value = "newsDetail", key = "#newsId")
-    public NewsDetailDto getNewsDetail(Long newsId) {
+    private List<NewsDto> getFeaturedDestinations() {
         try {
-            String response = webClient.get()
-                    .uri(newsEndpoint + "/{id}", newsId)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block(timeout);
+            List<ActivityEntity> allActivities = activityRepository.findAll();
 
-            return parseNewsDetailResponse(response, newsId);
-        } catch (WebClientResponseException e) {
-            if (e.getStatusCode().value() == 404) {
-                throw new NotFoundException("News not found: " + newsId);
-            }
-            logger.error("Error fetching news detail from XploreNow API: {}", e.getStatusCode());
-            throw new RuntimeException("Failed to fetch news detail from external API", e);
-        } catch (Exception e) {
-            logger.error("Unexpected error fetching news detail", e);
-            throw new RuntimeException("Unexpected error fetching news detail", e);
-        }
-    }
+            List<ActivityEntity> featuredActivities = allActivities.stream()
+                    .filter(activity -> activity.isFeatured())
+                    .toList();
 
-    /**
-     * Parse the JSON response from XploreNow API for news list.
-     * Expected format:
-     * {
-     *   "items": [
-     *     {
-     *       "id": 1,
-     *       "title": "...",
-     *       "description": "...",
-     *       "imageUrl": "...",
-     *       "type": "NEWS|OFFER|FEATURED_DESTINATION",
-     *       "relatedActivityId": 123,
-     *       "publishedAt": "2024-01-01T00:00:00",
-     *       "validUntil": "2024-12-31T23:59:59"
-     *     }
-     *   ],
-     *   "totalElements": 100
-     * }
-     */
-    private PageResponse<NewsDto> parseNewsListResponse(String jsonResponse, int page, int size) {
-        try {
-            JsonNode root = objectMapper.readTree(jsonResponse);
-            JsonNode itemsNode = root.get("items");
-            long totalElements = root.has("totalElements") ? root.get("totalElements").asLong() : 0;
+            logger.info("Featured activities count: {}", featuredActivities.size());
 
             List<NewsDto> items = new ArrayList<>();
-            if (itemsNode != null && itemsNode.isArray()) {
-                for (JsonNode itemNode : itemsNode) {
-                    items.add(parseNewsItem(itemNode));
-                }
+            for (ActivityEntity activity : featuredActivities) {
+                String description = activity.getDestination() != null
+                        ? activity.getDestination().getCity() + " - " + activity.getName()
+                        : activity.getName();
+
+                items.add(new NewsDto(
+                        activity.getId(),
+                        activity.getName(),
+                        description,
+                        activity.getImageUrl(),
+                        NewsType.FEATURED_DESTINATION,
+                        activity.getId(),
+                        LocalDateTime.now(),
+                        null
+                ));
             }
-
-            int totalPages = (int) Math.ceil((double) totalElements / size);
-
-            return new PageResponse<>(
-                    items,
-                    page,
-                    size,
-                    totalElements,
-                    totalPages
-            );
+            return items;
         } catch (Exception e) {
-            logger.error("Error parsing news list response", e);
-            throw new RuntimeException("Failed to parse news response", e);
-        }
-    }
-
-    /**
-     * Parse the JSON response from XploreNow API for news detail.
-     * Expected format:
-     * {
-     *   "id": 1,
-     *   "title": "...",
-     *   "description": "...",
-     *   "fullContent": "...",
-     *   "imageUrl": "...",
-     *   "type": "NEWS|OFFER|FEATURED_DESTINATION",
-     *   "relatedActivityId": 123,
-     *   "relatedActivityName": "...",
-     *   "publishedAt": "2024-01-01T00:00:00",
-     *   "validUntil": "2024-12-31T23:59:59",
-     *   "ctaText": "...",
-     *   "ctaLink": "..."
-     * }
-     */
-    private NewsDetailDto parseNewsDetailResponse(String jsonResponse, Long newsId) {
-        try {
-            JsonNode root = objectMapper.readTree(jsonResponse);
-            return parseNewsDetailItem(root);
-        } catch (Exception e) {
-            logger.error("Error parsing news detail response", e);
-            throw new RuntimeException("Failed to parse news detail response", e);
-        }
-    }
-
-    private NewsDto parseNewsItem(JsonNode itemNode) {
-        return new NewsDto(
-                itemNode.get("id").asLong(),
-                itemNode.get("title").asText(),
-                itemNode.get("description").asText(),
-                itemNode.has("imageUrl") ? itemNode.get("imageUrl").asText() : null,
-                parseNewsType(itemNode.get("type").asText()),
-                itemNode.has("relatedActivityId") ? itemNode.get("relatedActivityId").asLong() : null,
-                parseDateTime(itemNode.get("publishedAt")),
-                itemNode.has("validUntil") ? parseDateTime(itemNode.get("validUntil")) : null
-        );
-    }
-
-    private NewsDetailDto parseNewsDetailItem(JsonNode itemNode) {
-        return new NewsDetailDto(
-                itemNode.get("id").asLong(),
-                itemNode.get("title").asText(),
-                itemNode.get("description").asText(),
-                itemNode.has("fullContent") ? itemNode.get("fullContent").asText() : itemNode.get("description").asText(),
-                itemNode.has("imageUrl") ? itemNode.get("imageUrl").asText() : null,
-                parseNewsType(itemNode.get("type").asText()),
-                itemNode.has("relatedActivityId") ? itemNode.get("relatedActivityId").asLong() : null,
-                itemNode.has("relatedActivityName") ? itemNode.get("relatedActivityName").asText() : null,
-                parseDateTime(itemNode.get("publishedAt")),
-                itemNode.has("validUntil") ? parseDateTime(itemNode.get("validUntil")) : null,
-                itemNode.has("ctaText") ? itemNode.get("ctaText").asText() : null,
-                itemNode.has("ctaLink") ? itemNode.get("ctaLink").asText() : null
-        );
-    }
-
-    private NewsType parseNewsType(String typeStr) {
-        try {
-            return NewsType.valueOf(typeStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            logger.warn("Unknown news type: {}, defaulting to NEWS", typeStr);
-            return NewsType.NEWS;
-        }
-    }
-
-    private LocalDateTime parseDateTime(JsonNode dateTimeNode) {
-        if (dateTimeNode == null || dateTimeNode.isNull()) {
-            return null;
-        }
-        try {
-            return LocalDateTime.parse(dateTimeNode.asText(), DATE_FORMATTER);
-        } catch (Exception e) {
-            logger.warn("Failed to parse datetime: {}", dateTimeNode.asText());
-            return null;
+            logger.error("Error fetching featured destinations from database", e);
+            return new ArrayList<>();
         }
     }
 }
