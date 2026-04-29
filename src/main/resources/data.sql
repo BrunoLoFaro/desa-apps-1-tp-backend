@@ -1,4 +1,4 @@
--- SEED DATA - SQL Server - plain INSERTs with default ; separator
+-- SEED DATA - SQL Server - plain INSERTS with default ; separator
 -- Duplicate-key errors on re-run are ignored by continue-on-error=true
 
 -- 1. DESTINATIONS
@@ -51,6 +51,15 @@ UPDATE activities SET image_url = 'https://images.pexels.com/photos/26654240/pex
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e' WHERE id = 11;
 UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e' WHERE id = 12;
 
+-- 3b. ACTIVIDADES ADICIONALES (cupos disponibles, imagen completa)
+SET IDENTITY_INSERT activities ON;
+INSERT INTO activities (id, name, image_url, description, includes_text, meeting_point, duration_minutes, language, cancellation_policy, category, base_price, currency, featured, destination_id, guide_id) VALUES (13, 'Trekking al Cerro Llao Llao', 'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg', 'Senderismo de media jornada hasta la cima del Cerro Llao Llao con vistas panoramicas al lago Nahuel Huapi.', 'Guia certificado, bastones, snack energetico', 'Estacionamiento Hotel Llao Llao', 210, 'ES', 'Cancelacion gratuita hasta 24 h antes.', 'AVENTURA', 16000.00, 'ARS', 0, 3, 4);
+INSERT INTO activities (id, name, image_url, description, includes_text, meeting_point, duration_minutes, language, cancellation_policy, category, base_price, currency, featured, destination_id, guide_id) VALUES (14, 'City Tour Buenos Aires', 'https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg', 'Recorrido en bus panoramico por los barrios mas emblematicos: La Boca, San Telmo, Puerto Madero y Recoleta.', 'Bus panoramico, audio guia, mapa, agua', 'Obelisco, Av. Corrientes 1', 180, 'ES', 'Cancelacion gratuita hasta 24 h antes.', 'VISITA_GUIADA', 12000.00, 'ARS', 1, 1, 1);
+INSERT INTO activities (id, name, image_url, description, includes_text, meeting_point, duration_minutes, language, cancellation_policy, category, base_price, currency, featured, destination_id, guide_id) VALUES (15, 'Safari fotografico en la selva misionera', 'https://images.pexels.com/photos/975771/pexels-photo-975771.jpeg', 'Exploracion fotografica guiada por senderos internos del Parque Nacional Iguazu. Avistaje de fauna y flora.', 'Guia fotografo, entrada al parque, agua', 'Centro de Visitantes, Parque Nacional Iguazu', 240, 'ES', 'Cancelacion gratuita hasta 48 h antes.', 'AVENTURA', 22000.00, 'ARS', 0, 4, 2);
+INSERT INTO activities (id, name, image_url, description, includes_text, meeting_point, duration_minutes, language, cancellation_policy, category, base_price, currency, featured, destination_id, guide_id) VALUES (16, 'Sandboarding en dunas de Cafayate', 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg', 'Deslizate por las dunas rojizas de los alrededores de Cafayate. Apto para todos los niveles.', 'Tabla de sandboarding, casco, transporte desde Salta', 'Terminal de omnibus de Salta', 300, 'ES', 'Cancelacion gratuita hasta 24 h antes.', 'AVENTURA', 19000.00, 'ARS', 0, 5, 5);
+INSERT INTO activities (id, name, image_url, description, includes_text, meeting_point, duration_minutes, language, cancellation_policy, category, base_price, currency, featured, destination_id, guide_id) VALUES (17, 'Glaciar Martial y teleferico - Ushuaia', 'https://images.pexels.com/photos/3369569/pexels-photo-3369569.jpeg', 'Sube en teleferico hasta el Glaciar Martial y disfruta de vistas unicas sobre Ushuaia y el Canal Beagle.', 'Teleferico, guia, chocolate caliente al regreso', 'Base del teleferico Glaciar Martial, Ushuaia', 150, 'ES', 'Cancelacion gratuita hasta 24 h antes.', 'EXCURSION', 14000.00, 'ARS', 0, 6, 4);
+SET IDENTITY_INSERT activities OFF;
+
 -- 4. ACTIVITY SESSIONS (fechas futuras)
 SET IDENTITY_INSERT activity_sessions ON;
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (1, 1, '2026-04-20 10:00:00', 25, 12, NULL);
@@ -88,6 +97,17 @@ INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_cou
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (33, 12, '2026-04-01 10:00:00', 20, 15, NULL);
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (34, 12, '2026-04-02 10:00:00', 20, 0, NULL);
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (35, 12, '2026-04-03 16:00:00', 20, 0, NULL);
+-- Sesiones para actividades nuevas 13-17 (fechas futuras, cupos disponibles)
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (36, 13, '2026-05-02 08:00:00', 10, 3, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (37, 13, '2026-05-09 08:00:00', 10, 0, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (38, 14, '2026-05-01 09:00:00', 30, 10, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (39, 14, '2026-05-08 09:00:00', 30, 0, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (40, 15, '2026-05-04 07:30:00', 15, 5, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (41, 15, '2026-05-11 07:30:00', 15, 0, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (42, 16, '2026-05-05 06:00:00', 12, 4, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (43, 16, '2026-05-12 06:00:00', 12, 0, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (44, 17, '2026-05-03 10:00:00', 20, 7, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (45, 17, '2026-05-10 10:00:00', 20, 0, NULL);
 SET IDENTITY_INSERT activity_sessions OFF;
 
 -- 5. USERS DE PRUEBA (password = "123456" con BCrypt)
@@ -122,6 +142,42 @@ INSERT INTO bookings (id, user_id, session_id, participants, total_price, status
 INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (10, 2, 22, 2, 40000.00, 'COMPLETED', '2026-03-29 07:30:00', NULL, 'XPN-BOOK10');
 INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (11, 2, 29, 2, 130000.00, 'CONFIRMED', '2026-04-02 09:00:00', NULL, 'XPN-BOOK11');
 SET IDENTITY_INSERT bookings OFF;
+
+-- FAVORITES TEST DATA
+-- Casos para verificar los flags sinCupos, cambioPrecio y cuposLiberados
+
+-- Sesiones futuras para los 4 casos de prueba
+-- (hoy = 2026-04-26; estas fechas son futuras)
+SET IDENTITY_INSERT activity_sessions ON;
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (100, 6,  '2026-05-10 09:00:00', 8,  8,  NULL);       -- Caso 1: sin cupos (lleno)
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (101, 2,  '2026-05-15 11:00:00', 20, 5,  10000.00);   -- Caso 2: cambio de precio (8500 -> 10000)
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (102, 7,  '2026-05-20 10:00:00', 6,  3,  NULL);       -- Caso 3: cupos liberados (0 -> 3)
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (103, 11, '2026-05-25 09:30:00', 20, 10, 35000.00);   -- Caso 4: cambio precio + cupos liberados
+SET IDENTITY_INSERT activity_sessions OFF;
+
+SET IDENTITY_INSERT favorites ON;
+-- Caso 1: sin cupos
+--   activity 6 (Circuito Chico en bici, Bariloche, 18000 ARS, guia Valentina Ruiz)
+--   snapshot_slots=0 -> cupos actuales=0 -> sinCupos=true, cuposLiberados=false, cambioPrecio=false
+INSERT INTO favorites (id, user_id, activity_id, created_at, snapshot_price, snapshot_slots) VALUES (1, 1, 6,  '2026-04-20 10:00:00', 18000.00, 0);
+
+-- Caso 2: cambio de precio
+--   activity 2 (Teatro Colon, Buenos Aires, guia Carlos Garcia)
+--   snapshot_price=8500, precio actual=10000 -> cambioPrecio=true
+--   snapshot_slots=20, cupos actuales=15 -> cuposLiberados=(15>20)=false
+INSERT INTO favorites (id, user_id, activity_id, created_at, snapshot_price, snapshot_slots) VALUES (2, 1, 2,  '2026-04-20 11:00:00', 8500.00,  20);
+
+-- Caso 3: cupos liberados
+--   activity 7 (Kayak Nahuel Huapi, Bariloche, guia Diego Morales)
+--   snapshot_slots=0, cupos actuales=3 -> cuposLiberados=true, cambioPrecio=false
+INSERT INTO favorites (id, user_id, activity_id, created_at, snapshot_price, snapshot_slots) VALUES (3, 1, 7,  '2026-04-20 12:00:00', 25000.00, 0);
+
+-- Caso 4: cambio de precio + cupos liberados
+--   activity 11 (Canal Beagle, Ushuaia, guia Valentina Ruiz)
+--   snapshot_price=28000, precio actual=35000 -> cambioPrecio=true
+--   snapshot_slots=0, cupos actuales=10 -> cuposLiberados=true
+INSERT INTO favorites (id, user_id, activity_id, created_at, snapshot_price, snapshot_slots) VALUES (4, 1, 11, '2026-04-20 13:00:00', 28000.00, 0);
+SET IDENTITY_INSERT favorites OFF;
 
 -- 8. REVIEWS (sobre bookings COMPLETED)
 SET IDENTITY_INSERT reviews ON;
