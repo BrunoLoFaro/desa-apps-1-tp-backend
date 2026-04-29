@@ -2,12 +2,10 @@ package com.example.desabackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-/**
- * Spring Boot entry point for the XploreNow backend (TP).
- */
-@SpringBootApplication
+@SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 @EnableScheduling
 public class DesaBackendApplication {
 
