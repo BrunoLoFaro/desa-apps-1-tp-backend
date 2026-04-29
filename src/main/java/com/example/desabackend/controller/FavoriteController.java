@@ -1,6 +1,6 @@
 package com.example.desabackend.controller;
 
-import com.example.desabackend.dto.ActivitySummaryDto;
+import com.example.desabackend.dto.FavoriteActivityDto;
 import com.example.desabackend.security.AuthUtils;
 import com.example.desabackend.service.FavoriteService;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class FavoriteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ActivitySummaryDto>> getFavorites() {
+    public ResponseEntity<List<FavoriteActivityDto>> getFavorites() {
         Long userId = AuthUtils.getCurrentUserId();
         return ResponseEntity.ok(favoriteService.getFavorites(userId));
     }
