@@ -1,5 +1,6 @@
 -- SEED DATA - SQL Server - plain INSERTs with default ; separator
--- Duplicate-key errors on re-run are ignored by continue-on-error=true
+-- Duplicate-key errors on re-run are ignored by continue-on-error=true.
+-- The user seed below uses MERGE so password hashes are refreshed on restart.
 
 -- 1. DESTINATIONS
 SET IDENTITY_INSERT destinations ON;
@@ -92,8 +93,26 @@ SET IDENTITY_INSERT activity_sessions OFF;
 
 -- 5. USERS DE PRUEBA (password = "123456" con BCrypt)
 SET IDENTITY_INSERT users ON;
-INSERT INTO users (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at) VALUES (1, 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test', 'User', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00');
-INSERT INTO users (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at) VALUES (2, 'maria@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Maria', 'Lopez', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00');
+MERGE users AS target
+USING (
+	VALUES
+		(1, 'test@example.com', '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Test', 'User', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00'),
+		(2, 'maria@example.com', '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Maria', 'Lopez', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00')
+) AS source (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at)
+ON target.id = source.id
+WHEN MATCHED THEN
+	UPDATE SET
+		email = source.email,
+		password_hash = source.password_hash,
+		first_name = source.first_name,
+		last_name = source.last_name,
+		phone = source.phone,
+		profile_photo_url = source.profile_photo_url,
+		enabled = source.enabled,
+		created_at = source.created_at
+WHEN NOT MATCHED THEN
+	INSERT (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at)
+	VALUES (source.id, source.email, source.password_hash, source.first_name, source.last_name, source.phone, source.profile_photo_url, source.enabled, source.created_at);
 SET IDENTITY_INSERT users OFF;
 
 -- 6. USER PREFERENCES (para /activities/recommended)
@@ -132,3 +151,24 @@ INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_ra
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (5, 9, 2, 1, 1, 4, 4, 'Lindo paseo, el barrio tiene mucha historia.', '2026-04-01 15:00:00');
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (6, 10, 2, 8, 2, 5, 5, 'Espectacular! La Garganta del Diablo te deja sin palabras.', '2026-04-01 17:00:00');
 SET IDENTITY_INSERT reviews OFF;
+
+-- 9. ADD DISCOUNTS TO PROMOTIONAL ACTIVITIES
+-- Add 20% discount to Tour gastronomico por Palermo
+UPDATE activities SET discount_percentage = 20 WHERE id = 3;
+-- Add 15% discount to Excursion Alta Montana
+UPDATE activities SET discount_percentage = 15 WHERE id = 4;
+-- Add 25% discount to Degustacion de vinos en Lujan de Cuyo
+UPDATE activities SET discount_percentage = 25 WHERE id = 5;
+-- Add 10% discount to Circuito Chico en bici
+UPDATE activities SET discount_percentage = 10 WHERE id = 6;
+-- Add 30% discount to Kayak en el Nahuel Huapi
+UPDATE activities SET discount_percentage = 30 WHERE id = 7;
+
+-- 10. NEWS ARTICLES
+SET IDENTITY_INSERT news ON;
+INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (1, N'Nuevas rutas de trekking en Bariloche', N'Se inauguraron 3 senderos nuevos en el Parque Nacional Nahuel Huapi con vistas panoramicas al lago.', N'Se inauguraron 3 senderos nuevos en el Parque Nacional Nahuel Huapi con vistas panoramicas al lago. Los senderos estan habilitados para todos los niveles de dificultad y cuentan con senalizacion bilingue. El acceso es gratuito con reserva previa.', 'https://images.unsplash.com/photo-1551632811-1dca8d7c6985', 'NEWS', NULL, '2026-04-15 10:00:00', NULL, N'Explorar actividades', NULL);
+INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (2, N'Temporada de ballenas en Puerto Madryn', N'Comenzo la temporada de avistaje de ballenas francas en la costa patagonica.', N'Comenzo la temporada de avistaje de ballenas francas en la costa patagonica. Las excursiones salen diariamente desde Puerto Piramides y la temporada se extiende hasta diciembre. Se recomienda reservar con anticipacion.', 'https://images.unsplash.com/photo-1568430481898-5ba6f84fdb3e', 'NEWS', NULL, '2026-04-10 08:00:00', NULL, N'Ver excursiones', NULL);
+INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (3, N'Carnaval de Humahuaca 2026', N'El famoso Carnaval de Humahuaca celebra su edicion 2026 con mas de 50 comparsas.', N'El famoso Carnaval de Humahuaca celebra su edicion 2026 con mas de 50 comparsas. El evento se realiza en febrero y atrae a miles de turistas. Incluye musica folklorica, danzas tradicionales y la tradicional desentierra del diablo.', 'https://images.unsplash.com/photo-1530104685750-4217b1e0f9d6', 'NEWS', NULL, '2026-03-01 12:00:00', NULL, NULL, NULL);
+INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (4, N'Jujuy entre los 10 destinos emergentes del mundo', N'La revista Travel+ reconocio a Jujuy como uno de los destinos emergentes mas destacados del 2026.', N'La revista Travel+ reconocio a Jujuy como uno de los destinos emergentes mas destacados del 2026. La Quebrada de Humahuaca, las Salinas Grandes y la Puna fueron los atractivos que mas destacaron los editores.', 'https://images.unsplash.com/photo-1473496025427-9b7e1f62b4a1', 'NEWS', NULL, '2026-04-01 09:00:00', NULL, N'Descubrir Jujuy', NULL);
+INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (5, N'Reabren las Cataratas del Iguazu tras renovacion', N'Los circuitos del Parque Nacional Iguazu reabren con pasarelas renovadas y nuevas miradores.', N'Los circuitos del Parque Nacional Iguazu reabren con pasarelas renovadas y nuevas miradores. La Garganta del Diablo cuenta ahora con una pasarela de 1.2 km con vista panoramica de 360 grados.', 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad', 'NEWS', 8, '2026-04-05 11:00:00', NULL, N'Ver actividad', NULL);
+SET IDENTITY_INSERT news OFF;
