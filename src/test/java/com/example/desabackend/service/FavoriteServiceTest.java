@@ -220,7 +220,7 @@ class FavoriteServiceTest {
     private ActivitySummaryDto makeSummary(Long id, BigDecimal price, int availableSpots) {
         return new ActivitySummaryDto(id, "Activity " + id, null,
                 new DestinationDto(1L, "Bariloche"), null,
-                60, price, "ARS", availableSpots, null, 0L, true);
+                60, price, "ARS", availableSpots, null, 0L, true, null);
     }
 
     private Favorite makeFavoriteEntity(Long activityId, BigDecimal snapshotPrice, Integer snapshotSlots) {
