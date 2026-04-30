@@ -71,6 +71,9 @@ public class ActivityEntity {
     @Column(nullable = false)
     private boolean featured = false;
 
+    @Column
+    private Integer discountPercentage = null;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "destination_id", nullable = false)
     private DestinationEntity destination;

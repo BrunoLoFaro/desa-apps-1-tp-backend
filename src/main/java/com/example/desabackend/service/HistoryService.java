@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class HistoryService {
 
+
     private final BookingRepository bookingRepository;
     private final ReviewRepository reviewRepository;
 
@@ -43,17 +44,18 @@ public class HistoryService {
         return new PageResponse<>(items, result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages());
     }
 
-    private HistoryItemDto toHistoryItem(BookingEntity booking) {
+        private HistoryItemDto toHistoryItem(BookingEntity booking) {
         ActivitySessionEntity session = booking.getSession();
         ActivityEntity activity = session.getActivity();
         DestinationDto dest = activity.getDestination() != null
-                ? new DestinationDto(activity.getDestination().getId(), activity.getDestination().getName()) : null;
+            ? new DestinationDto(activity.getDestination().getId(), activity.getDestination().getName()) : null;
         String guideName = activity.getGuide() != null ? activity.getGuide().getFullName() : null;
         ReviewSummaryDto reviewDto = reviewRepository.findByBookingId(booking.getId())
-                .map(r -> new ReviewSummaryDto(r.getId(), r.getActivityRating(), r.getGuideRating(), r.getComment(), r.getCreatedAt()))
-                .orElse(null);
+            .map(r -> new ReviewSummaryDto(r.getId(), r.getActivityRating(), r.getGuideRating(), r.getComment(), r.getCreatedAt()))
+            .orElse(null);
+        // canReview ya no se calcula aquí
         return new HistoryItemDto(booking.getId(), activity.getId(), activity.getName(), dest, guideName,
-                session.getStartTime(), activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0,
-                booking.getParticipants(), booking.getTotalPrice(), activity.getCurrency(), reviewDto);
-    }
+            session.getStartTime(), activity.getDurationMinutes() != null ? activity.getDurationMinutes() : 0,
+            booking.getParticipants(), booking.getTotalPrice(), activity.getCurrency(), reviewDto, false);
+        }
 }

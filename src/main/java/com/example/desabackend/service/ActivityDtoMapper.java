@@ -36,7 +36,8 @@ final class ActivityDtoMapper {
                 availableSpots,
                 avgRating,
                 reviewCount,
-                isFavorite
+                isFavorite,
+                activity.getDiscountPercentage()
         );
     }
 
