@@ -1,10 +1,13 @@
 package com.example.desabackend.controller;
 
 import com.example.desabackend.dto.CreateReviewRequestDto;
+import com.example.desabackend.dto.MyReviewDto;
 import com.example.desabackend.dto.ReviewSummaryDto;
 import com.example.desabackend.service.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users/{userId}/reviews")
@@ -26,5 +29,10 @@ public class ReviewController {
     public ReviewSummaryDto getReviewByBooking(@PathVariable Long userId,
             @PathVariable Long bookingId) {
         return reviewService.getReviewByBooking(userId, bookingId);
+    }
+
+    @GetMapping("/mine")
+    public List<MyReviewDto> getMyReviews(@PathVariable Long userId) {
+        return reviewService.getMyReviews(userId);
     }
 }

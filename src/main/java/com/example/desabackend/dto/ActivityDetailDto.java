@@ -16,6 +16,7 @@ public record ActivityDetailDto(
         String description,
         String includesText,
         String meetingPoint,
+        List<ItineraryPointDto> itineraryPoints,
         GuideDto guide,
         int durationMinutes,
         String language,
@@ -26,6 +27,7 @@ public record ActivityDetailDto(
         int availableSpots,
         Double avgRating,
         long reviewCount,
-        boolean isFavorite
+        boolean isFavorite,
+        Integer discountPercentage
 ) {
 }

@@ -2,6 +2,7 @@ package com.example.desabackend.service;
 
 import com.example.desabackend.entity.ActivityCategory;
 import com.example.desabackend.entity.ActivityEntity;
+import com.example.desabackend.entity.ActivityItineraryPointEntity;
 import com.example.desabackend.entity.ActivitySessionEntity;
 import com.example.desabackend.entity.DestinationEntity;
 import com.example.desabackend.entity.GuideEntity;
@@ -11,6 +12,7 @@ import com.example.desabackend.repository.FavoriteRepository;
 import com.example.desabackend.repository.ReviewRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,6 +97,31 @@ class ActivityCatalogServiceTest {
         assertThat(result.sessions()).hasSize(1);
     }
 
+    @Test
+    void getActivityDetail_includesItineraryPointsSortedByPosition() {
+        ActivityEntity activity = createActivity(3L, "Recorrido");
+        activity.setMeetingPoint("Plaza Dorrego");
+
+        List<ActivityItineraryPointEntity> points = new ArrayList<>();
+        points.add(itineraryPoint(activity, 2, "Mercado de San Telmo"));
+        points.add(itineraryPoint(activity, 1, "Plaza Dorrego"));
+        activity.setItineraryPoints(points);
+
+        when(activityRepository.findById(3L)).thenReturn(Optional.of(activity));
+        when(sessionRepository.findFutureByActivityId(eq(3L), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+        when(reviewRepository.getActivityRating(3L)).thenReturn(Optional.empty());
+        when(favoriteRepository.existsByUserIdAndActivityId(77L, 3L)).thenReturn(false);
+
+        var result = service.getActivityDetail(3L, null, 77L);
+
+        assertThat(result.itineraryPoints()).hasSize(2);
+        assertThat(result.itineraryPoints().get(0).position()).isEqualTo(1);
+        assertThat(result.itineraryPoints().get(0).name()).isEqualTo("Plaza Dorrego");
+        assertThat(result.itineraryPoints().get(1).position()).isEqualTo(2);
+        assertThat(result.itineraryPoints().get(1).name()).isEqualTo("Mercado de San Telmo");
+    }
+
     private static ActivityEntity createActivity(Long id, String name) {
         ActivityEntity activity = new ActivityEntity();
         activity.setId(id);
@@ -119,6 +146,15 @@ class ActivityCatalogServiceTest {
         guide.setFullName("Ana Guide");
         activity.setGuide(guide);
         return activity;
+    }
+
+    private static ActivityItineraryPointEntity itineraryPoint(ActivityEntity activity, int position, String name) {
+        ActivityItineraryPointEntity point = new ActivityItineraryPointEntity();
+        point.setActivity(activity);
+        point.setPosition(position);
+        point.setName(name);
+        point.setAddress(name);
+        return point;
     }
 
     private static ActivitySessionRepository.ActivitySummaryAggregate sessionAggregate(

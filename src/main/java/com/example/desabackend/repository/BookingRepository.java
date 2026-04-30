@@ -25,7 +25,7 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
             join fetch a.destination
             left join fetch a.guide
             where b.user.id = :userId
-              and b.status = 'COMPLETED'
+              and b.status in ('COMPLETED', 'CANCELLED')
               and (:destinationId is null or a.destination.id = :destinationId)
               and (:startDate is null or s.startTime >= :startDate)
               and (:endDate is null or s.startTime < :endDate)
