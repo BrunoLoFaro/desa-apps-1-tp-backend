@@ -12,6 +12,22 @@ import org.springframework.data.repository.query.Param;
  */
 public interface ActivitySessionRepository extends JpaRepository<ActivitySessionEntity, Long> {
 
+    interface NextSessionDateProjection {
+        Long getActivityId();
+        LocalDateTime getNextSessionDate();
+    }
+
+    @Query("""
+            SELECT s.activity.id AS activityId, MIN(s.startTime) AS nextSessionDate
+            FROM ActivitySessionEntity s
+            WHERE s.activity.id IN :activityIds AND s.startTime >= :now
+            GROUP BY s.activity.id
+            """)
+    List<NextSessionDateProjection> findNextSessionDateByActivityIds(
+            @Param("activityIds") List<Long> activityIds,
+            @Param("now") LocalDateTime now
+    );
+
     interface ActivitySummaryAggregate {
         Long getActivityId();
 
