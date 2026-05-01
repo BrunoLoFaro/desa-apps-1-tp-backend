@@ -11,6 +11,7 @@ public record ActivityDetailDto(
         Long id,
         String name,
         String imageUrl,
+        List<String> galleryUrls,
         DestinationDto destination,
         ActivityCategory category,
         String description,

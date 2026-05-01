@@ -1,4 +1,4 @@
--- SEED DATA - SQL Server - plain INSERTS with default ; separator
+﻿-- SEED DATA - SQL Server - plain INSERTS with default ; separator
 -- Duplicate-key errors on re-run are ignored by continue-on-error=true
 -- SEED DATA - SQL Server - plain INSERTs with default ; separator
 -- Duplicate-key errors on re-run are ignored by continue-on-error=true.
@@ -62,6 +62,97 @@ INSERT INTO activities (id, name, image_url, description, includes_text, meeting
 INSERT INTO activities (id, name, image_url, description, includes_text, meeting_point, duration_minutes, language, cancellation_policy, category, base_price, currency, featured, destination_id, guide_id) VALUES (16, 'Sandboarding en dunas de Cafayate', 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg', 'Deslizate por las dunas rojizas de los alrededores de Cafayate. Apto para todos los niveles.', 'Tabla de sandboarding, casco, transporte desde Salta', 'Terminal de omnibus de Salta', 300, 'ES', 'Cancelacion gratuita hasta 24 h antes.', 'AVENTURA', 19000.00, 'ARS', 0, 5, 5);
 INSERT INTO activities (id, name, image_url, description, includes_text, meeting_point, duration_minutes, language, cancellation_policy, category, base_price, currency, featured, destination_id, guide_id) VALUES (17, 'Glaciar Martial y teleferico - Ushuaia', 'https://images.pexels.com/photos/3369569/pexels-photo-3369569.jpeg', 'Sube en teleferico hasta el Glaciar Martial y disfruta de vistas unicas sobre Ushuaia y el Canal Beagle.', 'Teleferico, guia, chocolate caliente al regreso', 'Base del teleferico Glaciar Martial, Ushuaia', 150, 'ES', 'Cancelacion gratuita hasta 24 h antes.', 'EXCURSION', 14000.00, 'ARS', 0, 6, 4);
 SET IDENTITY_INSERT activities OFF;
+
+-- 3c. GALERIA DE IMAGENES (carrusel en detalle)
+-- Nota: requiere la entidad ActivityGalleryImageEntity (JPA crea la tabla).
+DELETE FROM activity_gallery_images WHERE activity_id IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17);
+
+-- Activity 1
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 1, 'https://images.unsplash.com/photo-1544986581-efac024faf62');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 2, 'https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 3, 'https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg');
+
+-- Activity 2
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 1, 'https://images.unsplash.com/photo-1520637836862-4d197d17c93a');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 2, 'https://images.pexels.com/photos/1697076/pexels-photo-1697076.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 3, 'https://images.pexels.com/photos/2772698/pexels-photo-2772698.jpeg');
+
+-- Activity 3
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 1, 'https://images.unsplash.com/photo-1504674900247-0877df9cc836');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 2, 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 3, 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg');
+
+-- Activity 4
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 1, 'https://images.unsplash.com/photo-1501785888041-af3ef285b470');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 2, 'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 3, 'https://images.pexels.com/photos/672358/pexels-photo-672358.jpeg');
+
+-- Activity 5
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 1, 'https://images.unsplash.com/photo-1519681393784-d120267933ba');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 2, 'https://images.pexels.com/photos/434311/pexels-photo-434311.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 3, 'https://images.pexels.com/photos/3019019/pexels-photo-3019019.jpeg');
+
+-- Activity 6
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 1, 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 2, 'https://images.pexels.com/photos/27727948/pexels-photo-27727948.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 3, 'https://images.pexels.com/photos/36975348/pexels-photo-36975348.jpeg');
+
+-- Activity 7
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 1, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 2, 'https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 3, 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg');
+
+-- Activity 8
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 1, 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 2, 'https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 3, 'https://images.pexels.com/photos/1295036/pexels-photo-1295036.jpeg');
+
+-- Activity 9
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 1, 'https://images.unsplash.com/photo-1491553895911-0055eca6402d');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 2, 'https://images.pexels.com/photos/2901228/pexels-photo-2901228.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 3, 'https://images.pexels.com/photos/301875/pexels-photo-301875.jpeg');
+
+-- Activity 10
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 1, 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 2, 'https://images.pexels.com/photos/1631678/pexels-photo-1631678.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 3, 'https://images.pexels.com/photos/1271620/pexels-photo-1271620.jpeg');
+
+-- Activity 11
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 1, 'https://images.unsplash.com/photo-1519817650390-64a93db511aa');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 2, 'https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 3, 'https://images.pexels.com/photos/53213/pexels-photo-53213.jpeg');
+
+-- Activity 12
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (12, 1, 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (12, 2, 'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (12, 3, 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg');
+
+-- Activity 13
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (13, 1, 'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (13, 2, 'https://images.pexels.com/photos/2433353/pexels-photo-2433353.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (13, 3, 'https://images.pexels.com/photos/2387871/pexels-photo-2387871.jpeg');
+
+-- Activity 14
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (14, 1, 'https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (14, 2, 'https://images.pexels.com/photos/53213/pexels-photo-53213.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (14, 3, 'https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg');
+
+-- Activity 15
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (15, 1, 'https://images.pexels.com/photos/975771/pexels-photo-975771.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (15, 2, 'https://images.pexels.com/photos/247600/pexels-photo-247600.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (15, 3, 'https://images.pexels.com/photos/2558605/pexels-photo-2558605.jpeg');
+
+-- Activity 16
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (16, 1, 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (16, 2, 'https://images.pexels.com/photos/315191/pexels-photo-315191.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (16, 3, 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg');
+
+-- Activity 17
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (17, 1, 'https://images.pexels.com/photos/3369569/pexels-photo-3369569.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (17, 2, 'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (17, 3, 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg');
+
+
 
 -- 4. ACTIVITY SESSIONS (fechas futuras)
 SET IDENTITY_INSERT activity_sessions ON;
@@ -238,9 +329,16 @@ UPDATE activities SET discount_percentage = 30 WHERE id = 7;
 
 -- 10. NEWS ARTICLES
 SET IDENTITY_INSERT news ON;
-INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (1, N'Nuevas rutas de trekking en Bariloche', N'Se inauguraron 3 senderos nuevos en el Parque Nacional Nahuel Huapi con vistas panoramicas al lago.', N'Se inauguraron 3 senderos nuevos en el Parque Nacional Nahuel Huapi con vistas panoramicas al lago. Los senderos estan habilitados para todos los niveles de dificultad y cuentan con senalizacion bilingue. El acceso es gratuito con reserva previa.', 'https://images.unsplash.com/photo-1551632811-1dca8d7c6985', 'NEWS', NULL, '2026-04-15 10:00:00', NULL, N'Explorar actividades', NULL);
-INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (2, N'Temporada de ballenas en Puerto Madryn', N'Comenzo la temporada de avistaje de ballenas francas en la costa patagonica.', N'Comenzo la temporada de avistaje de ballenas francas en la costa patagonica. Las excursiones salen diariamente desde Puerto Piramides y la temporada se extiende hasta diciembre. Se recomienda reservar con anticipacion.', 'https://images.unsplash.com/photo-1568430481898-5ba6f84fdb3e', 'NEWS', NULL, '2026-04-10 08:00:00', NULL, N'Ver excursiones', NULL);
+INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (1, N'Nuevas rutas de trekking en Bariloche', N'Se inauguraron 3 senderos nuevos en el Parque Nacional Nahuel Huapi con vistas panoramicas al lago.', N'Se inauguraron 3 senderos nuevos en el Parque Nacional Nahuel Huapi con vistas panoramicas al lago. Los senderos estan habilitados para todos los niveles de dificultad y cuentan con senalizacion bilingue. El acceso es gratuito con reserva previa.', 'https://images.pexels.com/photos/33448192/pexels-photo-33448192.jpeg', 'NEWS', NULL, '2026-04-15 10:00:00', NULL, N'Explorar actividades', NULL);
+INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (2, N'Temporada de ballenas en Puerto Madryn', N'Comenzo la temporada de avistaje de ballenas francas en la costa patagonica.', N'Comenzo la temporada de avistaje de ballenas francas en la costa patagonica. Las excursiones salen diariamente desde Puerto Piramides y la temporada se extiende hasta diciembre. Se recomienda reservar con anticipacion.', 'https://images.pexels.com/photos/7974939/pexels-photo-7974939.jpeg', 'NEWS', NULL, '2026-04-10 08:00:00', NULL, N'Ver excursiones', NULL);
 INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (3, N'Carnaval de Humahuaca 2026', N'El famoso Carnaval de Humahuaca celebra su edicion 2026 con mas de 50 comparsas.', N'El famoso Carnaval de Humahuaca celebra su edicion 2026 con mas de 50 comparsas. El evento se realiza en febrero y atrae a miles de turistas. Incluye musica folklorica, danzas tradicionales y la tradicional desentierra del diablo.', 'https://images.unsplash.com/photo-1530104685750-4217b1e0f9d6', 'NEWS', NULL, '2026-03-01 12:00:00', NULL, NULL, NULL);
 INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (4, N'Jujuy entre los 10 destinos emergentes del mundo', N'La revista Travel+ reconocio a Jujuy como uno de los destinos emergentes mas destacados del 2026.', N'La revista Travel+ reconocio a Jujuy como uno de los destinos emergentes mas destacados del 2026. La Quebrada de Humahuaca, las Salinas Grandes y la Puna fueron los atractivos que mas destacaron los editores.', 'https://images.unsplash.com/photo-1473496025427-9b7e1f62b4a1', 'NEWS', NULL, '2026-04-01 09:00:00', NULL, N'Descubrir Jujuy', NULL);
 INSERT INTO news (id, title, description, full_content, image_url, type, related_activity_id, published_at, valid_until, cta_text, cta_link) VALUES (5, N'Reabren las Cataratas del Iguazu tras renovacion', N'Los circuitos del Parque Nacional Iguazu reabren con pasarelas renovadas y nuevas miradores.', N'Los circuitos del Parque Nacional Iguazu reabren con pasarelas renovadas y nuevas miradores. La Garganta del Diablo cuenta ahora con una pasarela de 1.2 km con vista panoramica de 360 grados.', 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad', 'NEWS', 8, '2026-04-05 11:00:00', NULL, N'Ver actividad', NULL);
 SET IDENTITY_INSERT news OFF;
+
+-- Idempotente: asegura imÃ¡genes en news existentes (para no depender de recrear la DB)
+UPDATE news SET image_url = 'https://images.pexels.com/photos/33448192/pexels-photo-33448192.jpeg' WHERE id = 1;
+UPDATE news SET image_url = 'https://images.pexels.com/photos/7974939/pexels-photo-7974939.jpeg' WHERE id = 2;
+
+
+

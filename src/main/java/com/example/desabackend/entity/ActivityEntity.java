@@ -88,4 +88,8 @@ public class ActivityEntity {
     @OneToMany(mappedBy = "activity", fetch = FetchType.LAZY)
     @OrderBy("position ASC")
     private List<ActivityItineraryPointEntity> itineraryPoints = new ArrayList<>();
+
+    @OneToMany(mappedBy = "activity", fetch = FetchType.LAZY)
+    @OrderBy("position ASC")
+    private List<ActivityGalleryImageEntity> galleryImages = new ArrayList<>();
 }

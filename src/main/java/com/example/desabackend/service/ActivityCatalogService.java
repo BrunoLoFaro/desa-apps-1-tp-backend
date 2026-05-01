@@ -139,10 +139,19 @@ public class ActivityCatalogService {
                         ))
                         .toList();
 
+        List<String> galleryUrls = activity.getGalleryImages() == null
+                ? List.of()
+                : activity.getGalleryImages().stream()
+                        .sorted(Comparator.comparingInt(p -> p.getPosition() != null ? p.getPosition() : 0))
+                        .map(p -> p.getImageUrl())
+                        .filter(u -> u != null && !u.isBlank())
+                        .toList();
+
         return new ActivityDetailDto(
                 activity.getId(),
                 activity.getName(),
                 activity.getImageUrl(),
+                galleryUrls,
                 ActivityDtoMapper.toDestinationDto(activity),
                 activity.getCategory(),
                 activity.getDescription(),
