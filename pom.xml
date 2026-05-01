@@ -61,6 +61,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!-- Actuator (for /actuator/health used by docker-compose healthcheck) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Email (JavaMail) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
