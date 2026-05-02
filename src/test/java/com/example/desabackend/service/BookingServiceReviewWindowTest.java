@@ -37,13 +37,15 @@ class BookingServiceReviewWindowTest {
     private UserRepository userRepository;
     @Mock
     private ReviewRepository reviewRepository;
+    @Mock
+    private BookingMaintenanceService bookingMaintenanceService;
 
     // ── helpers ────────────────────────────────────────────────
 
     private BookingService serviceAt(LocalDateTime now) {
         Instant instant = now.atZone(ZONE).toInstant();
         Clock fixed = Clock.fixed(instant, ZONE);
-        return new BookingService(bookingRepository, sessionRepository, userRepository, reviewRepository, fixed);
+        return new BookingService(bookingRepository, sessionRepository, userRepository, reviewRepository, fixed, bookingMaintenanceService);
     }
 
     private BookingEntity completedBooking(LocalDateTime sessionStart, int durationMinutes) {

@@ -4,6 +4,7 @@ import com.example.desabackend.entity.BookingEntity;
 import com.example.desabackend.entity.BookingStatus;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,4 +41,14 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
     );
 
     long countByUserIdAndStatus(Long userId, BookingStatus status);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+            update BookingEntity b
+               set b.status = 'COMPLETED'
+             where b.user.id = :userId
+               and b.status = 'CONFIRMED'
+               and b.session.startTime < :now
+            """)
+    int completePastConfirmedBookings(@Param("userId") Long userId, @Param("now") java.time.LocalDateTime now);
 }

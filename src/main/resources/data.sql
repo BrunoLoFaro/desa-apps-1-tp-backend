@@ -1,4 +1,4 @@
-﻿-- SEED DATA - SQL Server - plain INSERTS with default ; separator
+-- SEED DATA - SQL Server - plain INSERTS with default ; separator
 -- Duplicate-key errors on re-run are ignored by continue-on-error=true
 -- SEED DATA - SQL Server - plain INSERTs with default ; separator
 -- Duplicate-key errors on re-run are ignored by continue-on-error=true.
@@ -42,17 +42,17 @@ SET IDENTITY_INSERT activities OFF;
 
 -- Actualiza image_url en filas existentes (se ejecuta siempre, idempotente)
 UPDATE activities SET image_url = 'https://images.pexels.com/photos/17914080/pexels-photo-17914080.jpeg' WHERE id = 1;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1503095396549-807759245b35' WHERE id = 2;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836' WHERE id = 3;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1501785888041-af3ef285b470' WHERE id = 4;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/1697076/pexels-photo-1697076.jpeg' WHERE id = 2;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg' WHERE id = 3;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg' WHERE id = 4;
 UPDATE activities SET image_url = 'https://images.pexels.com/photos/2702805/pexels-photo-2702805.jpeg' WHERE id = 5;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee' WHERE id = 6;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/27727948/pexels-photo-27727948.jpeg' WHERE id = 6;
 UPDATE activities SET image_url = 'https://images.pexels.com/photos/13858336/pexels-photo-13858336.jpeg' WHERE id = 7;
 UPDATE activities SET image_url = 'https://images.pexels.com/photos/29714312/pexels-photo-29714312.jpeg' WHERE id = 8;
 UPDATE activities SET image_url = 'https://images.pexels.com/photos/10553977/pexels-photo-10553977.jpeg' WHERE id = 9;
 UPDATE activities SET image_url = 'https://images.pexels.com/photos/26654240/pexels-photo-26654240.jpeg' WHERE id = 10;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e' WHERE id = 11;
-UPDATE activities SET image_url = 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e' WHERE id = 12;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg' WHERE id = 11;
+UPDATE activities SET image_url = 'https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg' WHERE id = 12;
 
 -- 3b. ACTIVIDADES ADICIONALES (cupos disponibles, imagen completa)
 SET IDENTITY_INSERT activities ON;
@@ -68,62 +68,62 @@ SET IDENTITY_INSERT activities OFF;
 DELETE FROM activity_gallery_images WHERE activity_id IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17);
 
 -- Activity 1
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 1, 'https://images.unsplash.com/photo-1544986581-efac024faf62');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 2, 'https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 3, 'https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 1, 'https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 2, 'https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (1, 3, 'https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg');
 
 -- Activity 2
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 1, 'https://images.unsplash.com/photo-1520637836862-4d197d17c93a');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 2, 'https://images.pexels.com/photos/1697076/pexels-photo-1697076.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 3, 'https://images.pexels.com/photos/2772698/pexels-photo-2772698.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 1, 'https://images.pexels.com/photos/1697076/pexels-photo-1697076.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 2, 'https://images.pexels.com/photos/2772698/pexels-photo-2772698.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (2, 3, 'https://images.pexels.com/photos/53213/pexels-photo-53213.jpeg');
 
 -- Activity 3
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 1, 'https://images.unsplash.com/photo-1504674900247-0877df9cc836');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 2, 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 3, 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 1, 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 2, 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (3, 3, 'https://images.pexels.com/photos/3019019/pexels-photo-3019019.jpeg');
 
 -- Activity 4
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 1, 'https://images.unsplash.com/photo-1501785888041-af3ef285b470');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 2, 'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 3, 'https://images.pexels.com/photos/672358/pexels-photo-672358.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 1, 'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 2, 'https://images.pexels.com/photos/672358/pexels-photo-672358.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (4, 3, 'https://images.pexels.com/photos/33448192/pexels-photo-33448192.jpeg');
 
 -- Activity 5
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 1, 'https://images.unsplash.com/photo-1519681393784-d120267933ba');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 2, 'https://images.pexels.com/photos/434311/pexels-photo-434311.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 3, 'https://images.pexels.com/photos/3019019/pexels-photo-3019019.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 1, 'https://images.pexels.com/photos/434311/pexels-photo-434311.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 2, 'https://images.pexels.com/photos/3019019/pexels-photo-3019019.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (5, 3, 'https://images.pexels.com/photos/2702805/pexels-photo-2702805.jpeg');
 
 -- Activity 6
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 1, 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 2, 'https://images.pexels.com/photos/27727948/pexels-photo-27727948.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 3, 'https://images.pexels.com/photos/36975348/pexels-photo-36975348.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 1, 'https://images.pexels.com/photos/27727948/pexels-photo-27727948.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 2, 'https://images.pexels.com/photos/36975348/pexels-photo-36975348.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (6, 3, 'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg');
 
 -- Activity 7
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 1, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 2, 'https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 3, 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 1, 'https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 2, 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (7, 3, 'https://images.pexels.com/photos/1295036/pexels-photo-1295036.jpeg');
 
 -- Activity 8
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 1, 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 2, 'https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 3, 'https://images.pexels.com/photos/1295036/pexels-photo-1295036.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 1, 'https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 2, 'https://images.pexels.com/photos/1295036/pexels-photo-1295036.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (8, 3, 'https://images.pexels.com/photos/29714312/pexels-photo-29714312.jpeg');
 
 -- Activity 9
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 1, 'https://images.unsplash.com/photo-1491553895911-0055eca6402d');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 2, 'https://images.pexels.com/photos/2901228/pexels-photo-2901228.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 3, 'https://images.pexels.com/photos/301875/pexels-photo-301875.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 1, 'https://images.pexels.com/photos/2901228/pexels-photo-2901228.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 2, 'https://images.pexels.com/photos/301875/pexels-photo-301875.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (9, 3, 'https://images.pexels.com/photos/1295036/pexels-photo-1295036.jpeg');
 
 -- Activity 10
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 1, 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 2, 'https://images.pexels.com/photos/1631678/pexels-photo-1631678.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 3, 'https://images.pexels.com/photos/1271620/pexels-photo-1271620.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 1, 'https://images.pexels.com/photos/1631678/pexels-photo-1631678.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 2, 'https://images.pexels.com/photos/1271620/pexels-photo-1271620.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (10, 3, 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg');
 
 -- Activity 11
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 1, 'https://images.unsplash.com/photo-1519817650390-64a93db511aa');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 2, 'https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg');
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 3, 'https://images.pexels.com/photos/53213/pexels-photo-53213.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 1, 'https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 2, 'https://images.pexels.com/photos/53213/pexels-photo-53213.jpeg');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (11, 3, 'https://images.pexels.com/photos/3369569/pexels-photo-3369569.jpeg');
 
 -- Activity 12
-INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (12, 1, 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e');
+INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (12, 1, 'https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg');
 INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (12, 2, 'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg');
 INSERT INTO activity_gallery_images (activity_id, position, image_url) VALUES (12, 3, 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg');
 
@@ -202,30 +202,33 @@ INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_cou
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (43, 16, '2026-05-12 06:00:00', 12, 0, NULL);
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (44, 17, '2026-05-03 10:00:00', 20, 7, NULL);
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (45, 17, '2026-05-10 10:00:00', 20, 0, NULL);
+
+-- Sesiones futuras (hoy ~ 2026-05-02) para asegurar cupos y "next session" en Home/promos
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (46, 1,  '2026-05-06 11:00:00', 25,  5,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (47, 2,  '2026-05-07 15:00:00', 20,  6,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (48, 3,  '2026-05-08 19:00:00', 16,  4,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (49, 4,  '2026-05-09 07:00:00', 15,  7,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (50, 5,  '2026-05-10 10:00:00', 10,  4,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (51, 6,  '2026-05-10 09:00:00', 8,   4,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (52, 7,  '2026-05-11 10:00:00', 6,   2,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (53, 8,  '2026-05-12 08:00:00', 30,  8,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (54, 9,  '2026-05-12 12:00:00', 18,  6,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (55, 10, '2026-05-11 07:00:00', 40, 12,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (56, 11, '2026-05-08 09:30:00', 20,  6,  NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (57, 12, '2026-05-09 10:00:00', 30,  9,  NULL);
+
+-- Sesiones pasadas para reviews de actividades 15-17 (mantener historial realista)
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (58, 15, '2026-04-20 07:30:00', 15, 10, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (59, 16, '2026-04-18 06:00:00', 12,  9, NULL);
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (60, 17, '2026-04-19 10:00:00', 20, 14, NULL);
 SET IDENTITY_INSERT activity_sessions OFF;
 
 -- 5. USERS DE PRUEBA (password = "123456" con BCrypt)
 SET IDENTITY_INSERT users ON;
-MERGE users AS target
-USING (
-	VALUES
-		(1, 'test@example.com', '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Test', 'User', '+5491123456789', 'https://i.pravatar.cc/300?u=test', 1, '2026-01-01 00:00:00'),
-		(2, 'maria@example.com', '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Maria', 'Lopez', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00')
-) AS source (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at)
-ON target.id = source.id
-WHEN MATCHED THEN
-	UPDATE SET
-		email = source.email,
-		password_hash = source.password_hash,
-		first_name = source.first_name,
-		last_name = source.last_name,
-		phone = source.phone,
-		profile_photo_url = source.profile_photo_url,
-		enabled = source.enabled,
-		created_at = source.created_at
-WHEN NOT MATCHED THEN
-	INSERT (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at)
-	VALUES (source.id, source.email, source.password_hash, source.first_name, source.last_name, source.phone, source.profile_photo_url, source.enabled, source.created_at);
+DELETE FROM users WHERE id IN (1,2);
+INSERT INTO users (id, email, password_hash, first_name, last_name, phone, profile_photo_url, enabled, created_at) VALUES
+  (1, 'test@example.com',  '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Test',  'User',  '+5491123456789', 'https://i.pravatar.cc/300?u=test',  1, '2026-01-01 00:00:00'),
+  (2, 'maria@example.com', '$2a$10$Zq.580gBFNWXppKFYRXJouckqEUPAqP469tPSTGV83yv5yRcXz8t6', 'Maria', 'Lopez', '+5491198765432', 'https://i.pravatar.cc/300?u=maria', 1, '2026-01-15 00:00:00');
 SET IDENTITY_INSERT users OFF;
 
 -- 6. USER PREFERENCES (para /activities/recommended)
@@ -253,6 +256,20 @@ INSERT INTO bookings (id, user_id, session_id, participants, total_price, status
 INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (9, 2, 1, 1, 0.00, 'COMPLETED', '2026-03-25 11:00:00', NULL, 'XPN-BOOK9');
 INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (10, 2, 22, 2, 40000.00, 'COMPLETED', '2026-03-29 07:30:00', NULL, 'XPN-BOOK10');
 INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (11, 2, 29, 2, 130000.00, 'CONFIRMED', '2026-04-02 09:00:00', NULL, 'XPN-BOOK11');
+
+-- COMPLETED adicionales para poblar reviews (evitar "sin reseñas" en Home)
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (12, 1, 12, 2, 70000.00, 'COMPLETED', '2026-04-10 09:00:00', NULL, 'XPN-BOOK12'); -- Act 4
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (13, 1, 15, 1, 22000.00, 'COMPLETED', '2026-04-12 10:00:00', NULL, 'XPN-BOOK13'); -- Act 5
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (14, 1, 17, 1, 18000.00, 'COMPLETED', '2026-04-15 12:00:00', NULL, 'XPN-BOOK14'); -- Act 6
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (15, 1, 20, 2, 50000.00, 'COMPLETED', '2026-03-28 08:00:00', NULL, 'XPN-BOOK15'); -- Act 7
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (16, 1, 25, 2, 60000.00, 'COMPLETED', '2026-03-29 09:00:00', NULL, 'XPN-BOOK16'); -- Act 9
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (17, 1, 28, 1, 65000.00, 'COMPLETED', '2026-03-30 07:00:00', NULL, 'XPN-BOOK17'); -- Act 10
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (18, 1, 30, 1, 28000.00, 'COMPLETED', '2026-03-30 09:30:00', NULL, 'XPN-BOOK18'); -- Act 11
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (19, 1, 33, 2, 0.00,  'COMPLETED', '2026-03-31 10:00:00', NULL, 'XPN-BOOK19'); -- Act 12
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (20, 1, 38, 1, 12000.00, 'COMPLETED', '2026-05-01 09:30:00', NULL, 'XPN-BOOK20'); -- Act 14
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (21, 1, 58, 1, 22000.00, 'COMPLETED', '2026-04-18 08:00:00', NULL, 'XPN-BOOK21'); -- Act 15
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (22, 1, 59, 1, 19000.00, 'COMPLETED', '2026-04-16 06:30:00', NULL, 'XPN-BOOK22'); -- Act 16
+INSERT INTO bookings (id, user_id, session_id, participants, total_price, status, created_at, cancelled_at, voucher_code) VALUES (23, 1, 60, 2, 28000.00, 'COMPLETED', '2026-04-17 10:30:00', NULL, 'XPN-BOOK23'); -- Act 17
 SET IDENTITY_INSERT bookings OFF;
 
 -- FAVORITES TEST DATA
@@ -261,7 +278,7 @@ SET IDENTITY_INSERT bookings OFF;
 -- Sesiones futuras para los 4 casos de prueba
 -- (hoy = 2026-04-26; estas fechas son futuras)
 SET IDENTITY_INSERT activity_sessions ON;
-INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (100, 6,  '2026-05-10 09:00:00', 8,  8,  NULL);       -- Caso 1: sin cupos (lleno)
+INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (100, 6,  '2026-05-16 09:00:00', 8,  8,  NULL);       -- Caso 1: sin cupos (lleno)
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (101, 2,  '2026-05-15 11:00:00', 20, 5,  10000.00);   -- Caso 2: cambio de precio (8500 -> 10000)
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (102, 7,  '2026-05-20 10:00:00', 6,  3,  NULL);       -- Caso 3: cupos liberados (0 -> 3)
 INSERT INTO activity_sessions (id, activity_id, start_time, capacity, booked_count, price_override) VALUES (103, 11, '2026-05-25 09:30:00', 20, 10, 35000.00);   -- Caso 4: cambio precio + cupos liberados
@@ -299,6 +316,20 @@ INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_ra
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (4, 5, 1, 8, 2, 5, 5, 'Las cataratas son impresionantes, una experiencia unica en la vida.', '2026-04-01 18:00:00');
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (5, 9, 2, 1, 1, 4, 4, 'Lindo paseo, el barrio tiene mucha historia.', '2026-04-01 15:00:00');
 INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (6, 10, 2, 8, 2, 5, 5, 'Espectacular! La Garganta del Diablo te deja sin palabras.', '2026-04-01 17:00:00');
+
+-- Reviews adicionales (objetivo: ~85%+ de actividades con rating)
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (7,  12, 1, 4, 3, 5, 5, 'Paisajes increibles y un recorrido muy completo. Recomiendo llevar abrigo.', '2026-04-21 18:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (8,  13, 1, 5, 3, 4, 4, 'Excelente degustacion, muy buena seleccion de vinos y bodega hermosa.', '2026-04-20 15:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (9,  14, 1, 6, 4, 5, 5, 'Circuito espectacular en bici, vistas increibles y ritmo tranquilo.', '2026-04-20 14:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (10, 15, 1, 7, 5, 4, 4, 'Muy divertido y seguro para principiantes. Terminamos cansados pero felices.', '2026-04-02 13:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (11, 16, 1, 9, 2, 5, 5, 'Adrenalina total, te mojas seguro. Inolvidable experiencia bajo los saltos.', '2026-04-01 16:30:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (12, 17, 1, 10, 5, 4, 4, 'Una excursion larga pero vale la pena. El paisaje es impresionante.', '2026-04-10 20:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (13, 18, 1, 11, 4, 5, 5, 'Navegacion hermosa, vimos fauna y el faro. Muy buen guia.', '2026-04-02 13:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (14, 19, 1, 12, 1, 4, 5, 'Recorrido corto y muy interesante. Ideal para conocer historia de la ciudad.', '2026-04-01 12:30:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (15, 20, 1, 14, 1, 4, 4, 'Buen resumen de la ciudad, comodo y con paradas lindas para fotos.', '2026-05-01 17:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (16, 21, 1, 15, 2, 4, 4, 'Muy buena salida para sacar fotos y ver fauna. Guía paciente y claro.', '2026-04-20 13:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (17, 22, 1, 16, 5, 5, 5, 'Sandboarding muy divertido, buena organizacion y equipo en buen estado.', '2026-04-18 13:00:00');
+INSERT INTO reviews (id, booking_id, user_id, activity_id, guide_id, activity_rating, guide_rating, comment, created_at) VALUES (18, 23, 1, 17, 4, 4, 4, 'Vistas increibles desde el teleferico. Recomendado para una tarde distinta.', '2026-04-19 16:00:00');
 SET IDENTITY_INSERT reviews OFF;
 
 -- =========================================================
@@ -340,19 +371,18 @@ SET IDENTITY_INSERT news OFF;
 UPDATE news SET image_url = 'https://images.pexels.com/photos/33448192/pexels-photo-33448192.jpeg' WHERE id = 1;
 UPDATE news SET image_url = 'https://images.pexels.com/photos/7974939/pexels-photo-7974939.jpeg' WHERE id = 2;
 
+-- 11. ITINERARIOS (Feature 10)
+-- Mantenerlo simple (sin bloques BEGIN/END) para que Spring ejecute el script sin rollback.
+DELETE FROM activity_itinerary_points WHERE activity_id IN (1,4);
 
+INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES
+  (1, 1, 'Plaza Dorrego', 'Plaza Dorrego, San Telmo, Buenos Aires'),
+  (1, 2, 'Mercado de San Telmo', 'Mercado de San Telmo, Bolivar 970, Buenos Aires'),
+  (1, 3, 'Calle Defensa', 'Defensa, San Telmo, Buenos Aires');
 
-
--- Seed de itinerarios (Feature 10)
--- (Unificado desde scripts/seed_itinerary.sql)\r\nIF OBJECT_ID('activity_itinerary_points', 'U') IS NOT NULL\r\nBEGIN\r\n    -- Activity 1\r\n    IF NOT EXISTS (SELECT 1 FROM activity_itinerary_points WHERE activity_id = 1)\r\n    BEGIN\r\n        INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES\r\n          (1, 1, 'Plaza Dorrego', 'Plaza Dorrego, San Telmo, Buenos Aires'),\r\n          (1, 2, 'Mercado de San Telmo', 'Mercado de San Telmo, Bolivar 970, Buenos Aires'),\r\n          (1, 3, 'Calle Defensa', 'Defensa, San Telmo, Buenos Aires');\r\n    END\r\n\r\n    -- Activity 4\r\n    IF NOT EXISTS (SELECT 1 FROM activity_itinerary_points WHERE activity_id = 4)\r\n    BEGIN\r\n        INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES\r\n          (4, 1, 'Villavicencio', 'Villavicencio, Mendoza'),\r\n          (4, 2, 'Uspallata', 'Uspallata, Mendoza'),\r\n          (4, 3, 'Puente del Inca', 'Puente del Inca, Mendoza'),\r\n          (4, 4, 'Mirador del Aconcagua', 'Parque Provincial Aconcagua, Mendoza');\r\n    END\r\nEND\r\n
-
--- Seed itinerario fallback: 1 punto por activity con meeting_point
-IF OBJECT_ID('activity_itinerary_points','U') IS NOT NULL
-BEGIN
-    INSERT INTO activity_itinerary_points (activity_id, position, name, address)
-    SELECT a.id, 1, 'Punto de encuentro', a.meeting_point
-    FROM activities a
-    WHERE a.meeting_point IS NOT NULL AND LTRIM(RTRIM(a.meeting_point)) <> ''
-      AND NOT EXISTS (SELECT 1 FROM activity_itinerary_points p WHERE p.activity_id = a.id);
-END
+INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES
+  (4, 1, 'Villavicencio', 'Villavicencio, Mendoza'),
+  (4, 2, 'Uspallata', 'Uspallata, Mendoza'),
+  (4, 3, 'Puente del Inca', 'Puente del Inca, Mendoza'),
+  (4, 4, 'Mirador del Aconcagua', 'Parque Provincial Aconcagua, Mendoza');
 
