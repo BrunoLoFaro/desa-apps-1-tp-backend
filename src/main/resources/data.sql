@@ -342,3 +342,17 @@ UPDATE news SET image_url = 'https://images.pexels.com/photos/7974939/pexels-pho
 
 
 
+
+-- Seed de itinerarios (Feature 10)
+-- (Unificado desde scripts/seed_itinerary.sql)\r\nIF OBJECT_ID('activity_itinerary_points', 'U') IS NOT NULL\r\nBEGIN\r\n    -- Activity 1\r\n    IF NOT EXISTS (SELECT 1 FROM activity_itinerary_points WHERE activity_id = 1)\r\n    BEGIN\r\n        INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES\r\n          (1, 1, 'Plaza Dorrego', 'Plaza Dorrego, San Telmo, Buenos Aires'),\r\n          (1, 2, 'Mercado de San Telmo', 'Mercado de San Telmo, Bolivar 970, Buenos Aires'),\r\n          (1, 3, 'Calle Defensa', 'Defensa, San Telmo, Buenos Aires');\r\n    END\r\n\r\n    -- Activity 4\r\n    IF NOT EXISTS (SELECT 1 FROM activity_itinerary_points WHERE activity_id = 4)\r\n    BEGIN\r\n        INSERT INTO activity_itinerary_points (activity_id, position, name, address) VALUES\r\n          (4, 1, 'Villavicencio', 'Villavicencio, Mendoza'),\r\n          (4, 2, 'Uspallata', 'Uspallata, Mendoza'),\r\n          (4, 3, 'Puente del Inca', 'Puente del Inca, Mendoza'),\r\n          (4, 4, 'Mirador del Aconcagua', 'Parque Provincial Aconcagua, Mendoza');\r\n    END\r\nEND\r\n
+
+-- Seed itinerario fallback: 1 punto por activity con meeting_point
+IF OBJECT_ID('activity_itinerary_points','U') IS NOT NULL
+BEGIN
+    INSERT INTO activity_itinerary_points (activity_id, position, name, address)
+    SELECT a.id, 1, 'Punto de encuentro', a.meeting_point
+    FROM activities a
+    WHERE a.meeting_point IS NOT NULL AND LTRIM(RTRIM(a.meeting_point)) <> ''
+      AND NOT EXISTS (SELECT 1 FROM activity_itinerary_points p WHERE p.activity_id = a.id);
+END
+
