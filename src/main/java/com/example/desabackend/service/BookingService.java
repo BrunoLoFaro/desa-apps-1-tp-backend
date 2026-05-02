@@ -35,14 +35,17 @@ public class BookingService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final Clock clock;
+    private final BookingMaintenanceService bookingMaintenanceService;
 
     public BookingService(BookingRepository bookingRepository, ActivitySessionRepository sessionRepository,
-                          UserRepository userRepository, ReviewRepository reviewRepository, Clock clock) {
+                          UserRepository userRepository, ReviewRepository reviewRepository, Clock clock,
+                          BookingMaintenanceService bookingMaintenanceService) {
         this.bookingRepository = bookingRepository;
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
         this.clock = clock;
+        this.bookingMaintenanceService = bookingMaintenanceService;
     }
 
     @Transactional
@@ -94,8 +97,10 @@ public class BookingService {
         return toDto(booking);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PageResponse<BookingDto> listMyBookings(Long userId, String statusFilter, Integer page, Integer size) {
+        bookingMaintenanceService.autoCompletePastConfirmedBookings(userId);
+
         int safePage = page == null ? 0 : Math.max(0, page);
         int safeSize = size == null ? 10 : Math.min(100, Math.max(1, size));
         PageRequest pageRequest = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));

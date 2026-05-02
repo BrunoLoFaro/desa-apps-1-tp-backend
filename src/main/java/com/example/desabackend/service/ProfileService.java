@@ -36,6 +36,7 @@ public class ProfileService {
     private final DestinationRepository destinationRepo;
     private final BookingRepository bookingRepository;
     private final ReviewRepository reviewRepository;
+    private final BookingMaintenanceService bookingMaintenanceService;
 
     public ProfileService(
             UserRepository userRepository,
@@ -43,7 +44,8 @@ public class ProfileService {
             UserPreferredDestinationRepository destinationPrefRepo,
             DestinationRepository destinationRepo,
             BookingRepository bookingRepository,
-            ReviewRepository reviewRepository
+            ReviewRepository reviewRepository,
+            BookingMaintenanceService bookingMaintenanceService
     ) {
         this.userRepository = userRepository;
         this.categoryRepo = categoryRepo;
@@ -51,10 +53,13 @@ public class ProfileService {
         this.destinationRepo = destinationRepo;
         this.bookingRepository = bookingRepository;
         this.reviewRepository = reviewRepository;
+        this.bookingMaintenanceService = bookingMaintenanceService;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public UserProfileDto getProfile(Long userId) {
+        bookingMaintenanceService.autoCompletePastConfirmedBookings(userId);
+
         UserEntity user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("User not found"));
 
@@ -122,8 +127,9 @@ public class ProfileService {
 
     // ── Activity Summary ─────────────────────────────────────────────────────────
 
-            @Transactional(readOnly = true)
+            @Transactional
             public PageResponse<BookingSummaryItemDto> getActivitySummary(Long userId, int page, int size) {
+            bookingMaintenanceService.autoCompletePastConfirmedBookings(userId);
             // findHistory filtra por COMPLETED y hace join fetch de destination + guide
             Page<BookingEntity> bookingsPage = bookingRepository.findHistory(
                 userId, null, null, null, PageRequest.of(page, size));
